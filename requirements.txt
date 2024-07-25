@@ -1,0 +1,7 @@
+natsort
+numpy
+tqdm
+scikit-image
+scipy
+torch
+lpips
