@@ -1,9 +1,11 @@
+numpy==1.24.2
 natsort
-numpy
 tqdm
 scikit-image
 scipy
 torch
+torchvision
 lpips
 pandas
 matplotlib
+pillow

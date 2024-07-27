@@ -6,6 +6,8 @@ import numpy as np
 from natsort import natsorted
 import random
 
+from tqdm import tqdm
+
 
 # TODO: where to add random seed
 
@@ -58,11 +60,11 @@ class ChromosomesHolder:
             self._chromosome_sequence_cache[chromosome_name] = sequence
         return sequence
 
-    def get_segment(self, chromosome_name, start_of_sequence, sequence_length):
+    def get_segment(self, chromosome_name, start_of_segment, sequence_length):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
-        assert start_of_sequence < len(chromosome_sequence), "Start of sequence is out of range."
-        assert start_of_sequence + sequence_length < len(chromosome_sequence), "End of sequence is out of range."
-        return chromosome_sequence[start_of_sequence:start_of_sequence + sequence_length]
+        assert start_of_segment > len(chromosome_sequence), "Start of segment is out of range."
+        assert start_of_segment + sequence_length > len(chromosome_sequence), "End of segment is out of range."
+        return chromosome_sequence[start_of_segment:start_of_segment + sequence_length]
 
     def get_random_segment(self, length, chromosome_name=None, remove_outlier=False, return_dict=False):
         if chromosome_name:
@@ -74,22 +76,36 @@ class ChromosomesHolder:
         random_start = random.randint(0, len(chosen_chromosome_sequence) - length)
 
         if remove_outlier:
-            chosen_segment_cytoband = self.get_annotation_of_segment(chosen_chromosome_name, random_start, length)
+            chosen_segment_cytoband = self.get_annotation_of_segment(chosen_chromosome_name, random_start, length,
+                                                                     group="cytoband")
             if chosen_segment_cytoband:
                 while chosen_segment_cytoband.color in ['pi', 'pu']:
                     random_start = random.randint(0, len(chosen_chromosome_sequence) - length)
                     chosen_segment_cytoband = self.get_annotation_of_segment(chosen_chromosome_name, random_start,
-                                                                             length)
+                                                                             length, group="cytoband")
             else:
                 raise Exception("Remove outlier is only valid when cytoband annotation exists.")
 
         random_sequence = chosen_chromosome_sequence[random_start:random_start + length]
         if self.reverse_complement[chosen_chromosome_name]:
-            random_sequence = self.get_reverse_complement_sequence(random_sequence)
+            random_sequence = self.get_reverse_complement(random_sequence)
+
         if return_dict:
             return {'chromosome_name': chosen_chromosome_name, 'sequence': random_sequence, 'start': random_start}
         else:
             return random_sequence
+
+    def choose_random_fragment_index(self, chromosome_name, length, outlier=True):
+        candidates = []
+        for i in range(len(self.get_chromosome_sequence(chromosome_name)) // length):
+            color = self.get_annotation_of_segment(chromosome_name, i * length, length, group='cytoband').color
+            if outlier:
+                if color in ['pi', 'pu']:
+                    candidates.append(i)
+            else:
+                if color not in ['pi', 'pu']:
+                    candidates.append(i)
+        return np.random.choice(candidates)
 
     def get_random_segments_list(self, length, num_segments, chromosome_name=None, overlap=False):
         if chromosome_name:
@@ -115,10 +131,10 @@ class ChromosomesHolder:
             start_of_segments_list = []
             for i in range(num_segments):
                 random_start = random.randint(0, len(chosen_chromosome_sequence) - length)
-                random_sequence = chosen_chromosome_sequence[random_start:random_start + length]
+                random_segment = chosen_chromosome_sequence[random_start:random_start + length]
                 if self.reverse_complement[chosen_chromosome_name]:
-                    random_sequence = self.get_reverse_complement_sequence(random_sequence)
-                segments_list.append(random_sequence)
+                    random_segment = self.get_reverse_complement(random_segment)
+                segments_list.append(random_segment)
                 start_of_segments_list.append(random_start)
             return {'segments_sequences': segments_list, 'starts': start_of_segments_list,
                     'chromosome_name': chosen_chromosome_name}
@@ -140,49 +156,52 @@ class ChromosomesHolder:
             return {'segments_sequences': segments_list, 'starts': start_of_segments_list,
                     'chromosome_name': chosen_chromosome_name}
 
-            # available_positions = list(range(len(chosen_chromosome_sequence) - length + 1))
-            # for i in range(num_segments):
-            #     if not available_positions:
-            #         raise Exception("Not enough non-overlapping positions available")
-            #     random_start = random.choice(available_positions)
-            #     random_sequence = chosen_chromosome_sequence[random_start:random_start + length]
-            #     if self.reverse_complement[chosen_chromosome_name]:
-            #         random_sequence = self.get_reverse_complement_sequence(random_sequence)
-            #     segments_list.append(random_sequence)
-            #     start_of_segments_list.append(random_start)
-            #     # Remove positions that would overlap with the chosen segment
-            #     available_positions = [pos for pos in available_positions if
-            #                            ((pos < random_start - length) and (pos - (random_start + length) > 0))
-            #                            or pos >= random_start + length]
-            #
-            # return {'segments_sequences': segments_list, 'starts': start_of_segments_list,
-            #         'chromosome_name': chosen_chromosome_name}
-
     def get_cytoband_segment(self, chromosome_name, cytoband_name):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
         cytoband = self.cytobands[chromosome_name][cytoband_name]
         assert cytoband, "Cytoband not found."
         cytoband_segment = chromosome_sequence[cytoband.start:cytoband.end]
         if self.reverse_complement[chromosome_name]:
-            cytoband_segment = self.get_reverse_complement_sequence(cytoband_segment)
+            cytoband_segment = self.get_reverse_complement(cytoband_segment)
         return cytoband_segment
 
-    def get_annotation_of_segment(self, chromosome_name, start_of_sequence, sequence_length):
+    def get_annotation_of_segment(self, chromosome_name, start_of_segment, segment_length, group=None):
         for key, value in self.cytobands[chromosome_name].items():
-            end_of_sequence = start_of_sequence + sequence_length
-            if start_of_sequence <= value.end:
-                if start_of_sequence >= value.start and end_of_sequence <= value.end:
+            if group and value.group != group:
+                continue
+            end_of_segment = start_of_segment + segment_length
+            if start_of_segment <= value.end:
+                if start_of_segment >= value.start and end_of_segment <= value.end:
                     return value
-                if start_of_sequence >= value.start and end_of_sequence > value.end:
-                    midpoint = (end_of_sequence - start_of_sequence) / 2
-                    if start_of_sequence + midpoint <= value.end:
+                if start_of_segment >= value.start and end_of_segment > value.end:
+                    midpoint = (end_of_segment - start_of_segment) / 2
+                    if start_of_segment + midpoint <= value.end:
                         return value
-                if start_of_sequence <= value.start and end_of_sequence < value.end:
-                    midpoint = (end_of_sequence - start_of_sequence) / 2
-                    if start_of_sequence + midpoint >= value.start:
+                if start_of_segment <= value.start and end_of_segment < value.end:
+                    midpoint = (end_of_segment - start_of_segment) / 2
+                    if start_of_segment + midpoint >= value.start:
                         return value
-                if start_of_sequence <= value.start and end_of_sequence >= value.end:
+                if start_of_segment <= value.start and end_of_segment >= value.end:
                     return value
+
+    def get_chromosome_non_overlapping_segments(self, chromosome_name, segments_length):
+        chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
+
+        segments_sequences = []
+        segments_information = []
+        step_length = np.floor(len(chromosome_sequence) / segments_length)
+        for i in tqdm(range(int(step_length) - 1)):
+            start_of_segment = i * segments_length
+            end_of_segment = (i + 1) * segments_length
+            segment_sequence = chromosome_sequence[start_of_segment:end_of_segment]
+            if self.reverse_complement[chromosome_name]:
+                segment_sequence = self.get_reverse_complement(segment_sequence)
+            segments_sequences.append(segment_sequence)
+
+            segment_information = self.get_annotation_of_segment(chromosome_name, start_of_segment, segments_length,
+                                                                 group="cytoband")
+            segments_information.append(segment_information)
+        return {'segments_sequences': segments_sequences, 'segments_information': segments_information}
 
     def clear_cache(self):
         self._chromosome_sequence_cache = {}
@@ -251,7 +270,7 @@ class ChromosomesHolder:
         return None
 
     @staticmethod
-    def get_reverse_complement_sequence(sequence):
+    def get_reverse_complement(sequence):
         complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
         bases = [complement[base] for base in sequence]
         bases = reversed(bases)
@@ -281,5 +300,6 @@ class ChromosomesHolder:
 
 if __name__ == '__main__':
     genome = ChromosomesHolder("human")
-    genome.get_random_segment(length=100, remove_outlier=True)
+    # genome.get_random_segment(1000, remove_outlier=True)
+    genome.get_chromosome_non_overlapping_segments("1", 1000)
     print("")

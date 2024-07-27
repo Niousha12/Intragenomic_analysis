@@ -158,3 +158,5 @@ if __name__ == '__main__':
     data_df = pd.DataFrame(data, columns=DISTANCE_METRICS_LIST)
     df = pd.concat([df, data_df], axis=1)
     df.to_csv('./outputs/intragenome_analysis.csv', index=False, sep='\t')
+
+# TODO: add a plot to this analysis

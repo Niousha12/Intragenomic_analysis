@@ -113,3 +113,5 @@ class CGR:
         img_array = np.array(img_array, dtype=dtype)
 
         return img_array
+
+# TODO: plot fcgr here

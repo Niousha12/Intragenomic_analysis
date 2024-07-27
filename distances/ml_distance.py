@@ -1,7 +1,7 @@
 import numpy as np
 import torch
-from torchvision import datasets, transforms, models
-from matplotlib import pyplot as plt, cm
+from torchvision import transforms
+from matplotlib import pyplot as plt
 from PIL import Image
 import lpips
 
