@@ -9,7 +9,7 @@ from chromosomes_holder import ChromosomesHolder
 from distances.distance_metrics import get_dist
 
 # TODO: complete and test the class
-# TODO: where to add random seed?
+
 
 class ChromosomeRepresentativeSelection:
     def __init__(self, specie, kmer, representative_length, distance_metric):
@@ -123,7 +123,8 @@ class ChromosomeRepresentativeSelection:
 
     def get_distance_matrix(self, chromosome_name, fcgrs):
         pickle_path = os.path.join(self.pickle_path_root,
-                                   f"chr_{chromosome_name}_len_{self.length}_kmer_{self.kmer}_dist_{self.distance_metric}_distance_matrix.pickle")
+                                   f"chr_{chromosome_name}_len_{self.length}_kmer_{self.kmer}"
+                                   f"_dist_{self.distance_metric}_distance_matrix.pickle")
         if os.path.exists(pickle_path):
             return self.load_pickle(pickle_path)
         else:

@@ -12,8 +12,10 @@ from tqdm import tqdm
 from PIL import Image
 from chaos_game_representation import CGR
 
-
 # TODO: where to add random seed
+random.seed(46)
+np.random.seed(46)
+
 
 class AnnotationRecord:
     def __init__(self, chr_name, start, end, name, group, color=None):
@@ -231,10 +233,12 @@ class ChromosomesHolder:
             plt.text(x, y, label, color='black', fontsize=12, ha='center', va='center')
         plt.title(f"chromosome {chromosome_name}")
 
-        save_path = os.path.join('Figures', self.species)
+        save_path = os.path.join('Figures', 'FCGRs', self.species)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-        plt.savefig(f"{save_path}/chr_{chromosome_name}_fcgr.png", dpi=300, bbox_inches='tight', transparent=True)
+        plt.savefig(
+            f"{save_path}/chr_{chromosome_name}_range_{start_of_segment}_{start_of_segment + segment_length}.png",
+            dpi=300, bbox_inches='tight', transparent=True)
         # plt.show()
 
     def clear_cache(self):
