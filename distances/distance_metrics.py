@@ -12,12 +12,12 @@ from distances.ml_distance import get_triplet_distance, lpips_dist, lpips_fine_t
 
 from chaos_game_representation import CGR
 
-epoch = 150
-
-root_folder = os.path.dirname(__file__)
-checkpoint_path_lpips = os.path.join(root_folder, "checkpoints", f"model_{epoch}.pth")
-lpip_model = lpips.LPIPS(net='vgg')
-lpip_model.load_state_dict(torch.load(checkpoint_path_lpips, map_location=torch.device('cpu')))
+# epoch = 150
+#
+# root_folder = os.path.dirname(__file__)
+# checkpoint_path_lpips = os.path.join(root_folder, "checkpoints", f"model_{epoch}.pth")
+# lpip_model = lpips.LPIPS(net='vgg')
+# lpip_model.load_state_dict(torch.load(checkpoint_path_lpips, map_location=torch.device('cpu')))
 
 DISTANCE_PARAM_DICT = {"Euclidean": {'prob': False, 'require_norm': True},
                        "Cosine": {'prob': False, 'require_norm': True},
