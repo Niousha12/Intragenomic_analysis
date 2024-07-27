@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Arbitrary vs Arbitrary was really slow.">
-      <change afterPath="$PROJECT_DIR$/representative_selection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="representative selection class is added, but not completed yet.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chaos_game_representation.py" beforeDir="false" afterPath="$PROJECT_DIR$/chaos_game_representation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chromosomes_holder.py" beforeDir="false" afterPath="$PROJECT_DIR$/chromosomes_holder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/distances/ml_distance.py" beforeDir="false" afterPath="$PROJECT_DIR$/distances/ml_distance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/intragenomic_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/intragenomic_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,14 +173,22 @@
       <option name="project" value="LOCAL" />
       <updated>1722051638745</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="representative selection class is added, but not completed yet.">
+      <created>1722120343632</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1722120343633</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial files for CGR, Chromosome holder, and distances." />
     <MESSAGE value="Intragenome experiments added." />
     <MESSAGE value="Arbitrary vs Arbitrary was really slow." />
-    <option name="LAST_COMMIT_MESSAGE" value="Arbitrary vs Arbitrary was really slow." />
+    <MESSAGE value="representative selection class is added, but not completed yet." />
+    <option name="LAST_COMMIT_MESSAGE" value="representative selection class is added, but not completed yet." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -217,27 +220,27 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>141</line>
+          <line>145</line>
           <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>189</line>
+          <line>193</line>
           <option name="timeStamp" value="30" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>200</line>
+          <line>204</line>
           <option name="timeStamp" value="32" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>78</line>
+          <line>82</line>
           <option name="timeStamp" value="36" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>303</line>
+          <line>337</line>
           <option name="timeStamp" value="37" />
         </line-breakpoint>
       </breakpoints>

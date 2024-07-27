@@ -3,10 +3,14 @@ import pickle
 import re
 
 import numpy as np
+from matplotlib import pyplot as plt
 from natsort import natsorted
 import random
 
 from tqdm import tqdm
+
+from PIL import Image
+from chaos_game_representation import CGR
 
 
 # TODO: where to add random seed
@@ -203,6 +207,36 @@ class ChromosomesHolder:
             segments_information.append(segment_information)
         return {'segments_sequences': segments_sequences, 'segments_information': segments_information}
 
+    def plot_fcgr(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9):
+        chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
+        if start_of_segment is None:
+            start_of_segment = 0
+        if segment_length is None:
+            segment_length = len(chromosome_sequence)
+        segment_sequence = chromosome_sequence[start_of_segment:start_of_segment + segment_length]
+        fcgr = CGR(segment_sequence, k_mer).get_fcgr()
+        fcgr_image = CGR.array2img(fcgr, bits=8)
+        fcgr_pil = Image.fromarray(fcgr_image, 'L')
+
+        plt.imshow(fcgr_pil, cmap="gray")
+        plt.xticks([])  # Remove x ticks
+        plt.yticks([])  # Remove y ticks
+
+        # Coordinates of points to label (example points)
+        points = [(-12, 520), (-15, -6), (522, -6), (525, 520)]  # List of (x, y) tuples
+        labels = ["A", "C", "G", "T"]  # Labels for each point
+
+        # Annotating each point
+        for (x, y), label in zip(points, labels):
+            plt.text(x, y, label, color='black', fontsize=12, ha='center', va='center')
+        plt.title(f"chromosome {chromosome_name}")
+
+        save_path = os.path.join('Figures', self.species)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        plt.savefig(f"{save_path}/chr_{chromosome_name}_fcgr.png", dpi=300, bbox_inches='tight', transparent=True)
+        # plt.show()
+
     def clear_cache(self):
         self._chromosome_sequence_cache = {}
 
@@ -301,5 +335,6 @@ class ChromosomesHolder:
 if __name__ == '__main__':
     genome = ChromosomesHolder("human")
     # genome.get_random_segment(1000, remove_outlier=True)
-    genome.get_chromosome_non_overlapping_segments("1", 1000)
+    # genome.get_chromosome_non_overlapping_segments("1", 1000)
+    genome.plot_fcgr("21")
     print("")
