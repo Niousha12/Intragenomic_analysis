@@ -62,3 +62,7 @@ TANDEM_REPEAT_DICT = {
 }
 
 DISTANCE_METRICS_LIST = ["Euclidean", "Cosine", "Manhattan", "Descriptor", "DSSIM", "K-S", "Wasserstein", "LPIPS"]
+
+# REVERSE_COMP = {"1": False, "2": False, "3": True, "4": True, "5": True, "6": True, "7": True, "8": True, "9": True,
+#                 "10": True, "11": False, "12": False, "13": False, "14": False, "15": False, "16": False, "17": False,
+#                 "18": False, "19": False, "20": False, "21": False, "22": False, "X": False, "Y": False}

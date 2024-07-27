@@ -139,25 +139,22 @@ if __name__ == '__main__':
                         '21 (p-arm vs q-arm)', '22 (p-arm vs q-arm)', 'Y vs Acrocentric tandem repeats',
                         'Acrocentric tandem repeats', 'Arbitrary vs Arbitrary']
 
-    df = pd.DataFrame(columns=DISTANCE_METRICS_LIST)
-    # df = pd.DataFrame({'Experiment': experiments_list})
+    df = pd.DataFrame({'Experiment': experiments_list})
 
     data = [
-        # intragenome.telomere_vs_telomere(DISTANCE_METRICS_LIST),
-        # intragenome.cytoband_vs_cytoband(DISTANCE_METRICS_LIST, HETERO_HETERO_DICT),
-        # intragenome.cytoband_vs_cytoband(DISTANCE_METRICS_LIST, HETERO_EU_DICT, exclude_chromosome="Y"),
-        # intragenome.p_vs_q("Y", DISTANCE_METRICS_LIST, 10724418),
-        # intragenome.p_vs_q("13", DISTANCE_METRICS_LIST, 16522942),
-        # intragenome.p_vs_q("14", DISTANCE_METRICS_LIST, 11400261),
-        # intragenome.p_vs_q("15", DISTANCE_METRICS_LIST, 17186630),
-        # intragenome.p_vs_q("21", DISTANCE_METRICS_LIST, 11134529),
-        # intragenome.p_vs_q("22", DISTANCE_METRICS_LIST, 14249622),
-        # intragenome.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT),
-        # intragenome.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT, exclude_chromosome="Y"),
+        intragenome.telomere_vs_telomere(DISTANCE_METRICS_LIST),
+        intragenome.cytoband_vs_cytoband(DISTANCE_METRICS_LIST, HETERO_HETERO_DICT),
+        intragenome.cytoband_vs_cytoband(DISTANCE_METRICS_LIST, HETERO_EU_DICT, exclude_chromosome="Y"),
+        intragenome.p_vs_q("Y", DISTANCE_METRICS_LIST, 10724418),
+        intragenome.p_vs_q("13", DISTANCE_METRICS_LIST, 16522942),
+        intragenome.p_vs_q("14", DISTANCE_METRICS_LIST, 11400261),
+        intragenome.p_vs_q("15", DISTANCE_METRICS_LIST, 17186630),
+        intragenome.p_vs_q("21", DISTANCE_METRICS_LIST, 11134529),
+        intragenome.p_vs_q("22", DISTANCE_METRICS_LIST, 14249622),
+        intragenome.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT),
+        intragenome.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT, exclude_chromosome="Y"),
         intragenome.arbitrary_vs_arbitrary(DISTANCE_METRICS_LIST)
     ]
-    for i, row in enumerate(data, start=1):
-        df.loc[i] = row
-    # data_df = pd.DataFrame(data, columns=DISTANCE_METRICS_LIST)
-    # df = pd.concat([df, data_df], axis=1)
-    df.to_csv('./outputs/intragenome_analysis.csv', index=True, sep='\t')
+    data_df = pd.DataFrame(data, columns=DISTANCE_METRICS_LIST)
+    df = pd.concat([df, data_df], axis=1)
+    df.to_csv('./outputs/intragenome_analysis.csv', index=False, sep='\t')

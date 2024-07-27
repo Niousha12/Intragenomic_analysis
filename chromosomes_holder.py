@@ -110,9 +110,9 @@ class ChromosomesHolder:
             raise ValueError("Sequence is too short to fit the desired number of segments of the specified length.")
 
         segments_list = []
-        start_of_segments_list = []
 
         if overlap:
+            start_of_segments_list = []
             for i in range(num_segments):
                 random_start = random.randint(0, len(chosen_chromosome_sequence) - length)
                 random_sequence = chosen_chromosome_sequence[random_start:random_start + length]
@@ -123,23 +123,40 @@ class ChromosomesHolder:
             return {'segments_sequences': segments_list, 'starts': start_of_segments_list,
                     'chromosome_name': chosen_chromosome_name}
         else:
-            available_positions = list(range(len(chosen_chromosome_sequence) - length + 1))
-            for i in range(num_segments):
-                if not available_positions:
-                    raise Exception("Not enough non-overlapping positions available")
-                random_start = random.choice(available_positions)
-                random_sequence = chosen_chromosome_sequence[random_start:random_start + length]
-                if self.reverse_complement[chosen_chromosome_name]:
-                    random_sequence = self.get_reverse_complement_sequence(random_sequence)
-                segments_list.append(random_sequence)
-                start_of_segments_list.append(random_start)
-                # Remove positions that would overlap with the chosen segment
-                available_positions = [pos for pos in available_positions if
-                                       ((pos < random_start - length) and (pos - (random_start + length) > 0))
-                                       or pos >= random_start + length]
+            start_of_segments_list = set()
+            while len(segments_list) < num_segments:
+                start_position = random.randint(0, len(chosen_chromosome_sequence) - length)
+
+                found_overlap = False
+                for pos in start_of_segments_list:
+                    if pos < start_position < pos + length or start_position < pos < start_position + length:
+                        found_overlap = True
+                        break
+
+                if not found_overlap:
+                    segments_list.append(chosen_chromosome_sequence[start_position:start_position + length])
+                    start_of_segments_list.add(start_position)
 
             return {'segments_sequences': segments_list, 'starts': start_of_segments_list,
                     'chromosome_name': chosen_chromosome_name}
+
+            # available_positions = list(range(len(chosen_chromosome_sequence) - length + 1))
+            # for i in range(num_segments):
+            #     if not available_positions:
+            #         raise Exception("Not enough non-overlapping positions available")
+            #     random_start = random.choice(available_positions)
+            #     random_sequence = chosen_chromosome_sequence[random_start:random_start + length]
+            #     if self.reverse_complement[chosen_chromosome_name]:
+            #         random_sequence = self.get_reverse_complement_sequence(random_sequence)
+            #     segments_list.append(random_sequence)
+            #     start_of_segments_list.append(random_start)
+            #     # Remove positions that would overlap with the chosen segment
+            #     available_positions = [pos for pos in available_positions if
+            #                            ((pos < random_start - length) and (pos - (random_start + length) > 0))
+            #                            or pos >= random_start + length]
+            #
+            # return {'segments_sequences': segments_list, 'starts': start_of_segments_list,
+            #         'chromosome_name': chosen_chromosome_name}
 
     def get_cytoband_segment(self, chromosome_name, cytoband_name):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
