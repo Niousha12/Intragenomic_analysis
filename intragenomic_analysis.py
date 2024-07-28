@@ -1,6 +1,8 @@
+import os
 import random
 import pandas as pd
 import numpy as np
+from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 from chromosomes_holder import ChromosomesHolder
@@ -130,36 +132,89 @@ class IntraGenomicAnalysis:
             distance_values[distance_metric] = np.mean(np.asarray(distance_values[distance_metric]))
         return distance_values
 
-    def plot_intragenomic_analysis(self):
-        pass
+    def run_experiment(self, new_run=False):
+        experiment_path = os.path.join('outputs', 'intragenome_analysis.csv')
+        if not os.path.exists(experiment_path):
+            new_run = True
+        if new_run:
+            experiments_list = ['Telomere vs Telomere', 'Heterochromatin vs Heterochromatin',
+                                'Heterochromatin vs Euchromatin', 'Y (p-arm vs q-arm)', '13 (p-arm vs q-arm)',
+                                '14 (p-arm vs q-arm)', '15 (p-arm vs q-arm)', '21 (p-arm vs q-arm)',
+                                '22 (p-arm vs q-arm)', 'Y vs Acrocentric tandem repeats',
+                                'Acrocentric tandem repeats', 'Arbitrary vs Arbitrary']
+
+            df = pd.DataFrame({'Experiment': experiments_list})
+
+            data = [
+                self.telomere_vs_telomere(DISTANCE_METRICS_LIST),
+                self.cytoband_vs_cytoband(DISTANCE_METRICS_LIST, HETERO_HETERO_DICT),
+                self.cytoband_vs_cytoband(DISTANCE_METRICS_LIST, HETERO_EU_DICT, exclude_chromosome="Y"),
+                self.p_vs_q("Y", DISTANCE_METRICS_LIST, 10724418),
+                self.p_vs_q("13", DISTANCE_METRICS_LIST, 16522942),
+                self.p_vs_q("14", DISTANCE_METRICS_LIST, 11400261),
+                self.p_vs_q("15", DISTANCE_METRICS_LIST, 17186630),
+                self.p_vs_q("21", DISTANCE_METRICS_LIST, 11134529),
+                self.p_vs_q("22", DISTANCE_METRICS_LIST, 14249622),
+                self.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT),
+                self.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT, exclude_chromosome="Y"),
+                self.arbitrary_vs_arbitrary(DISTANCE_METRICS_LIST)
+            ]
+            data_df = pd.DataFrame(data, columns=DISTANCE_METRICS_LIST)
+            df = pd.concat([df, data_df], axis=1)
+            df.to_csv(experiment_path, index=False, sep='\t')
+
+        df = pd.read_csv(experiment_path, sep='\t', header=0, index_col=0)
+        return df
+
+    @staticmethod
+    def plot_intragenomic_analysis(df):
+        save_path = os.path.join('Figures', 'intragenomic_experiment')
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        metrics = list(df.columns)
+        experiments = list(df.index)
+        data = df.transpose().values
+        bar_width = 0.8
+        x = np.arange(len(experiments))
+
+        fig, axes = plt.subplots(1, len(data), figsize=(16, 5))
+
+        # colors = plt.cm.tab20.colors
+        colors = ['#C53A33',
+                  '#F19D99',
+                  '#F5BE82',
+
+                  '#3A75AE',
+                  '#B3C6E5',
+                  '#519E3E',
+                  '#A7DD93',
+                  '#8D69B8',
+                  '#C1B1D2',
+
+                  '#EF8636',
+                  '#BE9E96',
+                  '#83584D']
+
+        for i, ax in enumerate(axes):
+            for j in range(len(experiments)):
+                ax.bar(j, data[i][j], width=bar_width, color=colors[j], label=experiments[j] if i == 0 else "")
+            ax.set_title(metrics[i])
+            ax.grid(True, axis='y', color='lightgrey', linestyle='-', linewidth=0.5)  # Adjust grid properties
+            ax.set_xticks(x)
+            ax.set_xticklabels([])
+            ax.tick_params(axis='y', pad=1)  # labelsize=8,
+
+        handles, labels = axes[0].get_legend_handles_labels()
+        fig.legend(handles, labels, loc='upper center', ncol=4, bbox_to_anchor=(0.5, 0.1))
+
+        plt.tight_layout(rect=[0, 0.1, 1, 1])
+        plt.subplots_adjust(wspace=0.4)
+
+        plt.savefig(f"{save_path}/intragenomic_analysis.png", dpi=300, bbox_inches='tight')  # , transparent=True)
+        # plt.show()
 
 
 if __name__ == '__main__':
     intragenome = IntraGenomicAnalysis('human', kmer=6)
-
-    experiments_list = ['Telomere vs Telomere', 'Heterochromatin vs Heterochromatin', 'Heterochromatin vs Euchromatin',
-                        'Y (p-arm vs q-arm)', '13 (p-arm vs q-arm)', '14 (p-arm vs q-arm)', '15 (p-arm vs q-arm)',
-                        '21 (p-arm vs q-arm)', '22 (p-arm vs q-arm)', 'Y vs Acrocentric tandem repeats',
-                        'Acrocentric tandem repeats', 'Arbitrary vs Arbitrary']
-
-    df = pd.DataFrame({'Experiment': experiments_list})
-
-    data = [
-        intragenome.telomere_vs_telomere(DISTANCE_METRICS_LIST),
-        intragenome.cytoband_vs_cytoband(DISTANCE_METRICS_LIST, HETERO_HETERO_DICT),
-        intragenome.cytoband_vs_cytoband(DISTANCE_METRICS_LIST, HETERO_EU_DICT, exclude_chromosome="Y"),
-        intragenome.p_vs_q("Y", DISTANCE_METRICS_LIST, 10724418),
-        intragenome.p_vs_q("13", DISTANCE_METRICS_LIST, 16522942),
-        intragenome.p_vs_q("14", DISTANCE_METRICS_LIST, 11400261),
-        intragenome.p_vs_q("15", DISTANCE_METRICS_LIST, 17186630),
-        intragenome.p_vs_q("21", DISTANCE_METRICS_LIST, 11134529),
-        intragenome.p_vs_q("22", DISTANCE_METRICS_LIST, 14249622),
-        intragenome.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT),
-        intragenome.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT, exclude_chromosome="Y"),
-        intragenome.arbitrary_vs_arbitrary(DISTANCE_METRICS_LIST)
-    ]
-    data_df = pd.DataFrame(data, columns=DISTANCE_METRICS_LIST)
-    df = pd.concat([df, data_df], axis=1)
-    df.to_csv('./outputs/intragenome_analysis.csv', index=False, sep='\t')
-
-# TODO: add a plot to this analysis
+    dataframe = intragenome.run_experiment(new_run=False)
+    intragenome.plot_intragenomic_analysis(dataframe)
