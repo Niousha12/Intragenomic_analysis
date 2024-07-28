@@ -244,6 +244,30 @@ class ChromosomesHolder:
     def clear_cache(self):
         self._chromosome_sequence_cache = {}
 
+    '''Run this method to create chromosome files from a whole genome file (Run only once)'''
+
+    def create_chromosomes_files(self, whole_genome_path):
+        file_path = os.path.join(self.root_path, self.species, 'extra', whole_genome_path)
+        save_path = os.path.join(self.root_path, self.species, 'chromosomes')
+        with open(file_path) as fasta_file:
+            f = None
+            for line in fasta_file:
+                line = line.strip()
+                if not line:
+                    continue
+                if line.startswith(">"):
+                    if not (f is None):
+                        f.close()
+                    filename = line[1:].replace('.', "").replace("/", "") + '.fna'
+                    print(filename)
+                    path = os.path.join(save_path, filename)
+                    f = open(path, "w")
+                    f.write(line + "\n")
+                else:
+                    line = line.upper()
+                    f.write(line)
+            f.close()
+
     ''' Private Methods '''
 
     def _fill_chromosomes_path(self):
@@ -337,8 +361,9 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    genome = ChromosomesHolder("human")
+    genome = ChromosomesHolder("maize")
     # genome.get_random_segment(1000, remove_outlier=True)
     # genome.get_chromosome_non_overlapping_segments("1", 1000)
-    genome.plot_fcgr("21")
+    # genome.plot_fcgr("21")
+    genome.create_chromosomes_files("GCA_022117705.1_Zm-Mo17-REFERENCE-CAU-T2T-assembly_genomic.fna")
     print("")

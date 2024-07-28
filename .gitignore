@@ -10,6 +10,7 @@ __pycache__/
 .Python
 Data/
 temp.py
+temp.txt
 distances/checkpoints/*
 build/
 develop-eggs/

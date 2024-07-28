@@ -130,6 +130,9 @@ class IntraGenomicAnalysis:
             distance_values[distance_metric] = np.mean(np.asarray(distance_values[distance_metric]))
         return distance_values
 
+    def plot_intragenomic_analysis(self):
+        pass
+
 
 if __name__ == '__main__':
     intragenome = IntraGenomicAnalysis('human', kmer=6)

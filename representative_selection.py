@@ -2,13 +2,15 @@ import os
 import pickle
 
 import numpy as np
+from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 from chaos_game_representation import CGR
 from chromosomes_holder import ChromosomesHolder
 from distances.distance_metrics import get_dist
 
-# TODO: complete and test the class
+
+# TODO: Test the class and complete
 
 
 class ChromosomeRepresentativeSelection:
@@ -97,8 +99,51 @@ class ChromosomeRepresentativeSelection:
     def plot_multi_dimensional_scaling(self):
         pass
 
-    def plot_distance_variations(self):
-        pass
+    def plot_distance_variations(self, chromosome_name):
+        figure_path = os.path.join('Figures', 'Representative', self.specie, 'Different_centroids')
+        if not os.path.exists(figure_path):
+            os.makedirs(figure_path)
+
+        plt.figure(figsize=(10, 5))
+
+        segments = self.get_non_overlapping_segments(chromosome_name)
+        fcgrs = self.get_fcgrs_of_segments(chromosome_name, segments)
+        distance_matrix = self.get_distance_matrix(chromosome_name, fcgrs)
+
+        pipeline_representative_dict = self.get_representative(chromosome_name)
+
+        distances_from_centroid = distance_matrix[pipeline_representative_dict['representative_index'], :]
+
+        # if remove_outliers:
+        #     exclude_indices = [i for i, info in enumerate(info) if info[0] in ['pi', 'pu']]
+        #     centroid_no_outliers = find_centroid(distance_matrix, exclude_indices=exclude_indices)
+        #     distance = distance_matrix[centroid_no_outliers, :]
+        #     plt.plot(distance, marker='o', linestyle='-', markersize=4, color='blue')
+        # if plot_random_outlier:
+        #     random_seg = get_random_fragment(info, True)
+        #     distance = distance_matrix[random_seg]
+        #     plt.plot(distance, marker='o', linestyle='-', markersize=4, color='purple')
+        # if plot_approximate:
+        #     distance = np.zeros(len(cgrs))
+        #     apx_representative_cgr = get_apx_representative(chrs[0], random_seq_number=30)['fcgr']
+        #     for index, cgr_matrix in enumerate(cgrs):
+        #         distance[index] = get_dist(cgr_matrix, apx_representative_cgr, dist_m="DSSIM")
+        #
+        #     # Calculate the mean of the squared differences (MSE)
+        #     approximation_error = np.sqrt(np.mean((distance - distances_from_centroid) ** 2))
+        #
+        #     plt.plot(distance, marker='o', linestyle='-', markersize=4, color='green')
+        #
+        # plt.plot(distances_from_centroid, marker='o', linestyle='-', markersize=4, color='red')
+        # plt.grid(True)
+        #
+        # x_ticks = []
+        # for i in range(0, 26):
+        #     x_ticks.append(i * 20)
+        # y_ticks = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+        # plt.xticks(x_ticks)
+        # plt.yticks(y_ticks)
+        # plt.savefig(f'{figure_path}/distance_from_centroid_{chromosome_name}.png')
 
     def get_non_overlapping_segments(self, chromosome_name):
         pickle_path = os.path.join(self.pickle_path_root, f"chr_{chromosome_name}_len_{self.length}_segments.pickle")
