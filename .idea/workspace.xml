@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Plot representative distance analysis is added.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="misc folder with python code for cleaning images is added.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Representative/human/Different_centroids/distance_from_centroid_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/Figures/Representative/human/Different_centroids/distance_from_centroid_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chromosomes_holder.py" beforeDir="false" afterPath="$PROJECT_DIR$/chromosomes_holder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/representative_selection.py" beforeDir="false" afterPath="$PROJECT_DIR$/representative_selection.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,7 +53,7 @@
       <recent name="$PROJECT_DIR$/Data/species/human/extra" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.clean_images">
+  <component name="RunManager" selected="Python.representative_selection">
     <configuration name="chromosomes_holder" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Intragenomic_analysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -181,10 +182,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.clean_images" />
         <item itemvalue="Python.representative_selection" />
-        <item itemvalue="Python.intragenomic_analysis" />
         <item itemvalue="Python.chromosomes_holder" />
+        <item itemvalue="Python.clean_images" />
+        <item itemvalue="Python.intragenomic_analysis" />
         <item itemvalue="Python.temp" />
       </list>
     </recent_temporary>
@@ -261,7 +262,14 @@
       <option name="project" value="LOCAL" />
       <updated>1722287764625</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="misc folder with python code for cleaning images is added.">
+      <created>1722287978684</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1722287978684</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -274,7 +282,8 @@
     <MESSAGE value="Processing whole genome file is added." />
     <MESSAGE value="Plot intragenome analysis is added." />
     <MESSAGE value="Plot representative distance analysis is added." />
-    <option name="LAST_COMMIT_MESSAGE" value="Plot representative distance analysis is added." />
+    <MESSAGE value="misc folder with python code for cleaning images is added." />
+    <option name="LAST_COMMIT_MESSAGE" value="misc folder with python code for cleaning images is added." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -296,27 +305,27 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>147</line>
+          <line>161</line>
           <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>195</line>
+          <line>209</line>
           <option name="timeStamp" value="30" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>84</line>
+          <line>98</line>
           <option name="timeStamp" value="36" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>365</line>
+          <line>379</line>
           <option name="timeStamp" value="37" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>367</line>
+          <line>381</line>
           <option name="timeStamp" value="39" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -331,43 +340,43 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>251</line>
-          <option name="timeStamp" value="43" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>151</line>
+          <line>184</line>
           <option name="timeStamp" value="44" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>29</line>
+          <line>33</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>31</line>
+          <line>35</line>
           <option name="timeStamp" value="47" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>113</line>
+          <line>127</line>
           <option name="timeStamp" value="48" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>39</line>
+          <line>44</line>
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>114</line>
+          <line>150</line>
           <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>108</line>
+          <line>148</line>
           <option name="timeStamp" value="53" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/representative_selection.py</url>
+          <line>288</line>
+          <option name="timeStamp" value="55" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

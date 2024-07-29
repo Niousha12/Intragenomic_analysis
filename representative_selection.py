@@ -1,3 +1,4 @@
+import math
 import os
 import pickle
 
@@ -11,11 +12,14 @@ from distances.distance_metrics import get_dist
 
 
 class ChromosomeRepresentativeSelection:
-    def __init__(self, specie, kmer, representative_length, distance_metric):
+    def __init__(self, specie, kmer, distance_metric, segment_length=None):
         self.specie = specie
         self.chromosomes_holder = ChromosomesHolder(specie)
         self.kmer = kmer
-        self.length = representative_length
+        if segment_length is not None:
+            self.length = segment_length
+        else:
+            self.length = self.chromosomes_holder.get_appropriate_segment_length()
         self.distance_metric = distance_metric
 
         self.pickle_path_root = f"./outputs/cache_pickles/{self.specie}/"
@@ -24,25 +28,27 @@ class ChromosomeRepresentativeSelection:
 
     def get_representative(self, chromosome_name):
         segments = self.get_non_overlapping_segments(chromosome_name)
-        fcgrs = self.get_fcgrs_of_segments(chromosome_name, segments)
-        distance_matrix = self.get_distance_matrix(chromosome_name, fcgrs)
+        fcgrs = self.get_fcgrs_of_segments(chromosome_name)
+        distance_matrix = self.get_distance_matrix(chromosome_name)
 
         centroid = self.find_centroid(distance_matrix, exclude_indices=None)
 
-        return {"representative_sequence": segments['segments_sequences'][centroid],
-                "representative_index": centroid,
-                "representative_fcgr": fcgrs[centroid]}
+        return {"sequence": segments['segments_sequences'][centroid],
+                "index": centroid,
+                "fcgr": fcgrs[centroid],
+                "type": "non-approximative"}
 
     def get_random_representative(self, chromosome_name, outlier=True):
         segments = self.get_non_overlapping_segments(chromosome_name)
-        fcgrs = self.get_fcgrs_of_segments(chromosome_name, segments)
+        fcgrs = self.get_fcgrs_of_segments(chromosome_name)
 
         random_centroid_index = self.chromosomes_holder.choose_random_fragment_index(chromosome_name, self.length,
                                                                                      outlier=outlier)
 
-        return {"representative_sequence": segments['segments_sequences'][random_centroid_index],
-                "representative_index": random_centroid_index,
-                "representative_fcgr": fcgrs[random_centroid_index]}
+        return {"sequence": segments['segments_sequences'][random_centroid_index],
+                "index": random_centroid_index,
+                "fcgr": fcgrs[random_centroid_index],
+                "type": f"random_outlier_{outlier}"}
 
     def get_approximate_representative(self, chromosome_name, random_sequences_number=30,
                                        remove_outliers_function="IQR", verbose=False):
@@ -94,12 +100,46 @@ class ChromosomeRepresentativeSelection:
             print(f"The process ran for {count} times, "
                   f"Total number of dropped indices {outlier_indices_number_total}")
 
-        return {"representative_sequence": representative_dict['sequence'],
-                "representative_start": representative_dict['start'],
-                "representative_fcgr": representative_dict['fcgr']}
+        return {"sequence": representative_dict['sequence'],
+                "start": representative_dict['start'],
+                "fcgr": representative_dict['fcgr'],
+                "type": "approximative"}
 
     def plot_multi_dimensional_scaling(self):
         pass
+
+    def get_distance_from_representative(self, chromosome_name, representative_dict):
+        if representative_dict['type'] == "approximative":
+            fcgrs = self.get_fcgrs_of_segments(chromosome_name)
+            distance_from_representative = np.zeros(len(fcgrs))
+
+            for index, fcgr in enumerate(fcgrs):
+                distance_from_representative[index] = get_dist(fcgr, representative_dict['fcgr'],
+                                                               dist_m=self.distance_metric)
+        else:
+            distance_matrix = self.get_distance_matrix(chromosome_name)
+            distance_from_representative = distance_matrix[representative_dict['index'], :]
+
+        return distance_from_representative
+
+    def get_approximation_error(self, chromosome_name):
+        representative = self.get_representative(chromosome_name)
+        distances_from_representative = self.get_distance_from_representative(chromosome_name, representative)
+
+        random_representative = self.get_random_representative(chromosome_name)
+        distances_from_random_representative = \
+            self.get_distance_from_representative(chromosome_name, random_representative)
+
+        approximative_representative = self.get_approximate_representative(chromosome_name)
+        distances_from_approximative_representative = \
+            self.get_distance_from_representative(chromosome_name, approximative_representative)
+
+        approximation_error = np.sqrt(
+            np.mean((distances_from_approximative_representative - distances_from_representative) ** 2))
+        random_error = np.sqrt(np.mean((distances_from_random_representative - distances_from_representative) ** 2))
+
+        print(f"Approximation error: {approximation_error}")
+        print(f"Random error: {random_error}")
 
     def plot_distance_variations(self, chromosome_name, plot_random_outliers=True, plot_approximate=True):
         figure_path = os.path.join('Figures', 'Representative', self.specie, 'Different_centroids')
@@ -108,35 +148,28 @@ class ChromosomeRepresentativeSelection:
 
         plt.figure(figsize=(10, 5))
 
-        segments = self.get_non_overlapping_segments(chromosome_name)
-        fcgrs = self.get_fcgrs_of_segments(chromosome_name, segments)
-        distance_matrix = self.get_distance_matrix(chromosome_name, fcgrs)
-
         pipeline_representative_dict = self.get_representative(chromosome_name)
-
-        distances_from_centroid = distance_matrix[pipeline_representative_dict['representative_index'], :]
+        distances_from_centroid = self.get_distance_from_representative(chromosome_name, pipeline_representative_dict)
 
         if plot_random_outliers:
             random_outlier_representative_dict = self.get_random_representative(chromosome_name, True)
-            distance_from_outlier_representative = distance_matrix[
-                                                   random_outlier_representative_dict['representative_index'], :]
+            distance_from_outlier_representative = \
+                self.get_distance_from_representative(chromosome_name, random_outlier_representative_dict)
             plt.plot(distance_from_outlier_representative, marker='o', linestyle='-', markersize=4, color='purple')
+
         if plot_approximate:
-            distance = np.zeros(len(fcgrs))
-            apx_representative_fcgr = self.get_approximate_representative(chromosome_name)['representative_fcgr']
-            for index, fcgr_matrix in enumerate(fcgrs):
-                distance[index] = get_dist(fcgr_matrix, apx_representative_fcgr, dist_m=self.distance_metric)
+            approximate_representative_dict = self.get_approximate_representative(chromosome_name)
+            distance_from_approximate_representative = \
+                self.get_distance_from_representative(chromosome_name, approximate_representative_dict)
 
-            # Calculate the mean of the squared differences (MSE)
-            # approximation_error = np.sqrt(np.mean((distance - distances_from_centroid) ** 2))
-
-            plt.plot(distance, marker='o', linestyle='-', markersize=4, color='green')
+            plt.plot(distance_from_approximate_representative, marker='o', linestyle='-', markersize=4, color='blue')
 
         plt.plot(distances_from_centroid, marker='o', linestyle='-', markersize=4, color='red')
         plt.grid(True)
 
+        x_range = math.ceil(self.chromosomes_holder.get_largest_chromosome_length() / self.length / 20)
         x_ticks = []
-        for i in range(0, 26):
+        for i in range(0, int(x_range) + 1):
             x_ticks.append(i * 20)
         y_ticks = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
         plt.xticks(x_ticks)
@@ -152,25 +185,29 @@ class ChromosomeRepresentativeSelection:
             self.create_pickle(segments, pickle_path)
             return segments
 
-    def get_fcgrs_of_segments(self, chromosome_name, segments):
+    def get_fcgrs_of_segments(self, chromosome_name):
         pickle_path = os.path.join(self.pickle_path_root,
                                    f"chr_{chromosome_name}_len_{self.length}_kmer_{self.kmer}_fcgrs.pickle")
         if os.path.exists(pickle_path):
             return self.load_pickle(pickle_path)
         else:
+            segments = self.get_non_overlapping_segments(chromosome_name)
+
             fcgrs_list = []
             for segment in segments['segments_sequences']:
                 fcgrs_list.append(CGR(segment, self.kmer).get_fcgr())
             self.create_pickle(fcgrs_list, pickle_path)
             return fcgrs_list
 
-    def get_distance_matrix(self, chromosome_name, fcgrs):
+    def get_distance_matrix(self, chromosome_name):
         pickle_path = os.path.join(self.pickle_path_root,
                                    f"chr_{chromosome_name}_len_{self.length}_kmer_{self.kmer}"
                                    f"_dist_{self.distance_metric}_distance_matrix.pickle")
         if os.path.exists(pickle_path):
             return self.load_pickle(pickle_path)
         else:
+            fcgrs = self.get_fcgrs_of_segments(chromosome_name)
+
             distance_matrix = np.zeros((len(fcgrs), len(fcgrs)))
             for i in tqdm(range(distance_matrix.shape[0])):
                 for j in range(i + 1):
@@ -248,5 +285,6 @@ class ChromosomeRepresentativeSelection:
 
 
 if __name__ == '__main__':
-    human_representative = ChromosomeRepresentativeSelection('human', 6, 500_000, 'DSSIM')
-    human_representative.plot_distance_variations('1')
+    human_representative = ChromosomeRepresentativeSelection('human', 6, 'DSSIM')
+    for chr_name in human_representative.chromosomes_holder.get_all_chromosomes_name():
+        human_representative.plot_distance_variations(chr_name)

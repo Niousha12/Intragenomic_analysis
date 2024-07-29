@@ -66,6 +66,20 @@ class ChromosomesHolder:
             self._chromosome_sequence_cache[chromosome_name] = sequence
         return sequence
 
+    def get_all_chromosome_length(self):
+        return {chromosome_name: len(self.get_chromosome_sequence(chromosome_name)) for chromosome_name in
+                self.get_all_chromosomes_name()}
+
+    def get_largest_chromosome_length(self):
+        return max(self.get_all_chromosome_length().values())
+
+    def get_appropriate_segment_length(self):
+        total_genome_length = sum(self.get_all_chromosome_length().values())
+        app_length = total_genome_length // 6234
+        app_length //= 1000
+        app_length *= 1000
+        return app_length
+
     def get_segment(self, chromosome_name, start_of_segment, sequence_length):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
         assert start_of_segment > len(chromosome_sequence), "Start of segment is out of range."
