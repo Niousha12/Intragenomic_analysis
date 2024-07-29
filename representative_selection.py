@@ -10,9 +10,6 @@ from chromosomes_holder import ChromosomesHolder
 from distances.distance_metrics import get_dist
 
 
-# TODO: Test the class and complete
-
-
 class ChromosomeRepresentativeSelection:
     def __init__(self, specie, kmer, representative_length, distance_metric):
         self.specie = specie

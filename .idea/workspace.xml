@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Plot intragenome analysis is added.">
+    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Plot representative distance analysis is added.">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/representative_selection.py" beforeDir="false" afterPath="$PROJECT_DIR$/representative_selection.py" afterDir="false" />
@@ -46,6 +46,8 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/misc" />
       <recent name="$PROJECT_DIR$/distances" />
       <recent name="$PROJECT_DIR$/Data/species/human/extra" />
     </key>
@@ -84,7 +86,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp/clean_images.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/clean_images.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -252,7 +254,14 @@
       <option name="project" value="LOCAL" />
       <updated>1722184508944</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Plot representative distance analysis is added.">
+      <created>1722287764625</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1722287764625</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -264,7 +273,8 @@
     <MESSAGE value="FCGR plot function's path is changed." />
     <MESSAGE value="Processing whole genome file is added." />
     <MESSAGE value="Plot intragenome analysis is added." />
-    <option name="LAST_COMMIT_MESSAGE" value="Plot intragenome analysis is added." />
+    <MESSAGE value="Plot representative distance analysis is added." />
+    <option name="LAST_COMMIT_MESSAGE" value="Plot representative distance analysis is added." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -321,22 +331,22 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>254</line>
+          <line>251</line>
           <option name="timeStamp" value="43" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>154</line>
+          <line>151</line>
           <option name="timeStamp" value="44" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>32</line>
+          <line>29</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>34</line>
+          <line>31</line>
           <option name="timeStamp" value="47" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -346,17 +356,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>42</line>
+          <line>39</line>
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>117</line>
+          <line>114</line>
           <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>111</line>
+          <line>108</line>
           <option name="timeStamp" value="53" />
         </line-breakpoint>
       </breakpoints>
