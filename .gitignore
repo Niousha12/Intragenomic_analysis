@@ -9,8 +9,9 @@ __pycache__/
 # Distribution / packaging
 .Python
 Data/
-temp.py
-temp.txt
+temp/
+processed/
+*.pickle
 distances/checkpoints/*
 build/
 develop-eggs/
