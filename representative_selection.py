@@ -323,7 +323,7 @@ class ChromosomeRepresentativeSelection:
 if __name__ == '__main__':
     human_representative = ChromosomeRepresentativeSelection('human', 6, 'DSSIM')
     for chr_name in human_representative.chromosomes_holder.get_all_chromosomes_name():
-        human_representative.plot_distance_variations(chr_name, plot_random_outliers=False)
+        human_representative.plot_distance_variations(chr_name)
         segments_info = human_representative.get_non_overlapping_segments(chr_name)['segments_information']
         human_representative.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_name),
                                                             segments_info, coloring_type='Chromosome')
