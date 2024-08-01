@@ -3,12 +3,15 @@ import os
 import pickle
 
 import numpy as np
+import pandas as pd
+from sklearn.manifold import MDS
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 from chaos_game_representation import CGR
-from chromosomes_holder import ChromosomesHolder
+from chromosomes_holder import ChromosomesHolder, AnnotationRecord
 from distances.distance_metrics import get_dist
+import plotly.express as px
 
 
 class ChromosomeRepresentativeSelection:
@@ -19,7 +22,8 @@ class ChromosomeRepresentativeSelection:
         if segment_length is not None:
             self.length = segment_length
         else:
-            self.length = self.chromosomes_holder.get_appropriate_segment_length()
+            self.length = self.chromosomes_holder.get_appropriate_segment_length(scale='genome')
+        print(f"Segment length for {self.specie} is {self.length}")
         self.distance_metric = distance_metric
 
         self.pickle_path_root = f"./outputs/cache_pickles/{self.specie}/"
@@ -105,9 +109,6 @@ class ChromosomeRepresentativeSelection:
                 "fcgr": representative_dict['fcgr'],
                 "type": "approximative"}
 
-    def plot_multi_dimensional_scaling(self):
-        pass
-
     def get_distance_from_representative(self, chromosome_name, representative_dict):
         if representative_dict['type'] == "approximative":
             fcgrs = self.get_fcgrs_of_segments(chromosome_name)
@@ -158,7 +159,7 @@ class ChromosomeRepresentativeSelection:
             plt.plot(distance_from_outlier_representative, marker='o', linestyle='-', markersize=4, color='purple')
 
         if plot_approximate:
-            approximate_representative_dict = self.get_approximate_representative(chromosome_name)
+            approximate_representative_dict = self.get_approximate_representative(chromosome_name, verbose=True)
             distance_from_approximate_representative = \
                 self.get_distance_from_representative(chromosome_name, approximate_representative_dict)
 
@@ -283,8 +284,46 @@ class ChromosomeRepresentativeSelection:
                 outlier_indices.append(index)
         return outlier_indices
 
+    @staticmethod
+    def plot_multi_dimensional_scaling(distance_matrix, info: list, representative_index=None, coloring_type='NCBI'):
+        mds = MDS(n_components=3, dissimilarity='precomputed', random_state=46)
+        mds_result = mds.fit_transform(distance_matrix)
+
+        # Add description for each data
+        data_description = np.asarray(
+            [f"<br>Start: {info[i].start}<br>band: {info[i].name}" for i in range(len(mds_result))])
+        labels = np.asarray([f"{info[i].color_name}" for i in range(len(mds_result))])
+        chrs = np.asarray([f"{info[i].chr_name}" for i in range(len(mds_result))])
+        data = {'x': mds_result[:, 0], 'y': mds_result[:, 1], 'z': mds_result[:, 2], 'description': data_description,
+                'labels': labels, 'chromosome': chrs}
+
+        if representative_index is not None:
+            data['labels'][representative_index] = "Representative"
+
+        df = pd.DataFrame(data)
+
+        if coloring_type == 'NCBI':
+            # Draw based on NCBI colors for each chromosome
+            fig = px.scatter_3d(df, x='x', y='y', z='z', color='labels', symbol='chromosome',
+                                color_discrete_map=AnnotationRecord.get_color_display_dict(),
+                                hover_data={'x': False, 'y': False, 'z': False, 'labels': False, 'chromosome': True,
+                                            'description': True})
+        elif coloring_type == 'Chromosome':
+            # Draw each Chromosome with different color
+            fig = px.scatter_3d(df, x='x', y='y', z='z', color='chromosome', symbol='chromosome',
+                                hover_data={'x': False, 'y': False, 'z': False, 'labels': False, 'chromosome': True,
+                                            'description': True})
+        else:
+            raise ValueError("Invalid coloring type")
+
+        fig.update_layout(scene=dict(xaxis=dict(range=[-1, 1]), yaxis=dict(range=[-1, 1]), zaxis=dict(range=[-1, 1])))
+        fig.show()
+
 
 if __name__ == '__main__':
     human_representative = ChromosomeRepresentativeSelection('human', 6, 'DSSIM')
     for chr_name in human_representative.chromosomes_holder.get_all_chromosomes_name():
-        human_representative.plot_distance_variations(chr_name)
+        human_representative.plot_distance_variations(chr_name, plot_random_outliers=False)
+        segments_info = human_representative.get_non_overlapping_segments(chr_name)['segments_information']
+        human_representative.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_name),
+                                                            segments_info, coloring_type='Chromosome')

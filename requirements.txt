@@ -9,3 +9,5 @@ lpips
 pandas
 matplotlib
 pillow
+scikit-learn
+plotly

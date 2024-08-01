@@ -25,9 +25,21 @@ class AnnotationRecord:
         self.end = end
         self.group = group
         self.color = color
+        self.color_name = None
+        self.display_color = None
+        color_name = {"w": "White", "lg": "Light Gray", "g": "Gray", "dg": "Dark Gray", "b": "Black", "pi": "Pink",
+                      "pu": "Purple", "R": "Representative"}
+
+        if self.color is not None:
+            self.color_name = color_name[self.color]
 
     def __repr__(self):
         return f"{self.chr_name}_{self.name}, {self.start}, {self.end}, {self.group}"
+
+    @staticmethod
+    def get_color_display_dict():
+        return {"White": "#C0C0C0", "Light Gray": "#808080", "Gray": "#696969", "Dark Gray": "#505050",
+                "Black": "#000000", "Pink": "#fc9ea3", "Purple": "#c89efc", "Representative": "#ff0000"}
 
 
 class ChromosomesHolder:
@@ -73,11 +85,21 @@ class ChromosomesHolder:
     def get_largest_chromosome_length(self):
         return max(self.get_all_chromosome_length().values())
 
-    def get_appropriate_segment_length(self):
-        total_genome_length = sum(self.get_all_chromosome_length().values())
-        app_length = total_genome_length // 6234
-        app_length //= 1000
-        app_length *= 1000
+    def get_appropriate_segment_length(self, scale='genome'):
+        """
+        :param scale: chromosome or genome
+        """
+        if scale == 'genome':
+            total_genome_length = sum(self.get_all_chromosome_length().values())
+            app_length = total_genome_length // 6234
+            if app_length > 1000:
+                app_length //= 1000
+                app_length *= 1000
+        else:
+            app_length = self.get_largest_chromosome_length() // 500
+            if app_length > 1000:
+                app_length //= 1000
+                app_length *= 1000
         return app_length
 
     def get_segment(self, chromosome_name, start_of_segment, sequence_length):
@@ -244,8 +266,8 @@ class ChromosomesHolder:
 
         # Annotating each point
         for (x, y), label in zip(points, labels):
-            plt.text(x, y, label, color='black', fontsize=12, ha='center', va='center')
-        plt.title(f"chromosome {chromosome_name}")
+            plt.text(x, y, label, color='black', fontsize=14, ha='center', va='center')
+        plt.title(f"Chromosome {chromosome_name}", fontsize=14)
 
         save_path = os.path.join('Figures', 'FCGRs', self.species)
         if not os.path.exists(save_path):
@@ -375,9 +397,10 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    genome = ChromosomesHolder("maize")
+    genome = ChromosomesHolder("human")
+
     # genome.get_random_segment(1000, remove_outlier=True)
     # genome.get_chromosome_non_overlapping_segments("1", 1000)
-    # genome.plot_fcgr("21")
-    genome.create_chromosomes_files("GCA_022117705.1_Zm-Mo17-REFERENCE-CAU-T2T-assembly_genomic.fna")
+    genome.plot_fcgr("Y")
+    # genome.create_chromosomes_files("GCA_022117705.1_Zm-Mo17-REFERENCE-CAU-T2T-assembly_genomic.fna")
     print("")
