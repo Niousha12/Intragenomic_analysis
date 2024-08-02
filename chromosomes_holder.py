@@ -109,24 +109,42 @@ class ChromosomesHolder:
         return chromosome_sequence[start_of_segment:start_of_segment + sequence_length]
 
     def get_random_segment(self, length, chromosome_name=None, remove_outlier=False, return_dict=False):
+        # Find the chromosome name and its sequence
         if chromosome_name:
             chosen_chromosome_name = chromosome_name
+            determined_chromosome = True
         else:
             chosen_chromosome_name = random.choice(self.get_all_chromosomes_name())
+            determined_chromosome = False
         chosen_chromosome_sequence = self.get_chromosome_sequence(chosen_chromosome_name)
 
-        random_start = random.randint(0, len(chosen_chromosome_sequence) - length)
+        # This condition only happens when the sequence is too short to fit the desired length, does not happen in human
+        if determined_chromosome and len(chosen_chromosome_sequence) < (length // 2):
+            raise ValueError("Sequence is too short to fit the desired length.")
 
-        if remove_outlier:
-            chosen_segment_cytoband = self.get_annotation_of_segment(chosen_chromosome_name, random_start, length,
-                                                                     group="cytoband")
-            if chosen_segment_cytoband:
-                while chosen_segment_cytoband.color in ['pi', 'pu']:
-                    random_start = random.randint(0, len(chosen_chromosome_sequence) - length)
-                    chosen_segment_cytoband = self.get_annotation_of_segment(chosen_chromosome_name, random_start,
-                                                                             length, group="cytoband")
-            else:
-                raise Exception("Remove outlier is only valid when cytoband annotation exists.")
+        while len(chosen_chromosome_sequence) < (length // 2):
+            chosen_chromosome_name = random.choice(self.get_all_chromosomes_name())
+            chosen_chromosome_sequence = self.get_chromosome_sequence(chosen_chromosome_name)
+        if len(chosen_chromosome_sequence) < length:
+            chosen_chromosome_sequence += 'N' * (length - len(chosen_chromosome_sequence))
+
+        # Find the random start position where it doesn't return a sequence with all N
+        random_start = -1
+
+        processed_chosen_seq = ""
+        while len(processed_chosen_seq) < (length // 2):
+            random_start = random.randint(0, len(chosen_chromosome_sequence) - length)
+            random_sequence = chosen_chromosome_sequence[random_start:random_start + length]
+            processed_chosen_seq = random_sequence.replace("N", "")
+
+            if remove_outlier:
+                chosen_segment_cytoband = self.get_annotation_of_segment(chosen_chromosome_name, random_start, length,
+                                                                         group="cytoband")
+                if chosen_segment_cytoband:
+                    if chosen_segment_cytoband.color in ['pi', 'pu']:
+                        processed_chosen_seq = ""  # invalidate the sequence
+                else:
+                    raise Exception("Remove outlier is only valid when cytoband annotation exists.")
 
         random_sequence = chosen_chromosome_sequence[random_start:random_start + length]
         if self.reverse_complement[chosen_chromosome_name]:
@@ -330,7 +348,7 @@ class ChromosomesHolder:
     def _fill_cytobands_info(self):
         for chromosome_name in self.get_all_chromosomes_name():
             self.cytobands[chromosome_name] = {}
-        if self.species == "human":
+        if self.species == "Human":
             file_path = f"./Data/species/{self.species}/bedfiles/chm13v2.0_telomere.bed"
             switch = 0
             with open(file_path) as file:
@@ -397,7 +415,7 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    genome = ChromosomesHolder("human")
+    genome = ChromosomesHolder("Human")
 
     # genome.get_random_segment(1000, remove_outlier=True)
     # genome.get_chromosome_non_overlapping_segments("1", 1000)
