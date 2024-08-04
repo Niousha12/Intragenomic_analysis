@@ -60,6 +60,7 @@ class ChromosomesHolder:
         self._chromosome_sequence_cache = {}
 
     def get_all_chromosomes_name(self):
+        # TODO: does not work on bacteria and Archaea
         return natsorted(list(self._chromosomes_path.keys()))
 
     def get_chromosome_sequence(self, chromosome_name):

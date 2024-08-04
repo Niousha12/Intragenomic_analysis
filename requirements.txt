@@ -11,3 +11,4 @@ matplotlib
 pillow
 scikit-learn
 plotly
+customtkinter
