@@ -100,12 +100,12 @@ class CGR:
         return matrix
 
     @staticmethod
-    def array2img(array, bits=8):
+    def array2img(array, bits=8, resolution=4):
         m, M = array.min(), array.max()
         # rescale to [0,1]
         img_rescaled = (array - m) / (M - m)
 
-        max_color = 4 ** bits - 1
+        max_color = resolution ** bits - 1
 
         # invert colors black->white
         img_array = np.ceil(max_color - img_rescaled * max_color)

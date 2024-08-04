@@ -17,6 +17,8 @@ random.seed(46)
 np.random.seed(46)
 
 
+# TODO: check the reverse complement
+
 class AnnotationRecord:
     def __init__(self, chr_name, start, end, name, group, color=None):
         self.name = name
@@ -63,9 +65,12 @@ class ChromosomesHolder:
         # TODO: does not work on bacteria and Archaea
         return natsorted(list(self._chromosomes_path.keys()))
 
-    def get_chromosome_sequence(self, chromosome_name):
+    def get_chromosome_sequence(self, chromosome_name, apply_reverse_complement=True):
         if chromosome_name in self._chromosome_sequence_cache:
-            return self._chromosome_sequence_cache[chromosome_name]
+            if apply_reverse_complement and self.reverse_complement[chromosome_name]:
+                return self.get_reverse_complement(self._chromosome_sequence_cache[chromosome_name])
+            else:
+                return self._chromosome_sequence_cache[chromosome_name]
         sequence = ""
         chr_path = self._chromosomes_path[chromosome_name]
         with open(chr_path) as file:
@@ -77,6 +82,8 @@ class ChromosomesHolder:
                     sequence += line
         if self.use_cache:
             self._chromosome_sequence_cache[chromosome_name] = sequence
+        if apply_reverse_complement and self.reverse_complement[chromosome_name]:
+            return self.get_reverse_complement(sequence)
         return sequence
 
     def get_all_chromosome_length(self):
@@ -148,8 +155,6 @@ class ChromosomesHolder:
                     raise Exception("Remove outlier is only valid when cytoband annotation exists.")
 
         random_sequence = chosen_chromosome_sequence[random_start:random_start + length]
-        if self.reverse_complement[chosen_chromosome_name]:
-            random_sequence = self.get_reverse_complement(random_sequence)
 
         if return_dict:
             return {'chromosome_name': chosen_chromosome_name, 'sequence': random_sequence, 'start': random_start}
@@ -193,8 +198,6 @@ class ChromosomesHolder:
             for i in range(num_segments):
                 random_start = random.randint(0, len(chosen_chromosome_sequence) - length)
                 random_segment = chosen_chromosome_sequence[random_start:random_start + length]
-                if self.reverse_complement[chosen_chromosome_name]:
-                    random_segment = self.get_reverse_complement(random_segment)
                 segments_list.append(random_segment)
                 start_of_segments_list.append(random_start)
             return {'segments_sequences': segments_list, 'starts': start_of_segments_list,
@@ -221,10 +224,7 @@ class ChromosomesHolder:
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
         cytoband = self.cytobands[chromosome_name][cytoband_name]
         assert cytoband, "Cytoband not found."
-        cytoband_segment = chromosome_sequence[cytoband.start:cytoband.end]
-        if self.reverse_complement[chromosome_name]:
-            cytoband_segment = self.get_reverse_complement(cytoband_segment)
-        return cytoband_segment
+        return chromosome_sequence[cytoband.start:cytoband.end]
 
     def get_annotation_of_segment(self, chromosome_name, start_of_segment, segment_length, group=None):
         for key, value in self.cytobands[chromosome_name].items():
@@ -255,8 +255,6 @@ class ChromosomesHolder:
             start_of_segment = i * segments_length
             end_of_segment = (i + 1) * segments_length
             segment_sequence = chromosome_sequence[start_of_segment:end_of_segment]
-            if self.reverse_complement[chromosome_name]:
-                segment_sequence = self.get_reverse_complement(segment_sequence)
             segments_sequences.append(segment_sequence)
 
             segment_information = self.get_annotation_of_segment(chromosome_name, start_of_segment, segments_length,
@@ -351,7 +349,7 @@ class ChromosomesHolder:
         for chromosome_name in self.get_all_chromosomes_name():
             self.cytobands[chromosome_name] = {}
         if self.species == "Human":
-            file_path = f"./Data/species/{self.species}/bedfiles/chm13v2.0_telomere.bed"
+            file_path = f"{self.root_path}/{self.species}/bedfiles/chm13v2.0_telomere.bed"
             switch = 0
             with open(file_path) as file:
                 for line in file:
@@ -367,7 +365,7 @@ class ChromosomesHolder:
 
                     switch = 1 - switch
 
-            file_path = f"./Data/species/{self.species}/bedfiles/chm13v2.0_cytobands_allchrs_color.bed"
+            file_path = f"{self.root_path}/{self.species}/bedfiles/chm13v2.0_cytobands_allchrs_color.bed"
             with open(file_path) as file:
                 for line in file:
                     line = line.strip()
