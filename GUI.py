@@ -169,24 +169,16 @@ class App(customtkinter.CTk):
         self.t1_seq1_rv = customtkinter.CTkFrame(self.t1_config_frame, fg_color=config_frame_color)
         self.t1_seq1_rv.grid(row=4, columnspan=2, padx=10, pady=5, sticky="ew")
 
-        first_seq_label = customtkinter.CTkLabel(self.t1_seq1_rv, text='Sequence 1 :', font=self.header_font)
-        first_seq_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        self.checkbox_RC = {}
+        self.checkbox_Random = {}
+        for i in range(2):
+            seq_label = customtkinter.CTkLabel(self.t1_seq1_rv, text=f'Sequence {i + 1} :', font=self.header_font)
+            seq_label.grid(row=(i * 2), column=0, padx=10, pady=(5, 0), sticky="w")
 
-        self.checkbox_RC_seq1 = customtkinter.CTkCheckBox(master=self.t1_seq1_rv, text="Reverse Complement")
-        self.checkbox_RC_seq1.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-        self.checkbox_Random_seq1 = customtkinter.CTkCheckBox(master=self.t1_seq1_rv, text="Shuffle")
-        self.checkbox_Random_seq1.grid(row=1, column=1, padx=10, pady=5, sticky="w")
-
-        # self.t1_seq2_rv = customtkinter.CTkFrame(self.t1_config_frame, fg_color=config_frame_color)
-        # self.t1_seq2_rv.grid(row=5, columnspan=2, padx=5, pady=5, sticky="w")
-
-        sec_seq_label = customtkinter.CTkLabel(self.t1_seq1_rv, text='Sequence 2 :', font=self.header_font)
-        sec_seq_label.grid(row=2, column=0, padx=10, pady=(5, 5), sticky="w")
-
-        self.checkbox_RC_seq2 = customtkinter.CTkCheckBox(master=self.t1_seq1_rv, text="Reverse Complement")
-        self.checkbox_RC_seq2.grid(row=2, column=1, padx=10, pady=5, sticky="w")
-        self.checkbox_Random_seq2 = customtkinter.CTkCheckBox(master=self.t1_seq1_rv, text="Shuffle")
-        self.checkbox_Random_seq2.grid(row=3, column=1, padx=10, pady=5, sticky="w")
+            self.checkbox_RC[str(i + 1)] = customtkinter.CTkCheckBox(master=self.t1_seq1_rv, text="Reverse Complement")
+            self.checkbox_RC[str(i + 1)].grid(row=(i * 2), column=1, padx=10, pady=5, sticky="w")
+            self.checkbox_Random[str(i + 1)] = customtkinter.CTkCheckBox(master=self.t1_seq1_rv, text="Shuffle")
+            self.checkbox_Random[str(i + 1)].grid(row=(i * 2) + 1, column=1, padx=10, pady=5, sticky="w")
 
         # Distance metrics
         self.dist_metric = customtkinter.StringVar()
@@ -273,15 +265,18 @@ class App(customtkinter.CTk):
             seq_s_e_label_d = customtkinter.CTkLabel(self.t1_slider_frame, text='bp')
             seq_s_e_label_d.grid(row=(i * 2) + 1, column=4, pady=_pad_size)
 
-    def sync_text_vars(self):
-        for key, value in self.ds.items():
-            self.ds[key].start_txt.set(f"{self.ds[key].start_seq.get()}")
-            self.ds[key].end_txt.set(f"{self.ds[key].end_seq.get()}")
+    def sync_text_vars(self, sender, keep_annotation=False):
+        # for key, value in self.ds.items():
+        self.ds[sender].start_txt.set(f"{self.ds[sender].start_seq.get()}")
+        self.ds[sender].end_txt.set(f"{self.ds[sender].end_seq.get()}")
+        if keep_annotation is False:
+            self.ds[sender].annotation.set("")
 
-    def reverse_sync_text_vars(self):
-        for key, value in self.ds.items():
-            self.ds[key].start_seq.set(int(self.ds[key].start_txt.get()))
-            self.ds[key].end_seq.set(int(self.ds[key].end_txt.get()))
+    def reverse_sync_text_vars(self, sender):
+        # for key, value in self.ds.items():
+        self.ds[sender].start_seq.set(int(self.ds[sender].start_txt.get()))
+        self.ds[sender].end_seq.set(int(self.ds[sender].end_txt.get()))
+        self.ds[sender].annotation.set("")
 
     # '''events'''
     def specie_change_event(self, sender, value):
@@ -309,10 +304,15 @@ class App(customtkinter.CTk):
         self.start_seq_scale[sender].configure(to=len(self.ds[sender].seq))
         self.end_seq_scale[sender].configure(to=len(self.ds[sender].seq))
 
-        self.sync_text_vars()
+        self.sync_text_vars(sender)
 
     def annotation_change_event(self, sender, value):
-        pass
+        annotation = self.ds[sender].annotation.get()
+        chromosome_name = self.ds[sender].chromosome.get()
+        annotation_info = ChromosomesHolder(self.ds[sender].specie.get()).cytobands[chromosome_name][annotation]
+        self.ds[sender].start_seq.set(annotation_info.start)
+        self.ds[sender].end_seq.set(annotation_info.end)
+        self.sync_text_vars(sender, keep_annotation=True)
 
     def window_size_toggle_event(self):
         if self.window_s_toggle.get() == 0:
@@ -336,7 +336,8 @@ class App(customtkinter.CTk):
             for key, value in self.ds.items():
                 self.ds[key].end_seq.set(self.ds[key].start_seq.get() + int(self.window_s.get()))
 
-        self.sync_text_vars()
+        for key, value in self.ds.items():
+            self.sync_text_vars(key)
 
     def sequence_value_change(self, sender, value):
         if sender == "0":  # Window size changed
@@ -346,12 +347,14 @@ class App(customtkinter.CTk):
             if self.window_s_toggle.get() == 1:
                 self.ds[sender].end_seq.set(self.ds[sender].start_seq.get() + int(self.window_s.get()))
         elif sender in ["3"]:
-            self.reverse_sync_text_vars()
+            for key, value in self.ds.items():
+                self.reverse_sync_text_vars(key)
             if self.window_s_toggle.get() == 1:
                 for key, value in self.ds.items():
                     self.ds[key].end_seq.set(self.ds[key].start_seq.get() + int(self.window_s.get()))
 
-        self.sync_text_vars()
+        for key, value in self.ds.items():
+            self.sync_text_vars(key)
 
         # if self.window_s_toggle.get() == 1:
         #     self.end_var.set(self.begin_var.get() + int(self.window_s.get()) / self._scale)

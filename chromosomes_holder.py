@@ -347,6 +347,7 @@ class ChromosomesHolder:
                 self.reverse_complement[chromosome_name] = False
 
     def _fill_cytobands_info(self):
+        # TODO: Add centromere annotations
         for chromosome_name in self.get_all_chromosomes_name():
             self.cytobands[chromosome_name] = {}
         if self.species == "Human":
