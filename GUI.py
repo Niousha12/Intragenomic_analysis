@@ -279,7 +279,7 @@ class App(customtkinter.CTk):
                                                     corner_radius=20, fg_color="white")
         self.t2_plot_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
         self.t2_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]), corner_radius=20,
-                                                       fg_color="#707370")
+                                                       fg_color="#707370", width=600, height=200)
         self.t2_display_frame.grid(row=2, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
 
         # Designing the config frame (F2)
@@ -338,8 +338,48 @@ class App(customtkinter.CTk):
         t2_switch.grid(row=4, columnspan=2, pady=(20, 5))
 
         # run button
-        t2_run_button = customtkinter.CTkButton(self.t2_config_frame, text="Run", command=partial(self.run_consecutive))
+        t2_run_button = customtkinter.CTkButton(self.t2_config_frame, text="Run",
+                                                command=partial(self.run_consecutive, None))
         t2_run_button.grid(row=7, columnspan=2)  # , sticky="ns")
+
+        # cgr_img_base = customtkinter.CTkImage(Image.open(f"{self.assets_path}/background.png"), size=(800, 300))
+        # self.t2_cgr_img_l = customtkinter.CTkLabel(self.t2_display_frame, image=cgr_img_base, text="")
+        # self.t2_cgr_img_l.grid(row=0, padx=120, sticky='nsew')
+
+        # placing the progress bars
+        self.step_length = None
+        self.cgr_distance_history = None
+        self.progress_bar = customtkinter.CTkProgressBar(self.tabview.tab(tab_names[1]))
+        self.progress_bar.set(0)
+        self.progress_bar.grid(row=0, column=1, padx=(10, 10), pady=(10, 10), sticky="nsew")
+
+        # placing the slider bar
+        self.t2_changing_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]), corner_radius=20)
+        self.t2_changing_frame.grid(row=3, column=1, sticky="nsew")
+
+        # Designing the changing frame
+        self.t2_changing_frame.grid_columnconfigure(0, weight=1)
+        self.t2_changing_frame.grid_columnconfigure(1, weight=10)
+        self.t2_changing_frame.grid_columnconfigure(2, weight=1)
+
+        self.t2_pic_num = customtkinter.IntVar(value=0)
+        self.t2_scale = customtkinter.CTkSlider(self.t2_changing_frame, from_=0,
+                                                orientation=customtkinter.HORIZONTAL, variable=self.t2_pic_num,
+                                                command=lambda value: self._change_image(value))
+        self.t2_scale.grid(row=0, column=1, pady=(10, 10), sticky="nsew")
+
+        # previous-next button
+        self.previous_im = customtkinter.CTkImage(light_image=Image.open(f"{self.assets_path}/back_arrow.png"),
+                                                  size=(20, 20))
+        self.next_im = customtkinter.CTkImage(light_image=Image.open(f"{self.assets_path}/next_arrow.png"),
+                                              size=(20, 20))
+        self.t2_previous_button = customtkinter.CTkButton(self.t2_changing_frame, image=self.previous_im, text="",
+                                                          command=lambda: self.move_previous(None), width=10)
+        self.t2_previous_button.grid(row=0, column=0)
+
+        self.t2_next_button = customtkinter.CTkButton(self.t2_changing_frame, image=self.next_im, text="",
+                                                      command=lambda: self.move_next(None), width=10)
+        self.t2_next_button.grid(row=0, column=2)
 
     def sync_text_vars(self, sender, keep_annotation=False):
         self.t1_ds[sender].start_txt.set(f"{self.t1_ds[sender].start_seq.get()}")
@@ -442,8 +482,9 @@ class App(customtkinter.CTk):
             self.sync_text_vars(key)
 
     def t1_plot(self):
-        fcgrs = []
+        fcgrs_dict = {}
         for key in self.t1_ds.keys():
+            fcgrs_dict[key] = {}
             seq = self.t1_ds[key].seq[self.t1_ds[key].start_seq.get():self.t1_ds[key].end_seq.get()]
             if self.checkbox_RC[key].get():
                 seq = ChromosomesHolder.get_reverse_complement(seq)
@@ -453,40 +494,22 @@ class App(customtkinter.CTk):
                 seq = ''.join(seq)
             cgr = CGR(seq, self.k_var.get())
             if self.fcgr.get() == 1:
-                fcgrs.append(cgr.get_fcgr())
+                fcgrs_dict[key]["(f)cgr"] = cgr.get_fcgr()
             else:
-                fcgrs.append(cgr.get_cgr())
-        diff = fcgrs[1] - fcgrs[0]
-        distance_value = get_dist(fcgrs[0], fcgrs[1], dist_m=self.dist_metric.get())
+                fcgrs_dict[key]["(f)cgr"] = cgr.get_cgr()
 
-        # Visualize
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
-        extent = 0, 1, 0, 1
+            fcgrs_dict[key]["chr_len"] = len(self.t1_ds[key].seq)
+            fcgrs_dict[key]["b"] = self.t1_ds[key].start_seq.get()
+            fcgrs_dict[key]["e"] = self.t1_ds[key].end_seq.get()
 
+        diff = fcgrs_dict["2"]["(f)cgr"] - fcgrs_dict["1"]["(f)cgr"]
+        fcgrs_dict["diff"] = diff
+        distance_value = get_dist(fcgrs_dict["1"]["(f)cgr"], fcgrs_dict["2"]["(f)cgr"], dist_m=self.dist_metric.get())
+        fcgrs_dict["distance"] = distance_value
+
+        # Visualize the FCGRs
         display_frame_color = self.t1_display_frame.cget("fg_color")
-        fig.patch.set_facecolor(display_frame_color)
-
-        # plot the data on the subplots
-        img1 = CGR.array2img(fcgrs[0], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
-        img1 = Image.fromarray(img1, 'L')
-        ax1.imshow(img1, cmap='gray', extent=extent)
-        ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-        ax1.set_title("Sequence 1")
-
-        im2 = ax2.imshow(diff, cmap='RdBu', norm=plt.Normalize(-100, 100), extent=extent)
-        ax2.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-        ax2.set_title(f'distance = {round(distance_value, 4)}')
-
-        img2 = CGR.array2img(fcgrs[1], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
-        img2 = Image.fromarray(img2, 'L')
-        ax3.imshow(img2, cmap='gray', extent=extent)
-        ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-        ax3.set_title("Sequence 2")
-
-        # plt.savefig(f"{self.temp_output_path}/t1_fcgrs.png", bbox_inches='tight', transparent=True)
-
-        cbar_ax2 = fig.add_axes([0.36, 0.1, 0.3, 0.02])  # Adjust position as needed
-        fig.colorbar(im2, cax=cbar_ax2, orientation='horizontal')
+        fig = self.plot_fcgrs(fcgrs_dict, colormap=True, background_color=display_frame_color)
 
         # Clear the previous figure from the display frame if any
         for widget in self.t1_display_frame.winfo_children():
@@ -504,6 +527,56 @@ class App(customtkinter.CTk):
         # Use grid to place the canvas
         canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
+    def plot_fcgrs(self, fcgrs, colormap=False, background_color=None):
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+        extent = 0, 1, 0, 1
+
+        if background_color is not None:
+            fig.patch.set_facecolor(background_color)
+
+        scale_1, scaling_1 = self.get_scaling(fcgrs["1"]["chr_len"])
+        b1 = fcgrs["1"]["b"]
+        e1 = fcgrs["1"]["e"]
+        scale_2, scaling_2 = self.get_scaling(fcgrs["2"]["chr_len"])
+        b2 = fcgrs["2"]["b"]
+        e2 = fcgrs["2"]["e"]
+
+        # plot the data on the subplots
+        img1 = CGR.array2img(fcgrs["1"]["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+        img1 = Image.fromarray(img1, 'L')
+        ax1.imshow(img1, cmap='gray', extent=extent)
+        ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+        ax1.set_title(f'{round(b1 / scale_1, 2)} - {round(e1 / scale_1, 2)} {scaling_1}')
+
+        im2 = ax2.imshow(fcgrs['diff'], cmap='RdBu', norm=plt.Normalize(-100, 100), extent=extent)
+        ax2.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+        ax2.set_title(f'distance = {round(fcgrs["distance"], 4)}')
+
+        img2 = CGR.array2img(fcgrs["2"]["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+        img2 = Image.fromarray(img2, 'L')
+        ax3.imshow(img2, cmap='gray', extent=extent)
+        ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+        ax3.set_title(f'{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
+
+        if colormap:
+            cbar_ax2 = fig.add_axes([0.36, 0.1, 0.3, 0.02])  # Adjust position as needed
+            fig.colorbar(im2, cax=cbar_ax2, orientation='horizontal')
+
+        return fig
+
+    @staticmethod
+    def get_scaling(chromosome_length):
+        scale = 1_000_000
+        while (chromosome_length / scale) < 2:
+            scale //= 1000
+        if scale == 1_000_000:
+            scaling = "Mbp"
+        elif scale == 1_000:
+            scaling = "Kbp"
+        else:
+            scaling = "bp"
+        return scale, scaling
+
     def t2_specie_change_event(self, value):
         specie = self.t2_ds["1"].specie.get()
         self.t2_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
@@ -519,8 +592,118 @@ class App(customtkinter.CTk):
         # enable window size
         self.t2_window_entry.configure(state="normal")
 
-    def run_consecutive(self):
-        pass
+    def run_consecutive(self, event):
+        global foo_thread
+        foo_thread = threading.Thread(target=self.t2_run)
+        foo_thread.daemon = True
+        foo_thread.start()
+        self.after(20, self.check_thread)
+
+    def t2_run(self):
+        self.cgr_distance_history = []
+        self.step_length = np.floor(len(self.t2_ds["1"].seq) / int(self.t2_window_s.get()))
+        self.progress_bar.set(0)
+        self.t2_pic_num.set(0)
+        for i in range(int(self.step_length) - 1):
+            dictionary = {}
+            self.progress_bar.set((i + 2) / int(self.step_length))
+            b1 = i * int(self.t2_window_s.get())
+            e1 = (i + 1) * int(self.t2_window_s.get())
+            b2 = (i + 1) * int(self.t2_window_s.get())
+            e2 = (i + 2) * int(self.t2_window_s.get())
+
+            cgr1 = CGR(self.t2_ds["1"].seq[b1:e1], self.k_var.get())
+            cgr2 = CGR(self.t2_ds["1"].seq[b2:e2], self.k_var.get())
+
+            if self.fcgr.get() == 1:
+                im1 = cgr1.get_fcgr()
+                im2 = cgr2.get_fcgr()
+            else:
+                im1 = cgr1.get_cgr()
+                im2 = cgr2.get_cgr()
+
+            diff = im2 - im1
+
+            dist = get_dist(im1, im2, dist_m=self.dist_metric.get())
+
+            self.cgr_distance_history.append(dist)
+
+            dictionary["1"] = {"(f)cgr": im1, "b": b1, "e": e1, "chr_len": len(self.t2_ds["1"].seq)}
+            dictionary["2"] = {"(f)cgr": im2, "b": b2, "e": e2, "chr_len": len(self.t2_ds["1"].seq)}
+            dictionary["diff"] = diff
+            dictionary["distance"] = dist
+
+            path = f"{self.temp_output_path}/consecutive/pickle"
+            if not os.path.exists(path):
+                os.makedirs(path)
+            with open(f"{path}/{i}.pkl", 'wb') as f:
+                pickle.dump(dictionary, f)
+
+    def check_thread(self):
+        if foo_thread.is_alive():
+            self.after(20, self.check_thread)
+        else:
+            self.t2_scale.configure(to=int(len(self.cgr_distance_history) - 1))  # Update the scale range
+            # TODO: resize the images
+            # plot distance results bar and first index is red
+            self._t2_plot_chart(0)
+
+            # Load and display the first image set in next plot
+            self._t2_plot_fcgrs(0)
+
+    def _t2_plot_chart(self, highlighted_index):
+        fig, ax1 = plt.subplots(figsize=(10.7, 3))
+        x = np.arange(len(self.cgr_distance_history))
+        y = np.asarray(self.cgr_distance_history)
+        mask1 = x == highlighted_index
+        mask2 = x != highlighted_index
+        ax1.bar(x[mask1], y[mask1], color='red')
+        ax1.bar(x[mask2], y[mask2], color='blue')
+
+        # Clear the previous figure from the display frame if any
+        for widget in self.t2_display_frame.winfo_children():
+            widget.destroy()
+
+        # Create a canvas and add the figure to it
+        canvas = FigureCanvasTkAgg(fig, master=self.t2_plot_frame)
+        canvas.draw()
+
+        # Set the canvas size explicitly
+        canvas_width = 600  # Example width, adjust as needed
+        canvas_height = 200  # Example height, adjust as needed
+        canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
+        # Use grid to place the canvas
+        canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+
+    def _t2_plot_fcgrs(self, image_index, mode="consecutive"):
+        with open(f"{self.temp_output_path}/{mode}/pickle/{image_index}.pkl", 'rb') as handle:
+            dictionary = pickle.load(handle)
+
+        display_frame_color = self.t2_display_frame.cget("fg_color")
+        fig = self.plot_fcgrs(dictionary, colormap=False, background_color=display_frame_color)
+
+        # Create a canvas and add the figure to it
+        canvas = FigureCanvasTkAgg(fig, master=self.t2_display_frame)
+        canvas.draw()
+
+        # Set the canvas size explicitly
+        canvas_width = 600  # Example width, adjust as needed
+        canvas_height = 200  # Example height, adjust as needed
+        canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
+        # Use grid to place the canvas
+        canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+
+    def move_previous(self, value):
+        if self.t2_pic_num.get() > 0:
+            self.t2_pic_num.set(self.t2_pic_num.get() - 1)
+            self._t2_plot_chart(self.t2_pic_num.get())
+            self._t2_plot_fcgrs(self.t2_pic_num.get())
+
+    def move_next(self, value):
+        if self.t2_pic_num.get() < len(self.cgr_distance_history) - 1:
+            self.t2_pic_num.set(self.t2_pic_num.get() + 1)
+            self._t2_plot_chart(self.t2_pic_num.get())
+            self._t2_plot_fcgrs(self.t2_pic_num.get())
 
 
 if __name__ == "__main__":
