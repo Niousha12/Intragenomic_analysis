@@ -290,61 +290,56 @@ class App(customtkinter.CTk):
         self.t2_chr_frame = customtkinter.CTkFrame(self.t2_config_frame, corner_radius=20)
         self.t2_chr_frame.grid(row=0, columnspan=2, padx=5, pady=5, sticky="ew")
 
-        # self.t2_ds = {'1': GUIDataStructure()}
+        self.t2_ds = {'1': GUIDataStructure()}
 
-        # label = customtkinter.CTkLabel(self.t2_chr_frame, text=f"Chromosome: ", font=self.header_font)
-        # label.grid(row=0, column=0, sticky="w", padx=10, pady=(5, 0))
-        # specie_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Specie: ", font=self.header_font)
-        # specie_label.grid(row=1, column=0, sticky="w", padx=10)
-        # chr_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Chromosome name: ", font=self.header_font)
-        # chr_label.grid(row=1, column=1, sticky="w", padx=10)
-        # self.t2_specie_combobox = customtkinter.CTkComboBox(self.t2_chr_frame, values=species_list,
-        #                                                     width=100,
-        #                                                     variable=self.t2_ds["t2"].specie,
-        #                                                     command=partial(self.t2_specie_change_event))
-        #
-        # self.t2_specie_combobox.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
-        # self.t2_specie_combobox.set("")
-        #
-        # self.t2_chr_combobox = customtkinter.CTkComboBox(self.t2_chr_frame, values=[],
-        #                                                  variable=self.t2_ds["t2"].chromosome,
-        #                                                  width=100,
-        #                                                  command=partial(self.t2_chromosome_change_event))
-        # self.t2_chr_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(0, 10))
-        # self.t2_chr_combobox.set("")
-        #
-        # # k_mer combo box
-        # k_mer_label = customtkinter.CTkLabel(self.t2_config_frame, text="k-mer: ", font=self.header_font)
-        # k_mer_label.grid(row=2, column=0, padx=10, pady=(10, 10))
-        # self.t2_k_mer_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=values_list, width=100,
-        #                                                    state="normal", variable=self.k_var)
-        # self.t2_k_mer_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(10, 10))
-        #
-        # # Window size
-        # window_s_label = customtkinter.CTkLabel(self.t2_config_frame, text="Window Size:", font=self.header_font)
-        # window_s_label.grid(row=2, column=0, padx=10, pady=(20, 5))
-        # self.t2_window_s = tkinter.StringVar(value="")
-        # self.t2_window_entry = customtkinter.CTkEntry(self.t2_config_frame, textvariable=self.t2_window_s)
-        # # self.window_entry.bind('<FocusOut>', partial(self.sequence_value_change, "0"))
-        # # self.window_entry.bind('<Key-Return>', partial(self.sequence_value_change, "0"))
-        # self.t2_window_entry.configure(state="disable")
-        # self.t2_window_entry.grid(row=2, column=1, pady=(20, 5), padx=(0, 20), sticky="w")
+        label = customtkinter.CTkLabel(self.t2_chr_frame, text=f"Chromosome: ", font=self.header_font)
+        label.grid(row=0, column=0, sticky="w", padx=10, pady=(5, 0))
+        specie_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Specie: ", font=self.header_font)
+        specie_label.grid(row=1, column=0, sticky="w", padx=10)
+        chr_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Chromosome name: ", font=self.header_font)
+        chr_label.grid(row=1, column=1, sticky="w", padx=10)
+        self.t2_specie_combobox = customtkinter.CTkComboBox(self.t2_chr_frame, values=species_list, width=100,
+                                                            variable=self.t2_ds["1"].specie,
+                                                            command=partial(self.t2_specie_change_event))
 
-        # # Distance metrics
-        # t2_dist_metric_l = customtkinter.CTkLabel(self.t2_config_frame, text="Distance Metric: ", font=self.header_font)
-        # t2_dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
-        # self.t2_dist_metric_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=DISTANCE_METRICS_LIST,
-        #                                                          width=120, variable=self.dist_metric)
-        # self.t2_dist_metric_combobox.grid(row=3, column=1, pady=(20, 5), sticky="w")
-        # self.t2_dist_metric_combobox.set("")
+        self.t2_specie_combobox.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
+        self.t2_specie_combobox.set("")
 
-        # t2_switch = customtkinter.CTkSwitch(self.t2_config_frame, text=f"Frequency CGR", variable=self.fcgr)
-        # t2_switch.grid(row=4, columnspan=2, pady=(20, 5))
+        self.t2_chr_combobox = customtkinter.CTkComboBox(self.t2_chr_frame, values=[],
+                                                         variable=self.t2_ds["1"].chromosome, width=100,
+                                                         command=partial(self.t2_chromosome_change_event))
+        self.t2_chr_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(0, 10))
+        self.t2_chr_combobox.set("")
 
-        # # run button
-        # t2_run_button = customtkinter.CTkButton(self.t2_config_frame, text="Run",
-        #                                         command=lambda: self.run_consecutive(None))
-        # t2_run_button.grid(row=7, columnspan=2, sticky="ns")
+        # k_mer combo box
+        k_mer_label = customtkinter.CTkLabel(self.t2_config_frame, text="k-mer: ", font=self.header_font)
+        k_mer_label.grid(row=1, column=0, padx=10, pady=(10, 10))
+        self.t2_k_mer_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=values_list, width=100,
+                                                           state="normal", variable=self.k_var)
+        self.t2_k_mer_combobox.grid(row=1, column=1, sticky="w", padx=10, pady=(10, 10))
+
+        # Window size
+        window_s_label = customtkinter.CTkLabel(self.t2_config_frame, text="Window Size:", font=self.header_font)
+        window_s_label.grid(row=2, column=0, padx=10, pady=(20, 5))
+        self.t2_window_s = tkinter.StringVar(value="")
+        self.t2_window_entry = customtkinter.CTkEntry(self.t2_config_frame, textvariable=self.t2_window_s)
+        self.t2_window_entry.configure(state="disable")
+        self.t2_window_entry.grid(row=2, column=1, pady=(20, 5), padx=(0, 20), sticky="w")
+
+        # Distance metrics
+        t2_dist_metric_l = customtkinter.CTkLabel(self.t2_config_frame, text="Distance Metric: ", font=self.header_font)
+        t2_dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
+        self.t2_dist_metric_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=DISTANCE_METRICS_LIST,
+                                                                 width=120, variable=self.dist_metric)
+        self.t2_dist_metric_combobox.grid(row=3, column=1, pady=(20, 5), sticky="w")
+        self.t2_dist_metric_combobox.set("")
+
+        t2_switch = customtkinter.CTkSwitch(self.t2_config_frame, text=f"Frequency CGR", variable=self.fcgr)
+        t2_switch.grid(row=4, columnspan=2, pady=(20, 5))
+
+        # run button
+        t2_run_button = customtkinter.CTkButton(self.t2_config_frame, text="Run", command=partial(self.run_consecutive))
+        t2_run_button.grid(row=7, columnspan=2)  # , sticky="ns")
 
     def sync_text_vars(self, sender, keep_annotation=False):
         self.t1_ds[sender].start_txt.set(f"{self.t1_ds[sender].start_seq.get()}")
@@ -509,10 +504,22 @@ class App(customtkinter.CTk):
         # Use grid to place the canvas
         canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
-    def t2_specie_change_event(self):
-        pass
+    def t2_specie_change_event(self, value):
+        specie = self.t2_ds["1"].specie.get()
+        self.t2_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+        self.t2_ds["1"].invalidate_based_specie()
 
-    def t2_chromosome_change_event(self):
+    def t2_chromosome_change_event(self, value):
+        specie = self.t2_ds["1"].specie.get()
+        chromosome = self.t2_ds["1"].chromosome.get()
+        # set its sequence
+        self.t2_ds["1"].seq = ChromosomesHolder(specie).get_chromosome_sequence(chromosome)
+        # set end
+        self.t2_ds["1"].end_seq.set(len(self.t2_ds["1"].seq))
+        # enable window size
+        self.t2_window_entry.configure(state="normal")
+
+    def run_consecutive(self):
         pass
 
 
