@@ -117,7 +117,7 @@ class App(customtkinter.CTk):
         for i in range(2):
             label = customtkinter.CTkLabel(self.t1_chr_frame, text=f"Chromosome {i + 1}: ", font=self.header_font)
             label.grid(row=i * 3, column=0, sticky="w", padx=10, pady=(5, 0))
-            specie_label = customtkinter.CTkLabel(self.t1_chr_frame, text="Specie: ", font=self.header_font)
+            specie_label = customtkinter.CTkLabel(self.t1_chr_frame, text="Species: ", font=self.header_font)
             specie_label.grid(row=(i * 3) + 1, column=0, sticky="w", padx=10)
             chr_label = customtkinter.CTkLabel(self.t1_chr_frame, text="Chromosome name: ", font=self.header_font)
             chr_label.grid(row=(i * 3) + 1, column=1, sticky="w", padx=10)
@@ -276,11 +276,17 @@ class App(customtkinter.CTk):
                                                       fg_color="#333333")
         self.t2_config_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.t2_plot_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]),
-                                                    corner_radius=20, fg_color="white")
+                                                    corner_radius=20, fg_color="white", width=1100, height=300)
         self.t2_plot_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
         self.t2_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]), corner_radius=20,
                                                        fg_color="#707370", width=600, height=200)
         self.t2_display_frame.grid(row=2, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
+
+        self.t2_display_frame.grid_rowconfigure(0, weight=1)
+        self.t2_display_frame.grid_columnconfigure(0, weight=1)
+
+        self.t2_plot_frame.grid_rowconfigure(0, weight=1)
+        self.t2_plot_frame.grid_columnconfigure(0, weight=1)
 
         # Designing the config frame (F2)
         for row in range(10):
@@ -294,7 +300,7 @@ class App(customtkinter.CTk):
 
         label = customtkinter.CTkLabel(self.t2_chr_frame, text=f"Chromosome: ", font=self.header_font)
         label.grid(row=0, column=0, sticky="w", padx=10, pady=(5, 0))
-        specie_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Specie: ", font=self.header_font)
+        specie_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Species: ", font=self.header_font)
         specie_label.grid(row=1, column=0, sticky="w", padx=10)
         chr_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Chromosome name: ", font=self.header_font)
         chr_label.grid(row=1, column=1, sticky="w", padx=10)
@@ -365,7 +371,7 @@ class App(customtkinter.CTk):
         self.t2_pic_num = customtkinter.IntVar(value=0)
         self.t2_scale = customtkinter.CTkSlider(self.t2_changing_frame, from_=0,
                                                 orientation=customtkinter.HORIZONTAL, variable=self.t2_pic_num,
-                                                command=lambda value: self._change_image(value))
+                                                command=partial(self._change_images, self.t2_pic_num.get(), None))
         self.t2_scale.grid(row=0, column=1, pady=(10, 10), sticky="nsew")
 
         # previous-next button
@@ -374,11 +380,11 @@ class App(customtkinter.CTk):
         self.next_im = customtkinter.CTkImage(light_image=Image.open(f"{self.assets_path}/next_arrow.png"),
                                               size=(20, 20))
         self.t2_previous_button = customtkinter.CTkButton(self.t2_changing_frame, image=self.previous_im, text="",
-                                                          command=lambda: self.move_previous(None), width=10)
+                                                          command=partial(self.move_previous, None), width=10)
         self.t2_previous_button.grid(row=0, column=0)
 
         self.t2_next_button = customtkinter.CTkButton(self.t2_changing_frame, image=self.next_im, text="",
-                                                      command=lambda: self.move_next(None), width=10)
+                                                      command=partial(self.move_next, None), width=10)
         self.t2_next_button.grid(row=0, column=2)
 
     def sync_text_vars(self, sender, keep_annotation=False):
@@ -644,21 +650,23 @@ class App(customtkinter.CTk):
             self.after(20, self.check_thread)
         else:
             self.t2_scale.configure(to=int(len(self.cgr_distance_history) - 1))  # Update the scale range
-            # TODO: resize the images
-            # plot distance results bar and first index is red
-            self._t2_plot_chart(0)
+            self._change_images(0, None)
 
-            # Load and display the first image set in next plot
-            self._t2_plot_fcgrs(0)
+    def _change_images(self, index, value):
+        # plot distance results bar and first index is red
+        self._t2_plot_chart(index)
+        # Load and display the first image set in next plot
+        self._t2_plot_fcgrs(index)
 
     def _t2_plot_chart(self, highlighted_index):
-        fig, ax1 = plt.subplots(figsize=(10.7, 3))
+        fig, ax1 = plt.subplots(figsize=(50, 3))
         x = np.arange(len(self.cgr_distance_history))
         y = np.asarray(self.cgr_distance_history)
         mask1 = x == highlighted_index
         mask2 = x != highlighted_index
-        ax1.bar(x[mask1], y[mask1], color='red')
-        ax1.bar(x[mask2], y[mask2], color='blue')
+        # bar_width = 0.5
+        ax1.bar(x[mask1], y[mask1], color='red')  # , width=bar_width)
+        ax1.bar(x[mask2], y[mask2], color='blue')  # , width=bar_width)
 
         # Clear the previous figure from the display frame if any
         for widget in self.t2_display_frame.winfo_children():
@@ -669,11 +677,11 @@ class App(customtkinter.CTk):
         canvas.draw()
 
         # Set the canvas size explicitly
-        canvas_width = 600  # Example width, adjust as needed
-        canvas_height = 200  # Example height, adjust as needed
+        canvas_width = 1100  # Example width, adjust as needed
+        canvas_height = 300  # Example height, adjust as needed
         canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
         # Use grid to place the canvas
-        canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+        canvas.get_tk_widget().grid(row=0, column=0, padx=(8, 8), pady=5, sticky='nsew')
 
     def _t2_plot_fcgrs(self, image_index, mode="consecutive"):
         with open(f"{self.temp_output_path}/{mode}/pickle/{image_index}.pkl", 'rb') as handle:
@@ -696,14 +704,16 @@ class App(customtkinter.CTk):
     def move_previous(self, value):
         if self.t2_pic_num.get() > 0:
             self.t2_pic_num.set(self.t2_pic_num.get() - 1)
-            self._t2_plot_chart(self.t2_pic_num.get())
-            self._t2_plot_fcgrs(self.t2_pic_num.get())
+            self._change_images(self.t2_pic_num.get(), None)
+            # self._t2_plot_chart(self.t2_pic_num.get())
+            # self._t2_plot_fcgrs(self.t2_pic_num.get())
 
     def move_next(self, value):
         if self.t2_pic_num.get() < len(self.cgr_distance_history) - 1:
             self.t2_pic_num.set(self.t2_pic_num.get() + 1)
-            self._t2_plot_chart(self.t2_pic_num.get())
-            self._t2_plot_fcgrs(self.t2_pic_num.get())
+            self._change_images(self.t2_pic_num.get(), None)
+            # self._t2_plot_chart(self.t2_pic_num.get())
+            # self._t2_plot_fcgrs(self.t2_pic_num.get())
 
 
 if __name__ == "__main__":

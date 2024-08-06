@@ -17,8 +17,6 @@ random.seed(46)
 np.random.seed(46)
 
 
-# TODO: check the reverse complement
-
 class AnnotationRecord:
     def __init__(self, chr_name, start, end, name, group, color=None):
         self.name = name
@@ -62,7 +60,6 @@ class ChromosomesHolder:
         self._chromosome_sequence_cache = {}
 
     def get_all_chromosomes_name(self):
-        # TODO: does not work on bacteria and Archaea
         return natsorted(list(self._chromosomes_path.keys()))
 
     def get_chromosome_sequence(self, chromosome_name, apply_reverse_complement=True):
@@ -383,7 +380,9 @@ class ChromosomesHolder:
         match = re.search(r'(chromosome\s*|scaffold_)(\d+|[A-Za-z]+)', string, re.IGNORECASE)
         if match:
             return match.group(2)
-        return None
+        if match is None:
+            return "N"
+        # return None
 
     @staticmethod
     def get_reverse_complement(sequence):
@@ -416,7 +415,6 @@ class ChromosomesHolder:
 
 if __name__ == '__main__':
     genome = ChromosomesHolder("Human")
-
     # genome.get_random_segment(1000, remove_outlier=True)
     # genome.get_chromosome_non_overlapping_segments("1", 1000)
     genome.plot_fcgr("Y")
