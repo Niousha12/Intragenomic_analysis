@@ -342,7 +342,6 @@ class ChromosomesHolder:
                 self.reverse_complement[chromosome_name] = False
 
     def _fill_cytobands_info(self):
-        # TODO: Add centromere annotations
         for chromosome_name in self.get_all_chromosomes_name():
             self.cytobands[chromosome_name] = {}
         if self.species == "Human":
@@ -361,6 +360,31 @@ class ChromosomesHolder:
                                                                                      color=None)
 
                     switch = 1 - switch
+
+            file_path = f"{self.root_path}/{self.species}/bedfiles/chm13v2.0_censat_v2.0.bed"
+            chr_name = None
+            last_start = None
+            last_end = None
+            with open(file_path) as file:
+                for index, line in enumerate(file):
+                    if index == 0:
+                        continue
+                    line = line.strip()
+                    parts = line.split("\t")
+
+                    if chr_name != parts[0]:
+                        if last_end is not None:
+                            self.cytobands[chr_name]["centromere"] = AnnotationRecord(chr_name=chr_name,
+                                                                                      start=last_start,
+                                                                                      end=last_end,
+                                                                                      name="cent",
+                                                                                      group="centromere",
+                                                                                      color=None)
+
+                        last_start = int(parts[1])
+                        chr_name = parts[0][3:]
+
+                    last_end = int(parts[2])
 
             file_path = f"{self.root_path}/{self.species}/bedfiles/chm13v2.0_cytobands_allchrs_color.bed"
             with open(file_path) as file:

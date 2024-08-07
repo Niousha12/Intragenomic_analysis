@@ -65,9 +65,11 @@ class App(customtkinter.CTk):
             os.makedirs(self.temp_output_path)
         self.assets_path = "./assets"
 
-        # configure window TODO: find geometry window base on the screen size
         self.title("CGR GUI.py")
-        self.geometry(f"{2300}x{1500}")
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        self.geometry(f"{int(screen_width)}x{int(screen_height)}")
+        # self.geometry(f"{2300}x{1500}")
         self.header_font = ('Cambria', 14, 'bold')
 
         # configure grid layout (4x4)
@@ -98,7 +100,7 @@ class App(customtkinter.CTk):
                                                       fg_color="#333333")
         self.t1_slider_frame.grid(row=0, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
         self.t1_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[0]), corner_radius=20,
-                                                       fg_color="#707370", width=600, height=200)
+                                                       fg_color="#707370")  # , width=600, height=200)
         self.t1_display_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
 
         # Designing the config frame (F1)
@@ -276,10 +278,10 @@ class App(customtkinter.CTk):
                                                       fg_color="#333333")
         self.t2_config_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.t2_plot_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]),
-                                                    corner_radius=20, fg_color="white", width=1050, height=200)
+                                                    corner_radius=20, fg_color="white")  # , width=1050, height=200)
         self.t2_plot_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
         self.t2_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]), corner_radius=20,
-                                                       fg_color="#707370", width=1050, height=200)
+                                                       fg_color="#707370")  # , width=1050, height=200)
         self.t2_display_frame.grid(row=2, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
 
         self.t2_display_frame.grid_rowconfigure(0, weight=1)
@@ -399,21 +401,21 @@ class App(customtkinter.CTk):
         self.t3_config_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20,
                                                       fg_color="#333333")
         self.t3_config_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
-        self.t3_plot_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20, fg_color="white",
-                                                    width=1050, height=200)
+        self.t3_plot_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20,
+                                                    fg_color="white")  # , width=1050, height=200)
         self.t3_plot_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
-        self.t3_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20,
-                                                       width=1050, height=200)
+        self.t3_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]),
+                                                       corner_radius=20)  # , width=1050, height=200)
         self.t3_display_frame.grid(row=2, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
         # frames in the display frame
         self.t3_display_frame.grid_rowconfigure(0, weight=1)
         self.t3_display_frame.grid_columnconfigure(0, weight=2)
         self.t3_display_frame.grid_columnconfigure(1, weight=10)
-        self.t3_display_frame_1 = customtkinter.CTkFrame(self.t3_display_frame, corner_radius=20, fg_color="#707370",
-                                                         width=320, height=180)
+        self.t3_display_frame_1 = customtkinter.CTkFrame(self.t3_display_frame, corner_radius=20,
+                                                         fg_color="#707370")  # , width=320, height=180)
         self.t3_display_frame_1.grid(row=0, column=0, padx=(5, 5), pady=(5, 5), sticky="nsew")
-        self.t3_display_frame_2 = customtkinter.CTkFrame(self.t3_display_frame, corner_radius=20, fg_color="#707370",
-                                                         width=670, height=180)
+        self.t3_display_frame_2 = customtkinter.CTkFrame(self.t3_display_frame, corner_radius=20,
+                                                         fg_color="#707370")  # , width=670, height=180)
         self.t3_display_frame_2.grid(row=0, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
 
         self.t3_plot_frame.grid_rowconfigure(0, weight=1)
@@ -707,8 +709,8 @@ class App(customtkinter.CTk):
         canvas.draw()
 
         # Set the canvas size explicitly
-        canvas_width = 600  # Example width, adjust as needed
-        canvas_height = 200  # Example height, adjust as needed
+        canvas_width = self.t1_display_frame.cget("width")
+        canvas_height = self.t1_display_frame.cget("height")
         canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
 
         # Use grid to place the canvas
