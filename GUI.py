@@ -138,20 +138,11 @@ class App(customtkinter.CTk):
             self.t1_chr_combobox[f"{i + 1}"].grid(row=(i * 3) + 2, column=1, sticky="w", padx=10, pady=(0, 10))
             self.t1_chr_combobox[f"{i + 1}"].set("")
 
-        # k_mer combo box
-        self.k_var = customtkinter.IntVar()
-        k_mer_label = customtkinter.CTkLabel(self.t1_config_frame, text="k-mer: ", font=self.header_font)
-        k_mer_label.grid(row=2, column=0, padx=10, pady=(10, 10))
-        values_list = ["2", "3", "4", "5", "6", "7", "8", "9"]
-        self.t1_k_mer_combobox = customtkinter.CTkComboBox(self.t1_config_frame, values=values_list, width=100,
-                                                           state="normal", variable=self.k_var)
-        self.t1_k_mer_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(10, 10))
-
         # Radio Button (Window size)
         # Frame for window size settings
         config_frame_color = self.t1_config_frame.cget("fg_color")
         self.t1_window_size_frame = customtkinter.CTkFrame(self.t1_config_frame, fg_color=config_frame_color)
-        self.t1_window_size_frame.grid(row=3, columnspan=2, padx=10, pady=5, sticky="w")
+        self.t1_window_size_frame.grid(row=2, columnspan=2, padx=10, pady=5, sticky="w")
 
         window_s_label = customtkinter.CTkLabel(self.t1_window_size_frame, text="Window Size:", font=self.header_font)
         window_s_label.grid(row=0, column=0, padx=10)
@@ -171,19 +162,28 @@ class App(customtkinter.CTk):
         self.window_entry.configure(state="disable")
         self.window_entry.grid(row=2, columnspan=2, padx=(10, 10), pady=(10, 10), sticky="ew")
 
+        # k_mer combo box
+        self.k_var = customtkinter.IntVar()
+        k_mer_label = customtkinter.CTkLabel(self.t1_config_frame, text="k-mer: ", font=self.header_font)
+        k_mer_label.grid(row=3, column=0, padx=10, pady=(10, 10))
+        values_list = ["2", "3", "4", "5", "6", "7", "8", "9"]
+        self.t1_k_mer_combobox = customtkinter.CTkComboBox(self.t1_config_frame, values=values_list, width=100,
+                                                           state="normal", variable=self.k_var)
+        self.t1_k_mer_combobox.grid(row=3, column=1, sticky="w", pady=(10, 10))
+
         # reverse complement and random
-        self.t1_seq1_rv = customtkinter.CTkFrame(self.t1_config_frame, fg_color=config_frame_color)
-        self.t1_seq1_rv.grid(row=4, columnspan=2, padx=10, pady=5, sticky="ew")
+        self.t1_seq_rv = customtkinter.CTkFrame(self.t1_config_frame, fg_color=config_frame_color)
+        self.t1_seq_rv.grid(row=4, columnspan=2, padx=10, pady=5, sticky="ew")
 
         self.checkbox_RC = {}
         self.checkbox_Random = {}
         for i in range(2):
-            seq_label = customtkinter.CTkLabel(self.t1_seq1_rv, text=f'Sequence {i + 1} :', font=self.header_font)
+            seq_label = customtkinter.CTkLabel(self.t1_seq_rv, text=f'Sequence {i + 1} :', font=self.header_font)
             seq_label.grid(row=(i * 2), column=0, padx=10, pady=(5, 0), sticky="w")
 
-            self.checkbox_RC[str(i + 1)] = customtkinter.CTkCheckBox(master=self.t1_seq1_rv, text="Reverse Complement")
+            self.checkbox_RC[str(i + 1)] = customtkinter.CTkCheckBox(master=self.t1_seq_rv, text="Reverse Complement")
             self.checkbox_RC[str(i + 1)].grid(row=(i * 2), column=1, padx=10, pady=5, sticky="w")
-            self.checkbox_Random[str(i + 1)] = customtkinter.CTkCheckBox(master=self.t1_seq1_rv, text="Shuffle")
+            self.checkbox_Random[str(i + 1)] = customtkinter.CTkCheckBox(master=self.t1_seq_rv, text="Shuffle")
             self.checkbox_Random[str(i + 1)].grid(row=(i * 2) + 1, column=1, padx=10, pady=5, sticky="w")
 
         # Distance metrics
@@ -276,10 +276,10 @@ class App(customtkinter.CTk):
                                                       fg_color="#333333")
         self.t2_config_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.t2_plot_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]),
-                                                    corner_radius=20, fg_color="white", width=1100, height=300)
+                                                    corner_radius=20, fg_color="white", width=1050, height=200)
         self.t2_plot_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
         self.t2_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]), corner_radius=20,
-                                                       fg_color="#707370", width=600, height=200)
+                                                       fg_color="#707370", width=1050, height=200)
         self.t2_display_frame.grid(row=2, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
 
         self.t2_display_frame.grid_rowconfigure(0, weight=1)
@@ -317,20 +317,20 @@ class App(customtkinter.CTk):
         self.t2_chr_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(0, 10))
         self.t2_chr_combobox.set("")
 
-        # k_mer combo box
-        k_mer_label = customtkinter.CTkLabel(self.t2_config_frame, text="k-mer: ", font=self.header_font)
-        k_mer_label.grid(row=1, column=0, padx=10, pady=(10, 10))
-        self.t2_k_mer_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=values_list, width=100,
-                                                           state="normal", variable=self.k_var)
-        self.t2_k_mer_combobox.grid(row=1, column=1, sticky="w", padx=10, pady=(10, 10))
-
         # Window size
         window_s_label = customtkinter.CTkLabel(self.t2_config_frame, text="Window Size:", font=self.header_font)
-        window_s_label.grid(row=2, column=0, padx=10, pady=(20, 5))
+        window_s_label.grid(row=1, column=0, padx=10, pady=(20, 5))
         self.t2_window_s = tkinter.StringVar(value="")
         self.t2_window_entry = customtkinter.CTkEntry(self.t2_config_frame, textvariable=self.t2_window_s)
         self.t2_window_entry.configure(state="disable")
-        self.t2_window_entry.grid(row=2, column=1, pady=(20, 5), padx=(0, 20), sticky="w")
+        self.t2_window_entry.grid(row=1, column=1, pady=(20, 5), padx=(0, 20), sticky="w")
+
+        # k_mer combo box
+        k_mer_label = customtkinter.CTkLabel(self.t2_config_frame, text="k-mer: ", font=self.header_font)
+        k_mer_label.grid(row=2, column=0, padx=10, pady=(10, 10))
+        self.t2_k_mer_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=values_list, width=100,
+                                                           state="normal", variable=self.k_var)
+        self.t2_k_mer_combobox.grid(row=2, column=1, sticky="w", pady=(10, 10))
 
         # Distance metrics
         t2_dist_metric_l = customtkinter.CTkLabel(self.t2_config_frame, text="Distance Metric: ", font=self.header_font)
@@ -347,10 +347,6 @@ class App(customtkinter.CTk):
         t2_run_button = customtkinter.CTkButton(self.t2_config_frame, text="Run",
                                                 command=partial(self.run_consecutive, None))
         t2_run_button.grid(row=7, columnspan=2)  # , sticky="ns")
-
-        # cgr_img_base = customtkinter.CTkImage(Image.open(f"{self.assets_path}/background.png"), size=(800, 300))
-        # self.t2_cgr_img_l = customtkinter.CTkLabel(self.t2_display_frame, image=cgr_img_base, text="")
-        # self.t2_cgr_img_l.grid(row=0, padx=120, sticky='nsew')
 
         # placing the progress bars
         self.step_length = None
@@ -371,7 +367,7 @@ class App(customtkinter.CTk):
         self.t2_pic_num = customtkinter.IntVar(value=0)
         self.t2_scale = customtkinter.CTkSlider(self.t2_changing_frame, from_=0,
                                                 orientation=customtkinter.HORIZONTAL, variable=self.t2_pic_num,
-                                                command=partial(self._change_images, self.t2_pic_num.get(), None))
+                                                command=partial(self._change_images, self.t2_pic_num.get(), "t2", None))
         self.t2_scale.grid(row=0, column=1, pady=(10, 10), sticky="nsew")
 
         # previous-next button
@@ -380,23 +376,202 @@ class App(customtkinter.CTk):
         self.next_im = customtkinter.CTkImage(light_image=Image.open(f"{self.assets_path}/next_arrow.png"),
                                               size=(20, 20))
         self.t2_previous_button = customtkinter.CTkButton(self.t2_changing_frame, image=self.previous_im, text="",
-                                                          command=partial(self.move_previous, None), width=10)
+                                                          command=partial(self.move_previous, "t2", None), width=10)
         self.t2_previous_button.grid(row=0, column=0)
 
         self.t2_next_button = customtkinter.CTkButton(self.t2_changing_frame, image=self.next_im, text="",
-                                                      command=partial(self.move_next, None), width=10)
+                                                      command=partial(self.move_next, "t2", None), width=10)
         self.t2_next_button.grid(row=0, column=2)
 
-    def sync_text_vars(self, sender, keep_annotation=False):
-        self.t1_ds[sender].start_txt.set(f"{self.t1_ds[sender].start_seq.get()}")
-        self.t1_ds[sender].end_txt.set(f"{self.t1_ds[sender].end_seq.get()}")
-        if keep_annotation is False:
-            self.t1_ds[sender].annotation.set("")
+        '''
+            Third Page (Common Reference)
+            Configuring 
+        '''
+        self.tabview.tab(tab_names[2]).grid_columnconfigure(0, weight=1)
+        self.tabview.tab(tab_names[2]).grid_columnconfigure(1, weight=10)
 
-    def reverse_sync_text_vars(self, sender):
-        self.t1_ds[sender].start_seq.set(int(self.t1_ds[sender].start_txt.get()))
-        self.t1_ds[sender].end_seq.set(int(self.t1_ds[sender].end_txt.get()))
-        self.t1_ds[sender].annotation.set("")
+        self.tabview.tab(tab_names[2]).grid_rowconfigure(0, weight=1)
+        self.tabview.tab(tab_names[2]).grid_rowconfigure(1, weight=20)
+        self.tabview.tab(tab_names[2]).grid_rowconfigure(2, weight=20)
+        self.tabview.tab(tab_names[2]).grid_rowconfigure(3, weight=1)
+
+        # Frames
+        self.t3_config_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20,
+                                                      fg_color="#333333")
+        self.t3_config_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+        self.t3_plot_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20, fg_color="white",
+                                                    width=1050, height=200)
+        self.t3_plot_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
+        self.t3_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20,
+                                                       width=1050, height=200)
+        self.t3_display_frame.grid(row=2, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
+        # frames in the display frame
+        self.t3_display_frame.grid_rowconfigure(0, weight=1)
+        self.t3_display_frame.grid_columnconfigure(0, weight=2)
+        self.t3_display_frame.grid_columnconfigure(1, weight=10)
+        self.t3_display_frame_1 = customtkinter.CTkFrame(self.t3_display_frame, corner_radius=20, fg_color="#707370")
+        self.t3_display_frame_1.grid(row=0, column=0, padx=(5, 5), pady=(5, 5), sticky="nsew")
+        self.t3_display_frame_2 = customtkinter.CTkFrame(self.t3_display_frame, corner_radius=20, fg_color="#707370")
+        self.t3_display_frame_2.grid(row=0, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
+
+        self.t3_plot_frame.grid_rowconfigure(0, weight=1)
+        self.t3_plot_frame.grid_columnconfigure(0, weight=1)
+
+        self.t3_display_frame_1.grid_rowconfigure(0, weight=1)
+        self.t3_display_frame_1.grid_columnconfigure(0, weight=1)
+        self.t3_display_frame_2.grid_rowconfigure(0, weight=1)
+        self.t3_display_frame_2.grid_columnconfigure(0, weight=1)
+
+        # Designing the config frame (F3)
+        for row in range(10):
+            self.t3_config_frame.grid_rowconfigure(row, weight=1)
+
+        self.t3_ds = {'1': GUIDataStructure(), '2': GUIDataStructure()}
+
+        # Creating frame for reference sequence
+        self.t3_chr_frame = customtkinter.CTkFrame(self.t3_config_frame, corner_radius=20)
+        self.t3_chr_frame.grid(row=0, columnspan=2, padx=5, pady=5, sticky="ew")
+
+        label = customtkinter.CTkLabel(self.t3_chr_frame, text=f"Reference Sequence: ", font=self.header_font)
+        label.grid(row=0, columnspan=2, sticky="w", padx=10, pady=(5, 0))
+        specie_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Species: ", font=self.header_font)
+        specie_label.grid(row=1, column=0, sticky="w", padx=10)
+        chr_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Chromosome name: ", font=self.header_font)
+        chr_label.grid(row=1, column=1, sticky="w", padx=10)
+        self.t3_specie_combobox = customtkinter.CTkComboBox(self.t3_chr_frame, values=species_list, width=100,
+                                                            variable=self.t3_ds["1"].specie,
+                                                            command=partial(self.t3_specie_change_event, "1"))
+
+        self.t3_specie_combobox.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
+        self.t3_specie_combobox.set("")
+
+        self.t3_chr_combobox = customtkinter.CTkComboBox(self.t3_chr_frame, values=[],
+                                                         variable=self.t3_ds["1"].chromosome, width=100,
+                                                         command=partial(self.t3_chromosome_change_event, "1"))
+        self.t3_chr_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(0, 10))
+        self.t3_chr_combobox.set("")
+
+        # start and end
+        start_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Start: ", font=self.header_font)
+        start_label.grid(row=3, column=0, sticky="w", padx=10)
+        end_label = customtkinter.CTkLabel(self.t3_chr_frame, text="End: ", font=self.header_font)
+        end_label.grid(row=3, column=1, sticky="w", padx=10)
+
+        self.t3_start_seq_entry = customtkinter.CTkEntry(self.t3_chr_frame, textvariable=self.t3_ds["1"].start_txt)
+        self.t3_start_seq_entry.bind('<FocusOut>', partial(self.t3_entry_change))
+        self.t3_start_seq_entry.bind('<Key-Return>', partial(self.t3_entry_change))
+        self.t3_start_seq_entry.grid(row=4, column=0, padx=10, pady=(0, 10))
+
+        self.t3_end_seq_entry = customtkinter.CTkEntry(self.t3_chr_frame, textvariable=self.t3_ds["1"].end_txt)
+        self.t3_end_seq_entry.bind('<FocusOut>', partial(self.t3_entry_change))
+        self.t3_end_seq_entry.bind('<Key-Return>', partial(self.t3_entry_change))
+        self.t3_end_seq_entry.grid(row=4, column=1, padx=10, pady=(0, 10))
+
+        annotation_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Annotations: ", font=self.header_font)
+        annotation_label.grid(row=5, column=0, sticky="w", padx=10, pady=(0, 10))
+        self.t3_parts_name_combobox = customtkinter.CTkComboBox(self.t3_chr_frame, values=[], state="disable",
+                                                                variable=self.t3_ds["1"].annotation, width=120,
+                                                                command=partial(self.t3_annotation_change_event, "1"))
+        self.t3_parts_name_combobox.grid(row=5, column=1, sticky="w", padx=10, pady=(0, 10))
+
+        # Creating frame for the other sequence
+        self.t3_chr_frame_2 = customtkinter.CTkFrame(self.t3_config_frame, corner_radius=20)
+        self.t3_chr_frame_2.grid(row=1, columnspan=2, padx=5, pady=5, sticky="ew")
+
+        label = customtkinter.CTkLabel(self.t3_chr_frame_2, text=f"Sequence: ", font=self.header_font)
+        label.grid(row=0, columnspan=2, sticky="w", padx=10, pady=(5, 0))
+        specie_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Species: ", font=self.header_font)
+        specie_label.grid(row=1, column=0, sticky="w", padx=10)
+        chr_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Chromosome name: ", font=self.header_font)
+        chr_label.grid(row=1, column=1, sticky="w", padx=10)
+        self.t3_specie_combobox_2 = customtkinter.CTkComboBox(self.t3_chr_frame_2, values=species_list, width=100,
+                                                              variable=self.t3_ds["2"].specie,
+                                                              command=partial(self.t3_specie_change_event, "2"))
+
+        self.t3_specie_combobox_2.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
+        self.t3_specie_combobox_2.set("")
+
+        self.t3_chr_combobox_2 = customtkinter.CTkComboBox(self.t3_chr_frame_2, values=[],
+                                                           variable=self.t3_ds["2"].chromosome, width=100,
+                                                           command=partial(self.t3_chromosome_change_event, "2"))
+        self.t3_chr_combobox_2.grid(row=2, column=1, sticky="w", padx=10, pady=(0, 10))
+        self.t3_chr_combobox_2.set("")
+
+        # Window size
+        window_s_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Window Size:", font=self.header_font)
+        window_s_label.grid(row=3, column=0, padx=10, pady=(0, 10))
+        self.t3_window_s = tkinter.StringVar(value="")
+        self.t3_window_entry = customtkinter.CTkEntry(self.t3_chr_frame_2, textvariable=self.t3_window_s)
+        self.t3_window_entry.configure(state="disable")
+        self.t3_window_entry.grid(row=3, column=1, pady=(0, 10), padx=10, sticky="w")
+
+        # k_mer combo box
+        k_mer_label = customtkinter.CTkLabel(self.t3_config_frame, text="k-mer: ", font=self.header_font)
+        k_mer_label.grid(row=2, column=0, padx=10, pady=(10, 10))
+        self.t3_k_mer_combobox = customtkinter.CTkComboBox(self.t3_config_frame, values=values_list, width=100,
+                                                           state="normal", variable=self.k_var)
+        self.t3_k_mer_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(10, 10))
+
+        # Distance metrics
+        t3_dist_metric_l = customtkinter.CTkLabel(self.t3_config_frame, text="Distance Metric: ", font=self.header_font)
+        t3_dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
+        self.t3_dist_metric_combobox = customtkinter.CTkComboBox(self.t3_config_frame, values=DISTANCE_METRICS_LIST,
+                                                                 width=120, variable=self.dist_metric)
+        self.t3_dist_metric_combobox.grid(row=3, column=1, pady=(20, 5), sticky="w")
+        self.t3_dist_metric_combobox.set("")
+
+        t3_switch = customtkinter.CTkSwitch(self.t3_config_frame, text=f"Frequency CGR", variable=self.fcgr)
+        t3_switch.grid(row=4, columnspan=2, pady=(20, 5))
+
+        # run button
+        t3_run_button = customtkinter.CTkButton(self.t3_config_frame, text="Run",
+                                                command=partial(self.run_common_ref, None))
+        t3_run_button.grid(row=7, columnspan=2)  # , sticky="ns")
+
+        # placing the progress bars
+        self.t3_step_length = None
+        self.t3_cgr_distance_history = None
+
+        self.t3_progress_bar = customtkinter.CTkProgressBar(self.tabview.tab(tab_names[2]))
+        self.t3_progress_bar.set(0)
+        self.t3_progress_bar.grid(row=0, column=1, padx=(10, 10), pady=(10, 10), sticky="nsew")
+
+        # placing the slider bar
+        self.t3_changing_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20)
+        self.t3_changing_frame.grid(row=3, column=1, sticky="nsew")
+
+        # Designing the changing frame
+        self.t3_changing_frame.grid_columnconfigure(0, weight=1)
+        self.t3_changing_frame.grid_columnconfigure(1, weight=10)
+        self.t3_changing_frame.grid_columnconfigure(2, weight=1)
+
+        self.t3_pic_num = customtkinter.IntVar(value=0)
+        self.t3_scale = customtkinter.CTkSlider(self.t3_changing_frame, from_=0, orientation=customtkinter.HORIZONTAL,
+                                                variable=self.t3_pic_num,
+                                                command=partial(self._change_images, "t3", None))
+        self.t3_scale.grid(row=0, column=1, pady=(10, 10), sticky="nsew")
+
+        # previous-next button
+        self.t3_previous_button = customtkinter.CTkButton(self.t3_changing_frame, image=self.previous_im, text="",
+                                                          width=10, command=partial(self.move_previous, "t3", None))
+        self.t3_previous_button.grid(row=0, column=0)
+
+        self.t3_next_button = customtkinter.CTkButton(self.t3_changing_frame, image=self.next_im, text="",
+                                                      width=10, command=partial(self.move_next, "t3", None))
+        self.t3_next_button.grid(row=0, column=2)
+
+    @staticmethod
+    def sync_text_vars(ds, sender, keep_annotation=False):
+        ds[sender].start_txt.set(f"{ds[sender].start_seq.get()}")
+        ds[sender].end_txt.set(f"{ds[sender].end_seq.get()}")
+        if keep_annotation is False:
+            ds[sender].annotation.set("")
+
+    @staticmethod
+    def reverse_sync_text_vars(ds, sender):
+        ds[sender].start_seq.set(int(ds[sender].start_txt.get()))
+        ds[sender].end_seq.set(int(ds[sender].end_txt.get()))
+        ds[sender].annotation.set("")
 
     # '''events'''
     def specie_change_event(self, sender, value):
@@ -407,6 +582,9 @@ class App(customtkinter.CTk):
         # clear window_s
         self.window_s_toggle.set(0)
         self.window_size_toggle_event()
+
+        # Empty the list of annotations
+        self.t1_parts_name_combobox[sender].configure(values=[])
 
     def chromosome_change_event(self, sender, value):
         specie = self.t1_ds[sender].specie.get()
@@ -428,7 +606,7 @@ class App(customtkinter.CTk):
         self.start_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
         self.end_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
 
-        self.sync_text_vars(sender)
+        self.sync_text_vars(self.t1_ds, sender)
         # clear window_s
         self.window_s_toggle.set(0)
         self.window_size_toggle_event()
@@ -439,7 +617,7 @@ class App(customtkinter.CTk):
         annotation_info = ChromosomesHolder(self.t1_ds[sender].specie.get()).cytobands[chromosome_name][annotation]
         self.t1_ds[sender].start_seq.set(annotation_info.start)
         self.t1_ds[sender].end_seq.set(annotation_info.end)
-        self.sync_text_vars(sender, keep_annotation=True)
+        self.sync_text_vars(self.t1_ds, sender, keep_annotation=True)
 
         # clear window_s
         self.window_s_toggle.set(0)
@@ -465,10 +643,11 @@ class App(customtkinter.CTk):
             for key, value in self.t1_end_seq_entry.items():
                 value.configure(state="disable")
             for key, value in self.t1_ds.items():
-                self.t1_ds[key].end_seq.set(self.t1_ds[key].start_seq.get() + int(self.window_s.get()))
+                if len(self.t1_ds[key].seq) > 0:
+                    self.t1_ds[key].end_seq.set(self.t1_ds[key].start_seq.get() + int(self.window_s.get()))
 
         for key, value in self.t1_ds.items():
-            self.sync_text_vars(key)
+            self.sync_text_vars(self.t1_ds, key)
 
     def sequence_value_change(self, sender, value):
         if sender == "0":  # Window size changed
@@ -479,13 +658,13 @@ class App(customtkinter.CTk):
                 self.t1_ds[sender].end_seq.set(self.t1_ds[sender].start_seq.get() + int(self.window_s.get()))
         elif sender in ["3"]:
             for key, value in self.t1_ds.items():
-                self.reverse_sync_text_vars(key)
+                self.reverse_sync_text_vars(self.t1_ds, key)
             if self.window_s_toggle.get() == 1:
                 for key, value in self.t1_ds.items():
                     self.t1_ds[key].end_seq.set(self.t1_ds[key].start_seq.get() + int(self.window_s.get()))
 
         for key, value in self.t1_ds.items():
-            self.sync_text_vars(key)
+            self.sync_text_vars(self.t1_ds, key)
 
     def t1_plot(self):
         fcgrs_dict = {}
@@ -603,7 +782,7 @@ class App(customtkinter.CTk):
         foo_thread = threading.Thread(target=self.t2_run)
         foo_thread.daemon = True
         foo_thread.start()
-        self.after(20, self.check_thread)
+        self.after(20, self.t2_check_thread)
 
     def t2_run(self):
         self.cgr_distance_history = []
@@ -645,23 +824,32 @@ class App(customtkinter.CTk):
             with open(f"{path}/{i}.pkl", 'wb') as f:
                 pickle.dump(dictionary, f)
 
-    def check_thread(self):
+    def t2_check_thread(self):
         if foo_thread.is_alive():
-            self.after(20, self.check_thread)
+            self.after(20, self.t2_check_thread)
         else:
             self.t2_scale.configure(to=int(len(self.cgr_distance_history) - 1))  # Update the scale range
-            self._change_images(0, None)
+            self._change_images(0, "t2", None)
 
-    def _change_images(self, index, value):
+    def _change_images(self, index, tab_name, value):
         # plot distance results bar and first index is red
-        self._t2_plot_chart(index)
+        self._plot_chart(index, tab_name)
         # Load and display the first image set in next plot
-        self._t2_plot_fcgrs(index)
+        self._plot_fcgrs(index, tab_name)
 
-    def _t2_plot_chart(self, highlighted_index):
+    def _plot_chart(self, highlighted_index, tab_name):
+        dist_history = None
+        frame = None
+        if tab_name == "t2":
+            dist_history = self.cgr_distance_history
+            frame = self.t2_plot_frame
+        elif tab_name == "t3":
+            dist_history = self.t3_cgr_distance_history
+            frame = self.t3_plot_frame
+
         fig, ax1 = plt.subplots(figsize=(50, 3))
-        x = np.arange(len(self.cgr_distance_history))
-        y = np.asarray(self.cgr_distance_history)
+        x = np.arange(len(dist_history))
+        y = np.asarray(dist_history)
         mask1 = x == highlighted_index
         mask2 = x != highlighted_index
         # bar_width = 0.5
@@ -669,51 +857,119 @@ class App(customtkinter.CTk):
         ax1.bar(x[mask2], y[mask2], color='blue')  # , width=bar_width)
 
         # Clear the previous figure from the display frame if any
-        for widget in self.t2_display_frame.winfo_children():
+        for widget in frame.winfo_children():
             widget.destroy()
 
         # Create a canvas and add the figure to it
-        canvas = FigureCanvasTkAgg(fig, master=self.t2_plot_frame)
+        canvas = FigureCanvasTkAgg(fig, master=frame)
         canvas.draw()
 
         # Set the canvas size explicitly
-        canvas_width = 1100  # Example width, adjust as needed
-        canvas_height = 300  # Example height, adjust as needed
+        canvas_width = frame.cget("width")
+        canvas_height = frame.cget("height")
         canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
         # Use grid to place the canvas
         canvas.get_tk_widget().grid(row=0, column=0, padx=(8, 8), pady=5, sticky='nsew')
 
-    def _t2_plot_fcgrs(self, image_index, mode="consecutive"):
-        with open(f"{self.temp_output_path}/{mode}/pickle/{image_index}.pkl", 'rb') as handle:
-            dictionary = pickle.load(handle)
+    def _plot_fcgrs(self, image_index, tab_name):
+        frame, fig = None, None
+        if tab_name == "t2":
+            with open(f"{self.temp_output_path}/consecutive/pickle/{image_index}.pkl", 'rb') as handle:
+                dictionary = pickle.load(handle)
+            frame = self.t2_display_frame
 
-        display_frame_color = self.t2_display_frame.cget("fg_color")
-        fig = self.plot_fcgrs(dictionary, colormap=False, background_color=display_frame_color)
+            display_frame_color = frame.cget("fg_color")
+            fig = self.plot_fcgrs(dictionary, colormap=False, background_color=display_frame_color)
+
+        elif tab_name == "t3":
+            with open(f"{self.temp_output_path}/common_ref/pickle/{image_index}.pkl", 'rb') as handle:
+                dictionary = pickle.load(handle)
+            frame = self.t3_display_frame_2
+
+        # Clear the previous figure from the display frame if any
+        for widget in frame.winfo_children():
+            widget.destroy()
 
         # Create a canvas and add the figure to it
-        canvas = FigureCanvasTkAgg(fig, master=self.t2_display_frame)
+        canvas = FigureCanvasTkAgg(fig, master=frame)
         canvas.draw()
 
         # Set the canvas size explicitly
-        canvas_width = 600  # Example width, adjust as needed
-        canvas_height = 200  # Example height, adjust as needed
+        canvas_width = frame.cget("width")
+        canvas_height = frame.cget("height")
         canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
         # Use grid to place the canvas
         canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
-    def move_previous(self, value):
-        if self.t2_pic_num.get() > 0:
-            self.t2_pic_num.set(self.t2_pic_num.get() - 1)
-            self._change_images(self.t2_pic_num.get(), None)
-            # self._t2_plot_chart(self.t2_pic_num.get())
-            # self._t2_plot_fcgrs(self.t2_pic_num.get())
+    def move_previous(self, tab_name, value):
+        pic_num = None
+        if tab_name == "t2":
+            pic_num = self.t2_pic_num
+        elif tab_name == "t3":
+            pic_num = self.t3_pic_num
 
-    def move_next(self, value):
-        if self.t2_pic_num.get() < len(self.cgr_distance_history) - 1:
-            self.t2_pic_num.set(self.t2_pic_num.get() + 1)
-            self._change_images(self.t2_pic_num.get(), None)
-            # self._t2_plot_chart(self.t2_pic_num.get())
-            # self._t2_plot_fcgrs(self.t2_pic_num.get())
+        if pic_num.get() > 0:
+            pic_num.set(pic_num.get() - 1)
+            self._change_images(pic_num.get(), tab_name, None)
+
+    def move_next(self, tab_name, value):
+        pic_num, dist_history = None, None
+        if tab_name == "t2":
+            pic_num = self.t2_pic_num
+            dist_history = self.cgr_distance_history
+        elif tab_name == "t3":
+            pic_num = self.t3_pic_num
+            dist_history = self.t3_cgr_distance_history
+
+        if pic_num.get() < len(dist_history) - 1:
+            pic_num.set(pic_num.get() + 1)
+            self._change_images(pic_num.get(), tab_name, None)
+
+    def t3_specie_change_event(self, sender, value):
+        specie = self.t3_ds[sender].specie.get()
+        if sender == "1":
+            self.t3_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+            # disable annotation combobox
+            self.t3_parts_name_combobox.configure(values=[])
+        elif sender == "2":
+            self.t3_chr_combobox_2.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+            self.t3_window_entry.configure(state="disable")
+        self.t3_ds[sender].invalidate_based_specie()
+        self.sync_text_vars(self.t3_ds, sender)
+
+    def t3_chromosome_change_event(self, sender, value):
+        specie = self.t3_ds[sender].specie.get()
+        chromosome = self.t3_ds[sender].chromosome.get()
+        # set its sequence
+        self.t3_ds[sender].seq = ChromosomesHolder(specie).get_chromosome_sequence(chromosome)
+        # set the annotation combobox
+        if sender == "1":
+            self.t3_parts_name_combobox.configure(state="normal")
+            self.t3_parts_name_combobox.configure(values=ChromosomesHolder(specie).cytobands[chromosome])
+        elif sender == "2":
+            self.t3_window_entry.configure(state="normal")
+        self.t3_ds[sender].invalidate_based_chromosome()
+        # set end
+        self.t3_ds[sender].end_seq.set(len(self.t3_ds[sender].seq))
+        # sync with text
+
+        self.sync_text_vars(self.t3_ds, sender)
+
+    def t3_annotation_change_event(self, sender, value):
+        annotation = self.t3_ds[sender].annotation.get()
+        chromosome_name = self.t3_ds[sender].chromosome.get()
+        annotation_info = ChromosomesHolder(self.t3_ds[sender].specie.get()).cytobands[chromosome_name][annotation]
+        self.t3_ds[sender].start_seq.set(annotation_info.start)
+        self.t3_ds[sender].end_seq.set(annotation_info.end)
+        self.sync_text_vars(self.t3_ds, sender, keep_annotation=True)
+
+    def t3_entry_change(self, value):
+        self.t3_ds["1"].annotation.set("")
+        self.t3_ds["1"].start_seq.set(int(self.t3_ds["1"].start_txt.get()))
+        self.t3_ds["1"].end_seq.set(int(self.t3_ds["1"].end_txt.get()))
+
+    def run_common_ref(self, event):
+        pass
 
 
 if __name__ == "__main__":
