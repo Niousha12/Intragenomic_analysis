@@ -10,7 +10,6 @@ from chaos_game_representation import CGR
 from constants import DISTANCE_METRICS_LIST, HETERO_HETERO_DICT, HETERO_EU_DICT, TANDEM_REPEAT_DICT
 from distances.distance_metrics import get_dist
 
-# TODO: where to add random seed
 random.seed(46)
 np.random.seed(46)
 

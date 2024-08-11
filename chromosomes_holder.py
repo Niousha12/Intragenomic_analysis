@@ -12,7 +12,6 @@ from tqdm import tqdm
 from PIL import Image
 from chaos_game_representation import CGR
 
-# TODO: where to add random seed
 random.seed(46)
 np.random.seed(46)
 
@@ -435,6 +434,18 @@ class ChromosomesHolder:
                     line = line.upper()
                     f.write(line)
             f.close()
+
+    @staticmethod
+    def read_fasta(file_path):
+        sequence = ""
+        with open(file_path) as file:
+            for line in file:
+                line = line.strip()
+                if line.startswith(">"):
+                    file_name = line.split(",")[0].split(" ")[-1]
+                else:
+                    sequence += line
+        return file_name, sequence
 
 
 if __name__ == '__main__':

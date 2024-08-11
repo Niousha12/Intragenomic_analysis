@@ -116,9 +116,18 @@ class App(customtkinter.CTk):
         self.t1_ds = {'1': GUIDataStructure(), '2': GUIDataStructure()}
         self.t1_species_combobox = {}
         self.t1_chr_combobox = {}
+        upload_image = customtkinter.CTkImage(light_image=Image.open(f"{self.assets_path}/upload-sign.png"),
+                                              size=(12, 12))
         for i in range(2):
             label = customtkinter.CTkLabel(self.t1_chr_frame, text=f"Chromosome {i + 1}: ", font=self.header_font)
             label.grid(row=i * 3, column=0, sticky="w", padx=10, pady=(5, 0))
+
+            # upload button
+            upload_button = customtkinter.CTkButton(self.t1_chr_frame, image=upload_image, text="",
+                                                    command=partial(self.t1_upload_event, f"{str(i + 1)}", None),
+                                                    width=15, height=10)
+            upload_button.grid(row=i * 3, column=1, sticky="w", padx=10, pady=(5, 0))
+
             specie_label = customtkinter.CTkLabel(self.t1_chr_frame, text="Species: ", font=self.header_font)
             specie_label.grid(row=(i * 3) + 1, column=0, sticky="w", padx=10)
             chr_label = customtkinter.CTkLabel(self.t1_chr_frame, text="Chromosome name: ", font=self.header_font)
@@ -294,7 +303,7 @@ class App(customtkinter.CTk):
         for row in range(10):
             self.t2_config_frame.grid_rowconfigure(row, weight=1)
 
-        # Creating frames for chromosome 1 and chromosome 2
+        # Creating frames for chromosome
         self.t2_chr_frame = customtkinter.CTkFrame(self.t2_config_frame, corner_radius=20)
         self.t2_chr_frame.grid(row=0, columnspan=2, padx=5, pady=5, sticky="ew")
 
@@ -302,6 +311,12 @@ class App(customtkinter.CTk):
 
         label = customtkinter.CTkLabel(self.t2_chr_frame, text=f"Chromosome: ", font=self.header_font)
         label.grid(row=0, column=0, sticky="w", padx=10, pady=(5, 0))
+        # upload button
+        upload_button = customtkinter.CTkButton(self.t2_chr_frame, image=upload_image, text="",
+                                                command=partial(self.t2_upload_event, "1", None),
+                                                width=15, height=10)
+        upload_button.grid(row=0, column=1, sticky="w", padx=10, pady=(5, 0))
+
         specie_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Species: ", font=self.header_font)
         specie_label.grid(row=1, column=0, sticky="w", padx=10)
         chr_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Chromosome name: ", font=self.header_font)
@@ -436,8 +451,13 @@ class App(customtkinter.CTk):
         self.t3_chr_frame = customtkinter.CTkFrame(self.t3_config_frame, corner_radius=20)
         self.t3_chr_frame.grid(row=0, columnspan=2, padx=5, pady=5, sticky="ew")
 
-        label = customtkinter.CTkLabel(self.t3_chr_frame, text=f"Reference Sequence: ", font=self.header_font)
-        label.grid(row=0, columnspan=2, sticky="w", padx=10, pady=(5, 0))
+        label = customtkinter.CTkLabel(self.t3_chr_frame, text=f"Reference: ", font=self.header_font)
+        label.grid(row=0, column=0, sticky="w", padx=10, pady=(5, 0))
+        # upload button
+        upload_button = customtkinter.CTkButton(self.t3_chr_frame, image=upload_image, text="",
+                                                command=partial(self.t3_upload_event, "1", None),
+                                                width=15, height=10)
+        upload_button.grid(row=0, column=1, sticky="w", padx=10, pady=(5, 0))
         specie_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Species: ", font=self.header_font)
         specie_label.grid(row=1, column=0, sticky="w", padx=10)
         chr_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Chromosome name: ", font=self.header_font)
@@ -482,8 +502,12 @@ class App(customtkinter.CTk):
         self.t3_chr_frame_2 = customtkinter.CTkFrame(self.t3_config_frame, corner_radius=20)
         self.t3_chr_frame_2.grid(row=1, columnspan=2, padx=5, pady=5, sticky="ew")
 
-        label = customtkinter.CTkLabel(self.t3_chr_frame_2, text=f"Sequence: ", font=self.header_font)
+        label = customtkinter.CTkLabel(self.t3_chr_frame_2, text=f"Chromosome: ", font=self.header_font)
         label.grid(row=0, columnspan=2, sticky="w", padx=10, pady=(5, 0))
+        upload_button = customtkinter.CTkButton(self.t3_chr_frame_2, image=upload_image, text="",
+                                                command=partial(self.t3_upload_event, "2", None),
+                                                width=15, height=10)
+        upload_button.grid(row=0, column=1, sticky="w", padx=10, pady=(5, 0))
         specie_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Species: ", font=self.header_font)
         specie_label.grid(row=1, column=0, sticky="w", padx=10)
         chr_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Chromosome name: ", font=self.header_font)
@@ -578,6 +602,24 @@ class App(customtkinter.CTk):
         ds[sender].annotation.set("")
 
     # '''events'''
+    def t1_upload_event(self, sender, value):
+        file_path = filedialog.askopenfilename()
+        _, sequence = ChromosomesHolder.read_fasta(file_path)
+        if len(sequence) > 0:
+            self.t1_ds[sender].specie.set("Custom")
+            self.t1_ds[sender].invalidate_based_specie()
+            self.t1_chr_combobox[sender].configure(values=[])
+            self.t1_parts_name_combobox[sender].configure(values=[])
+            # clear window_s
+            self.window_s_toggle.set(0)
+            self.window_size_toggle_event()
+
+            self.t1_ds[sender].seq = sequence
+            self.t1_ds[sender].end_seq.set(len(self.t1_ds[sender].seq))
+            self.start_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
+            self.end_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
+            self.sync_text_vars(self.t1_ds, sender)
+
     def specie_change_event(self, sender, value):
         specie = self.t1_ds[sender].specie.get()
         self.t1_chr_combobox[sender].configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
@@ -766,6 +808,18 @@ class App(customtkinter.CTk):
             scaling = "bp"
         return scale, scaling
 
+    def t2_upload_event(self, sender, value):
+        file_path = filedialog.askopenfilename()
+        _, sequence = ChromosomesHolder.read_fasta(file_path)
+        if len(sequence) > 0:
+            self.t2_ds[sender].specie.set("Custom")
+            self.t2_ds[sender].invalidate_based_specie()
+            self.t2_chr_combobox.configure(values=[])
+            self.t2_window_entry.configure(state="normal")
+
+            self.t2_ds[sender].seq = sequence
+            self.t2_ds[sender].end_seq.set(len(self.t2_ds[sender].seq))
+
     def t2_specie_change_event(self, value):
         specie = self.t2_ds["1"].specie.get()
         self.t2_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
@@ -776,7 +830,6 @@ class App(customtkinter.CTk):
         chromosome = self.t2_ds["1"].chromosome.get()
         # set its sequence
         self.t2_ds["1"].seq = ChromosomesHolder(specie).get_chromosome_sequence(chromosome)
-        # set end
         self.t2_ds["1"].end_seq.set(len(self.t2_ds["1"].seq))
         # enable window size
         self.t2_window_entry.configure(state="normal")
@@ -951,6 +1004,22 @@ class App(customtkinter.CTk):
         if pic_num.get() < len(dist_history) - 1:
             pic_num.set(pic_num.get() + 1)
             self._change_images(pic_num.get(), tab_name, None)
+
+    def t3_upload_event(self, sender, value):
+        file_path = filedialog.askopenfilename()
+        _, sequence = ChromosomesHolder.read_fasta(file_path)
+        if len(sequence) > 0:
+            self.t3_ds[sender].specie.set("Custom")
+            self.t3_ds[sender].invalidate_based_specie()
+            self.t3_ds[sender].seq = sequence
+            self.t3_ds[sender].end_seq.set(len(self.t3_ds[sender].seq))
+            if sender == "1":
+                self.t3_chr_combobox.configure(values=[])
+                self.t3_parts_name_combobox.configure(values=[])
+            elif sender == "2":
+                self.t3_chr_combobox_2.configure(values=[])
+                self.t3_window_entry.configure(state="normal")
+            self.sync_text_vars(self.t3_ds, sender)
 
     def t3_specie_change_event(self, sender, value):
         specie = self.t3_ds[sender].specie.get()
