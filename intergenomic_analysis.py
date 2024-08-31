@@ -19,8 +19,8 @@ class InterGenomicAnalysis:
 
         if run:
             self.base_segments = []
+            chromosomes_holder_base = ChromosomesHolder(self.base_specie)
             for _ in tqdm(range(self.num_samples)):
-                chromosomes_holder_base = ChromosomesHolder(self.base_specie)
                 if self.base_specie == "Human":
                     remove_outlier = True
                 else:
@@ -32,8 +32,8 @@ class InterGenomicAnalysis:
             self.species_segments_dict = {}
             for target_species in self.target_species_list:
                 self.species_segments_dict[target_species] = []
+                chromosomes_holder_target = ChromosomesHolder(target_species)
                 for _ in tqdm(range(100)):
-                    chromosomes_holder_target = ChromosomesHolder(target_species)
                     if target_species == "Human":
                         remove_outlier = True
                     else:
@@ -104,7 +104,7 @@ class InterGenomicAnalysis:
             ax.set_ylabel(distance_m)
 
             # Rotate category labels for better readability
-            plt.xticks(rotation=15, ha='right')
+            plt.xticks(rotation=15, ha='right', fontstyle='italic')
 
             plt.savefig(f"{save_path}/{distance_m}.png", bbox_inches='tight', transparent=False)
             plt.close()
@@ -128,5 +128,5 @@ class InterGenomicAnalysis:
 if __name__ == '__main__':
     target_list = ["Human", "Chimp", "Mouse", "Insect", "Fungus", "Plant", "Protist", "Archaea", "Bacteria"]
     intergenome = InterGenomicAnalysis(base_specie="Human", target_species_list=target_list, run=False)
-    data_frame = intergenome.run_experiment(trim=True)
+    data_frame = intergenome.run_experiment(trim=True, new_run=False)
     intergenome.plot_means_variances(data_frame)

@@ -61,7 +61,8 @@ TANDEM_REPEAT_DICT = {
     "22": ["p13", "p12", "p11.2"]
 }
 
-DISTANCE_METRICS_LIST = ["Euclidean", "Cosine", "Manhattan", "Descriptor", "DSSIM", "K-S", "Wasserstein", "LPIPS"]
+DISTANCE_METRICS_LIST = ["Normalized Euclidean", "Cosine", "Manhattan", "Descriptor", "DSSIM", "K-S", "Wasserstein",
+                         "LPIPS"]
 
 SCIENTIFIC_NAMES = {"Human": 'H. sapiens',
                     "Chimp": 'P. troglodytes',

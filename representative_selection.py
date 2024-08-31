@@ -245,7 +245,7 @@ class ChromosomeRepresentativeSelection:
         masked_matrix = distance_matrix[mask][:, mask]
 
         # Sum distances from each remaining point to all others
-        sums = np.sum(masked_matrix, axis=1)
+        sums = np.mean(masked_matrix, axis=1)
 
         # The index of the minimum sum corresponds to the centroid among the included indices, or is the median
         if median:

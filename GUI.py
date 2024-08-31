@@ -19,17 +19,12 @@ from PIL import Image
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib import pyplot as plt
 
-from sklearn import cluster
-from sklearn.decomposition import PCA
-
 from chaos_game_representation import CGR
 from chromosomes_holder import ChromosomesHolder
 from constants import DISTANCE_METRICS_LIST, SCIENTIFIC_NAMES, RESOLUTION_DICT
 from distances.distance_metrics import get_dist
 
-# from dna_features_viewer import GraphicFeature, GraphicRecord
-
-customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
+customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 
@@ -94,10 +89,11 @@ class App(customtkinter.CTk):
 
         # Frames
         self.t1_config_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[0]), corner_radius=20,
-                                                      fg_color="#333333")
-        self.t1_config_frame.grid(row=0, column=0, rowspan=2, sticky="nsew")
+                                                      border_color="#333333", border_width=2)
+        self.t1_config_frame.grid(row=0, column=0, rowspan=2, sticky="ns")
         self.t1_slider_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[0]), corner_radius=20,
-                                                      fg_color="#333333")
+                                                      border_color="#333333", border_width=2)
+        # fg_color="#333333")
         self.t1_slider_frame.grid(row=0, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
         self.t1_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[0]), corner_radius=20,
                                                        fg_color="#707370")  # , width=600, height=200)
@@ -109,7 +105,7 @@ class App(customtkinter.CTk):
 
         # Creating frames for chromosome 1 and chromosome 2
         self.t1_chr_frame = customtkinter.CTkFrame(self.t1_config_frame, corner_radius=20)
-        self.t1_chr_frame.grid(row=0, columnspan=2, padx=5, pady=5, sticky="ew")
+        self.t1_chr_frame.grid(row=0, columnspan=2, padx=5, pady=10, sticky="ew")
 
         # Chromosomes Widget
         species_list = list(SCIENTIFIC_NAMES.keys())
@@ -218,6 +214,15 @@ class App(customtkinter.CTk):
         t1_plot_button = customtkinter.CTkButton(self.t1_config_frame, text="Plot", width=120, command=self.t1_plot)
         t1_plot_button.grid(row=8, columnspan=2, pady=(10, 10))
 
+        # Appearance mode
+        self.appearance = customtkinter.StringVar(value="Dark")
+        appearance_label = customtkinter.CTkLabel(self.t1_config_frame, text="Theme: ", font=self.header_font)
+        appearance_label.grid(row=9, column=0, padx=10, pady=(20, 10))
+        appearance_mode = customtkinter.CTkOptionMenu(self.t1_config_frame, values=["Dark", "Light"], width=100,
+                                                      variable=self.appearance,
+                                                      command=self.change_appearance_mode_event)
+        appearance_mode.grid(row=9, column=1, sticky="w", pady=(20, 10))
+
         # First Sequence scale
         _pad_size = (20, 0)
         self.t1_parts_name_combobox = {}
@@ -241,11 +246,23 @@ class App(customtkinter.CTk):
             seq_label_e = customtkinter.CTkLabel(self.t1_slider_frame, text='End')
             seq_label_e.grid(row=(i * 2) + 1, column=1, padx=5, pady=_pad_size)
 
-            self.start_seq_scale[str(i + 1)] = ttk.Scale(self.t1_slider_frame, from_=0,
-                                                         to=len(self.t1_ds[str(i + 1)].seq),
-                                                         orient=customtkinter.HORIZONTAL, length=700,
-                                                         variable=self.t1_ds[str(i + 1)].start_seq,
-                                                         command=partial(self.sequence_value_change, str(i + 1)))
+            # self.start_seq_scale[str(i + 1)] = ttk.Scale(self.t1_slider_frame, from_=0,
+            #                                              to=len(self.t1_ds[str(i + 1)].seq),
+            #                                              orient=customtkinter.HORIZONTAL, length=700,
+            #                                              variable=self.t1_ds[str(i + 1)].start_seq,
+            #                                              command=partial(self.sequence_value_change, str(i + 1)))
+            # self.start_seq_scale[str(i + 1)].grid(row=(i * 2), column=2, pady=_pad_size)
+            seq_length = len(self.t1_ds[str(i + 1)].seq)
+            to_value = seq_length if seq_length > 0 else 1
+
+            self.start_seq_scale[str(i + 1)] = customtkinter.CTkSlider(self.t1_slider_frame, from_=0, to=to_value,
+                                                                       orientation="horizontal", width=700,
+                                                                       variable=self.t1_ds[str(i + 1)].start_seq,
+                                                                       command=partial(self.sequence_value_change,
+                                                                                       str(i + 1)))
+            self.start_seq_scale[str(i + 1)].set(0)
+            self.scale_normal_color = self.start_seq_scale[str(i + 1)].cget("button_color")
+            self.start_seq_scale[str(i + 1)].configure(state="disabled", button_color="#888888")
             self.start_seq_scale[str(i + 1)].grid(row=(i * 2), column=2, pady=_pad_size)
 
             self.t1_start_seq_entry[str(i + 1)] = customtkinter.CTkEntry(self.t1_slider_frame,
@@ -256,12 +273,18 @@ class App(customtkinter.CTk):
             seq_s_e_label = customtkinter.CTkLabel(self.t1_slider_frame, text='bp')
             seq_s_e_label.grid(row=(i * 2), column=4, pady=_pad_size)
 
-            self.end_seq_scale[str(i + 1)] = ttk.Scale(self.t1_slider_frame, from_=0,
-                                                       to=self.t1_ds[str(i + 1)].end_seq.get(),
-                                                       orient=customtkinter.HORIZONTAL, length=700,
-                                                       variable=self.t1_ds[str(i + 1)].end_seq,
-                                                       command=partial(self.sequence_value_change, str(i + 1)))
+            end_seq_length = self.t1_ds[str(i + 1)].end_seq.get()
+            to_value = end_seq_length if end_seq_length > 0 else 1
+
+            self.end_seq_scale[str(i + 1)] = customtkinter.CTkSlider(self.t1_slider_frame, from_=0, to=to_value,
+                                                                     orientation="horizontal", width=700,
+                                                                     variable=self.t1_ds[str(i + 1)].end_seq,
+                                                                     command=partial(self.sequence_value_change,
+                                                                                     str(i + 1)))
+            self.end_seq_scale[str(i + 1)].set(0)
+            self.end_seq_scale[str(i + 1)].configure(state="disabled", button_color="#888888")
             self.end_seq_scale[str(i + 1)].grid(row=(i * 2) + 1, column=2, pady=_pad_size)
+
             self.t1_end_seq_entry[str(i + 1)] = customtkinter.CTkEntry(self.t1_slider_frame,
                                                                        textvariable=self.t1_ds[str(i + 1)].end_txt)
             self.t1_end_seq_entry[str(i + 1)].bind('<FocusOut>', partial(self.sequence_value_change, "3"))
@@ -284,8 +307,8 @@ class App(customtkinter.CTk):
 
         # Frames
         self.t2_config_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]), corner_radius=20,
-                                                      fg_color="#333333")
-        self.t2_config_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+                                                      border_color="#333333", border_width=2)
+        self.t2_config_frame.grid(row=0, column=0, rowspan=4, sticky="ns")
         self.t2_plot_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[1]),
                                                     corner_radius=20, fg_color="white")  # , width=1050, height=200)
         self.t2_plot_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
@@ -365,6 +388,14 @@ class App(customtkinter.CTk):
                                                 command=partial(self.run_consecutive, None))
         t2_run_button.grid(row=7, columnspan=2)  # , sticky="ns")
 
+        # Appearance mode
+        appearance_label = customtkinter.CTkLabel(self.t2_config_frame, text="Theme: ", font=self.header_font)
+        appearance_label.grid(row=8, column=0, padx=10, pady=(20, 10))
+        appearance_mode = customtkinter.CTkOptionMenu(self.t2_config_frame, values=["Dark", "Light"], width=100,
+                                                      variable=self.appearance,
+                                                      command=self.change_appearance_mode_event)
+        appearance_mode.grid(row=8, column=1, sticky="w", pady=(20, 10))
+
         # placing the progress bars
         self.step_length = None
         self.cgr_distance_history = None
@@ -414,8 +445,8 @@ class App(customtkinter.CTk):
 
         # Frames
         self.t3_config_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20,
-                                                      fg_color="#333333")
-        self.t3_config_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+                                                      border_color="#333333", border_width=2)
+        self.t3_config_frame.grid(row=0, column=0, rowspan=4, sticky="ns")
         self.t3_plot_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20,
                                                     fg_color="white")  # , width=1050, height=200)
         self.t3_plot_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
@@ -556,6 +587,14 @@ class App(customtkinter.CTk):
                                                 command=partial(self.run_common_ref, None))
         t3_run_button.grid(row=7, columnspan=2)  # , sticky="ns")
 
+        # Appearance mode
+        appearance_label = customtkinter.CTkLabel(self.t3_config_frame, text="Theme: ", font=self.header_font)
+        appearance_label.grid(row=8, column=0, padx=10, pady=(20, 10))
+        appearance_mode = customtkinter.CTkOptionMenu(self.t3_config_frame, values=["Dark", "Light"], width=100,
+                                                      variable=self.appearance,
+                                                      command=self.change_appearance_mode_event)
+        appearance_mode.grid(row=8, column=1, sticky="w", pady=(20, 10))
+
         # placing the progress bars
         self.t3_step_length = None
         self.t3_cgr_distance_history = None
@@ -589,6 +628,10 @@ class App(customtkinter.CTk):
         self.t3_next_button.grid(row=0, column=2)
 
     @staticmethod
+    def change_appearance_mode_event(new_appearance_mode: str):
+        customtkinter.set_appearance_mode(new_appearance_mode)
+
+    @staticmethod
     def sync_text_vars(ds, sender, keep_annotation=False):
         ds[sender].start_txt.set(f"{ds[sender].start_seq.get()}")
         ds[sender].end_txt.set(f"{ds[sender].end_seq.get()}")
@@ -612,12 +655,19 @@ class App(customtkinter.CTk):
             self.t1_parts_name_combobox[sender].configure(values=[])
             # clear window_s
             self.window_s_toggle.set(0)
-            self.window_size_toggle_event()
+            self.window_s.set("")
+            self.window_entry.configure(state="disable")
+            for key, value in self.t1_ds.items():
+                self.sync_text_vars(self.t1_ds, key, keep_annotation=False)
 
             self.t1_ds[sender].seq = sequence
             self.t1_ds[sender].end_seq.set(len(self.t1_ds[sender].seq))
+            self.start_seq_scale[sender].configure(state="normal", button_color=self.scale_normal_color)
             self.start_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
+            self.end_seq_scale[sender].configure(state="normal", button_color=self.scale_normal_color)
+            self.end_seq_scale[sender].set(0)
             self.end_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
+            self.end_seq_scale[sender].set(len(self.t1_ds[sender].seq))
             self.sync_text_vars(self.t1_ds, sender)
 
     def specie_change_event(self, sender, value):
@@ -627,7 +677,13 @@ class App(customtkinter.CTk):
 
         # clear window_s
         self.window_s_toggle.set(0)
-        self.window_size_toggle_event()
+        self.window_s.set("")
+        self.window_entry.configure(state="disable")
+        for key, value in self.t1_ds.items():
+            self.sync_text_vars(self.t1_ds, key, keep_annotation=False)
+
+        self.start_seq_scale[sender].configure(state="disabled", button_color="#888888")
+        self.end_seq_scale[sender].configure(state="disabled", button_color="#888888")
 
         # Empty the list of annotations
         self.t1_parts_name_combobox[sender].configure(values=[])
@@ -644,18 +700,23 @@ class App(customtkinter.CTk):
         # set start and end
         self.t1_ds[sender].end_seq.set(len(self.t1_ds[sender].seq))
         if len(self.t1_ds[sender].seq) > 0:
-            self.start_seq_scale[sender].configure(state="normal")
-            self.end_seq_scale[sender].configure(state="normal")
+            self.start_seq_scale[sender].configure(state="normal", button_color=self.scale_normal_color)
+            self.end_seq_scale[sender].configure(state="normal", button_color=self.scale_normal_color)
         else:
-            self.start_seq_scale[sender].configure(state="disable")
-            self.end_seq_scale[sender].configure(state="disable")
+            self.start_seq_scale[sender].configure(state="disable", button_color="#888888")
+            self.end_seq_scale[sender].configure(state="disable", button_color="#888888")
         self.start_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
+        self.end_seq_scale[sender].set(0)
         self.end_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
+        self.end_seq_scale[sender].set(len(self.t1_ds[sender].seq))
 
         self.sync_text_vars(self.t1_ds, sender)
         # clear window_s
         self.window_s_toggle.set(0)
-        self.window_size_toggle_event()
+        self.window_s.set("")
+        self.window_entry.configure(state="disable")
+        for key, value in self.t1_ds.items():
+            self.sync_text_vars(self.t1_ds, key, keep_annotation=False)
 
     def annotation_change_event(self, sender, value):
         annotation = self.t1_ds[sender].annotation.get()
@@ -664,28 +725,32 @@ class App(customtkinter.CTk):
         self.t1_ds[sender].start_seq.set(annotation_info.start)
         self.t1_ds[sender].end_seq.set(annotation_info.end)
         self.sync_text_vars(self.t1_ds, sender, keep_annotation=True)
+        self.end_seq_scale[sender].configure(state="normal", button_color=self.scale_normal_color)
 
         # clear window_s
         self.window_s_toggle.set(0)
-        self.window_size_toggle_event()
+        self.window_s.set("")
+        self.window_entry.configure(state="disable")
 
-    def window_size_toggle_event(self):
+    def window_size_toggle_event(self, keep_annotation=False):
         if self.window_s_toggle.get() == 0:
             self.window_s.set("")
             self.window_entry.configure(state="disable")
 
             # end scales
             for key, value in self.end_seq_scale.items():
-                value.configure(state="normal")
+                if len(self.t1_ds[key].seq) > 0:
+                    value.configure(state="normal", button_color=self.scale_normal_color)
             for key, value in self.t1_end_seq_entry.items():
-                value.configure(state="normal")
+                if len(self.t1_ds[key].seq) > 0:
+                    value.configure(state="normal")
         else:
             self.window_entry.configure(state="normal")
             self.window_s.set("500000")
 
             # end scales
             for key, value in self.end_seq_scale.items():
-                value.configure(state="disable")
+                value.configure(state="disable", button_color="#888888")
             for key, value in self.t1_end_seq_entry.items():
                 value.configure(state="disable")
             for key, value in self.t1_ds.items():
@@ -693,7 +758,7 @@ class App(customtkinter.CTk):
                     self.t1_ds[key].end_seq.set(self.t1_ds[key].start_seq.get() + int(self.window_s.get()))
 
         for key, value in self.t1_ds.items():
-            self.sync_text_vars(self.t1_ds, key)
+            self.sync_text_vars(self.t1_ds, key, keep_annotation)
 
     def sequence_value_change(self, sender, value):
         if sender == "0":  # Window size changed

@@ -19,7 +19,7 @@ from chaos_game_representation import CGR
 # lpip_model = lpips.LPIPS(net='vgg')
 # lpip_model.load_state_dict(torch.load(checkpoint_path_lpips, map_location=torch.device('cpu')))
 
-DISTANCE_PARAM_DICT = {"Euclidean": {'prob': False, 'require_norm': True},
+DISTANCE_PARAM_DICT = {"Normalized Euclidean": {'prob': False, 'require_norm': True},
                        "Cosine": {'prob': False, 'require_norm': True},
                        "Manhattan": {'prob': False, 'require_norm': True},
                        "Descriptor": {'prob': False, 'require_norm': True},
@@ -56,7 +56,7 @@ def get_dist(cgr_img1, cgr_img2, dist_m="DSSIM"):
         distance = 1 - (np.dot(cgr_img2.reshape(-1), cgr_img1.reshape(-1)) / (
                 np.linalg.norm(cgr_img2.reshape(-1)) * np.linalg.norm(cgr_img1.reshape(-1))))
 
-    elif (dist_m.lower() == "euclidean") or (dist_m == "normalized_euclidean"):
+    elif (dist_m.lower() == "euclidean") or (dist_m.lower() == "normalized euclidean"):
         denom_1 = np.sqrt(np.mean((cgr_img1 * cgr_img1), dtype=np.float64))
         denom_2 = np.sqrt(np.mean((cgr_img2 * cgr_img2), dtype=np.float64))
         if denom_1 > denom_2:

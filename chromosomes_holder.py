@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 from PIL import Image
 from chaos_game_representation import CGR
+from constants import RESOLUTION_DICT
 
 random.seed(46)
 np.random.seed(46)
@@ -108,8 +109,8 @@ class ChromosomesHolder:
 
     def get_segment(self, chromosome_name, start_of_segment, sequence_length):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
-        assert start_of_segment > len(chromosome_sequence), "Start of segment is out of range."
-        assert start_of_segment + sequence_length > len(chromosome_sequence), "End of segment is out of range."
+        assert start_of_segment < len(chromosome_sequence), "Start of segment is out of range."
+        assert start_of_segment + sequence_length <= len(chromosome_sequence), "End of segment is out of range."
         return chromosome_sequence[start_of_segment:start_of_segment + sequence_length]
 
     def get_random_segment(self, length, chromosome_name=None, remove_outlier=False, return_dict=False):
@@ -266,7 +267,7 @@ class ChromosomesHolder:
             segment_length = len(chromosome_sequence)
         segment_sequence = chromosome_sequence[start_of_segment:start_of_segment + segment_length]
         fcgr = CGR(segment_sequence, k_mer).get_fcgr()
-        fcgr_image = CGR.array2img(fcgr, bits=8)
+        fcgr_image = CGR.array2img(fcgr, bits=8, resolution=RESOLUTION_DICT[k_mer])
         fcgr_pil = Image.fromarray(fcgr_image, 'L')
 
         plt.imshow(fcgr_pil, cmap="gray")
@@ -280,7 +281,7 @@ class ChromosomesHolder:
         # Annotating each point
         for (x, y), label in zip(points, labels):
             plt.text(x, y, label, color='black', fontsize=14, ha='center', va='center')
-        plt.title(f"Chromosome {chromosome_name}", fontsize=14)
+        # plt.title(f"Chromosome {chromosome_name}", fontsize=14)
 
         save_path = os.path.join('Figures', 'FCGRs', self.species)
         if not os.path.exists(save_path):
@@ -400,7 +401,7 @@ class ChromosomesHolder:
 
     @staticmethod
     def _extract_chromosome_number(string):
-        match = re.search(r'(chromosome\s*|scaffold_)(\d+|[A-Za-z]+)', string, re.IGNORECASE)
+        match = re.search(r'(chromosome\s*|scaffold_|contig_)(\d+|[A-Za-z]+)', string, re.IGNORECASE)
         if match:
             return match.group(2)
         if match is None:
@@ -413,27 +414,6 @@ class ChromosomesHolder:
         bases = [complement[base] for base in sequence]
         bases = reversed(bases)
         return ''.join(bases)
-
-    @staticmethod
-    def split_chromosome_fasta_files(whole_genome_file_path, output_directory):
-        with open(whole_genome_file_path) as fasta_file:
-            f = None
-            for line in fasta_file:
-                line = line.strip()
-                if not line:
-                    continue
-                if line.startswith(">"):
-                    if not (f is None):
-                        f.close()
-                    filename = line[1:].replace('.', "").replace("/", "") + '.fna'
-                    print(filename)
-                    fasta_file_path = os.path.join(output_directory, filename)
-                    f = open(fasta_file_path, "w")
-                    f.write(line + "\n")
-                else:
-                    line = line.upper()
-                    f.write(line)
-            f.close()
 
     @staticmethod
     def read_fasta(file_path):
@@ -449,9 +429,24 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    genome = ChromosomesHolder("Human")
+    specie = "Dictyostelium discoideum"
+    ChromosomesHolder(specie).create_chromosomes_files("GCA_000004695.1_dicty_2.7_genomic.fna")
+    genome = ChromosomesHolder(specie)
+    all_len = 0
+    after_n_remove_seq = 0
+    for chromosome in genome.get_all_chromosomes_name():
+        seq = genome.get_chromosome_sequence(chromosome)
+        all_len += len(seq)
+        seq_1 = seq.replace("N", "")
+        after_n_remove_seq += len(seq_1)
+        if len(seq) != len(seq_1):
+            print(chromosome, len(seq), len(seq_1))
+    print(all_len, after_n_remove_seq)
+    print(all_len - after_n_remove_seq)
+    print((1 - (after_n_remove_seq / all_len)) * 100)
+
     # genome.get_random_segment(1000, remove_outlier=True)
     # genome.get_chromosome_non_overlapping_segments("1", 1000)
-    genome.plot_fcgr("Y")
+    # genome.plot_fcgr("Y")
     # genome.create_chromosomes_files("GCA_022117705.1_Zm-Mo17-REFERENCE-CAU-T2T-assembly_genomic.fna")
     print("")
