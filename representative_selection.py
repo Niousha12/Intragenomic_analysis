@@ -286,7 +286,7 @@ class ChromosomeRepresentativeSelection:
 
     @staticmethod
     def plot_multi_dimensional_scaling(distance_matrix, info: list, representative_index=None, coloring_type='NCBI'):
-        mds = MDS(n_components=3, dissimilarity='precomputed', random_state=46)
+        mds = MDS(n_components=3, dissimilarity='precomputed', random_state=38)
         mds_result = mds.fit_transform(distance_matrix)
 
         # Add description for each data
@@ -298,7 +298,7 @@ class ChromosomeRepresentativeSelection:
                 'labels': labels, 'chromosome': chrs}
 
         if representative_index is not None:
-            data['labels'][representative_index] = "Representative"
+            data['labels'][representative_index] = "RS"
 
         df = pd.DataFrame(data)
 
@@ -316,14 +316,23 @@ class ChromosomeRepresentativeSelection:
         else:
             raise ValueError("Invalid coloring type")
 
-        fig.update_layout(scene=dict(xaxis=dict(range=[-1, 1]), yaxis=dict(range=[-1, 1]), zaxis=dict(range=[-1, 1])))
+        axis_value = 0.15
+        fig.update_layout(
+            scene=dict(xaxis=dict(range=[-axis_value, axis_value]), yaxis=dict(range=[-axis_value, axis_value]),
+                       zaxis=dict(range=[-axis_value, axis_value])))
         fig.show()
 
 
 if __name__ == '__main__':
-    human_representative = ChromosomeRepresentativeSelection('Bacteria', 5, 'DSSIM', segment_length=10_000)
-    for chr_name in human_representative.chromosomes_holder.get_all_chromosomes_name():
-        human_representative.plot_distance_variations(chr_name, plot_random_outliers=True)
-        # segments_info = human_representative.get_non_overlapping_segments(chr_name)['segments_information']
-        # human_representative.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_name),
-        #                                                     segments_info, coloring_type='Chromosome')
+    chr_n = "21"
+    human_representative = ChromosomeRepresentativeSelection('human', 9, 'DSSIM', segment_length=500_000)
+    segments_info = human_representative.get_non_overlapping_segments(chr_n)['segments_information']
+    RSSP = human_representative.get_representative(chr_n)['index']
+    ChromosomeRepresentativeSelection.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_n),
+                                                                     segments_info, RSSP, coloring_type='NCBI')
+    # representative = ChromosomeRepresentativeSelection('Bacteria', 5, 'DSSIM', segment_length=10_000)
+    # for chr_name in representative.chromosomes_holder.get_all_chromosomes_name():
+    #     representative.plot_distance_variations(chr_name, plot_random_outliers=True)
+    # segments_info = human_representative.get_non_overlapping_segments(chr_name)['segments_information']
+    # human_representative.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_name),
+    #                                                     segments_info, coloring_type='Chromosome')

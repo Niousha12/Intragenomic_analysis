@@ -21,7 +21,7 @@ from matplotlib import pyplot as plt
 
 from chaos_game_representation import CGR
 from chromosomes_holder import ChromosomesHolder
-from constants import DISTANCE_METRICS_LIST, SCIENTIFIC_NAMES, RESOLUTION_DICT
+from constants import DISTANCE_METRICS_LIST, SCIENTIFIC_NAMES, RESOLUTION_DICT, REVERSE_SCIENTIFIC_NAMES
 from distances.distance_metrics import get_dist
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
@@ -108,7 +108,7 @@ class App(customtkinter.CTk):
         self.t1_chr_frame.grid(row=0, columnspan=2, padx=5, pady=10, sticky="ew")
 
         # Chromosomes Widget
-        species_list = list(SCIENTIFIC_NAMES.keys())
+        species_list = list(SCIENTIFIC_NAMES.values())
         self.t1_ds = {'1': GUIDataStructure(), '2': GUIDataStructure()}
         self.t1_species_combobox = {}
         self.t1_chr_combobox = {}
@@ -130,7 +130,7 @@ class App(customtkinter.CTk):
             chr_label.grid(row=(i * 3) + 1, column=1, sticky="w", padx=10)
             self.t1_species_combobox[f"{i + 1}"] = customtkinter.CTkComboBox(self.t1_chr_frame, values=species_list,
                                                                              width=100,
-                                                                             variable=self.t1_ds[str(i + 1)].specie,
+                                                                             # variable=self.t1_ds[str(i + 1)].specie,
                                                                              command=partial(self.specie_change_event,
                                                                                              f"{i + 1}"))
 
@@ -151,7 +151,7 @@ class App(customtkinter.CTk):
         self.t1_window_size_frame = customtkinter.CTkFrame(self.t1_config_frame, fg_color=config_frame_color)
         self.t1_window_size_frame.grid(row=2, columnspan=2, padx=10, pady=5, sticky="w")
 
-        window_s_label = customtkinter.CTkLabel(self.t1_window_size_frame, text="Window Size:", font=self.header_font)
+        window_s_label = customtkinter.CTkLabel(self.t1_window_size_frame, text="Segment Size:", font=self.header_font)
         window_s_label.grid(row=0, column=0, padx=10)
         self.window_s_toggle = tkinter.IntVar(value=0)
         self.t1_window_s_1 = customtkinter.CTkRadioButton(self.t1_window_size_frame, text="Variable",
@@ -344,12 +344,12 @@ class App(customtkinter.CTk):
         specie_label.grid(row=1, column=0, sticky="w", padx=10)
         chr_label = customtkinter.CTkLabel(self.t2_chr_frame, text="Chromosome name: ", font=self.header_font)
         chr_label.grid(row=1, column=1, sticky="w", padx=10)
-        self.t2_specie_combobox = customtkinter.CTkComboBox(self.t2_chr_frame, values=species_list, width=100,
-                                                            variable=self.t2_ds["1"].specie,
-                                                            command=partial(self.t2_specie_change_event))
+        self.t2_species_combobox = customtkinter.CTkComboBox(self.t2_chr_frame, values=species_list, width=100,
+                                                             # variable=self.t2_ds["1"].specie,
+                                                             command=partial(self.t2_specie_change_event))
 
-        self.t2_specie_combobox.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
-        self.t2_specie_combobox.set("")
+        self.t2_species_combobox.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
+        self.t2_species_combobox.set("")
 
         self.t2_chr_combobox = customtkinter.CTkComboBox(self.t2_chr_frame, values=[],
                                                          variable=self.t2_ds["1"].chromosome, width=100,
@@ -358,7 +358,7 @@ class App(customtkinter.CTk):
         self.t2_chr_combobox.set("")
 
         # Window size
-        window_s_label = customtkinter.CTkLabel(self.t2_config_frame, text="Window Size:", font=self.header_font)
+        window_s_label = customtkinter.CTkLabel(self.t2_config_frame, text="Segment Size:", font=self.header_font)
         window_s_label.grid(row=1, column=0, padx=10, pady=(20, 5))
         self.t2_window_s = tkinter.StringVar(value="")
         self.t2_window_entry = customtkinter.CTkEntry(self.t2_config_frame, textvariable=self.t2_window_s)
@@ -493,12 +493,12 @@ class App(customtkinter.CTk):
         specie_label.grid(row=1, column=0, sticky="w", padx=10)
         chr_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Chromosome name: ", font=self.header_font)
         chr_label.grid(row=1, column=1, sticky="w", padx=10)
-        self.t3_specie_combobox = customtkinter.CTkComboBox(self.t3_chr_frame, values=species_list, width=100,
-                                                            variable=self.t3_ds["1"].specie,
-                                                            command=partial(self.t3_specie_change_event, "1"))
+        self.t3_species_combobox = customtkinter.CTkComboBox(self.t3_chr_frame, values=species_list, width=100,
+                                                             # variable=self.t3_ds["1"].specie,
+                                                             command=partial(self.t3_specie_change_event, "1"))
 
-        self.t3_specie_combobox.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
-        self.t3_specie_combobox.set("")
+        self.t3_species_combobox.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
+        self.t3_species_combobox.set("")
 
         self.t3_chr_combobox = customtkinter.CTkComboBox(self.t3_chr_frame, values=[],
                                                          variable=self.t3_ds["1"].chromosome, width=100,
@@ -544,7 +544,7 @@ class App(customtkinter.CTk):
         chr_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Chromosome name: ", font=self.header_font)
         chr_label.grid(row=1, column=1, sticky="w", padx=10)
         self.t3_specie_combobox_2 = customtkinter.CTkComboBox(self.t3_chr_frame_2, values=species_list, width=100,
-                                                              variable=self.t3_ds["2"].specie,
+                                                              # variable=self.t3_ds["2"].specie,
                                                               command=partial(self.t3_specie_change_event, "2"))
 
         self.t3_specie_combobox_2.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
@@ -557,7 +557,7 @@ class App(customtkinter.CTk):
         self.t3_chr_combobox_2.set("")
 
         # Window size
-        window_s_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Window Size:", font=self.header_font)
+        window_s_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Segment Size:", font=self.header_font)
         window_s_label.grid(row=3, column=0, padx=10, pady=(0, 10))
         self.t3_window_s = tkinter.StringVar(value="")
         self.t3_window_entry = customtkinter.CTkEntry(self.t3_chr_frame_2, textvariable=self.t3_window_s)
@@ -671,6 +671,9 @@ class App(customtkinter.CTk):
             self.sync_text_vars(self.t1_ds, sender)
 
     def specie_change_event(self, sender, value):
+        self.t1_species_combobox[sender].set(value)
+        self.t1_ds[sender].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
+
         specie = self.t1_ds[sender].specie.get()
         self.t1_chr_combobox[sender].configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
         self.t1_ds[sender].invalidate_based_specie()
@@ -886,6 +889,9 @@ class App(customtkinter.CTk):
             self.t2_ds[sender].end_seq.set(len(self.t2_ds[sender].seq))
 
     def t2_specie_change_event(self, value):
+        self.t2_species_combobox.set(value)
+        self.t2_ds["1"].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
+
         specie = self.t2_ds["1"].specie.get()
         self.t2_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
         self.t2_ds["1"].invalidate_based_specie()
@@ -970,7 +976,7 @@ class App(customtkinter.CTk):
             dist_history = self.t3_cgr_distance_history
             frame = self.t3_plot_frame
 
-        fig, ax1 = plt.subplots(figsize=(50, 3))
+        fig, ax1 = plt.subplots(figsize=(200, 3))
         x = np.arange(len(dist_history))
         y = np.asarray(dist_history)
         mask1 = x == highlighted_index
@@ -1087,6 +1093,12 @@ class App(customtkinter.CTk):
             self.sync_text_vars(self.t3_ds, sender)
 
     def t3_specie_change_event(self, sender, value):
+        if sender == "1":
+            self.t3_species_combobox.set(value)
+        elif sender == "2":
+            self.t3_specie_combobox_2.set(value)
+        self.t3_ds[sender].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
+
         specie = self.t3_ds[sender].specie.get()
         if sender == "1":
             self.t3_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
@@ -1097,6 +1109,7 @@ class App(customtkinter.CTk):
             self.t3_window_entry.configure(state="disable")
         self.t3_ds[sender].invalidate_based_specie()
         self.sync_text_vars(self.t3_ds, sender)
+        # self.t3_ds[sender].specie.set(SCIENTIFIC_NAMES[specie])
 
     def t3_chromosome_change_event(self, sender, value):
         specie = self.t3_ds[sender].specie.get()

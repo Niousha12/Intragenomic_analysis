@@ -28,7 +28,7 @@ class AnnotationRecord:
         self.color_name = None
         self.display_color = None
         color_name = {"w": "White", "lg": "Light Gray", "g": "Gray", "dg": "Dark Gray", "b": "Black", "pi": "Pink",
-                      "pu": "Purple", "R": "Representative"}
+                      "pu": "Purple", "R": "RS"}
 
         if self.color is not None:
             self.color_name = color_name[self.color]
@@ -39,7 +39,7 @@ class AnnotationRecord:
     @staticmethod
     def get_color_display_dict():
         return {"White": "#C0C0C0", "Light Gray": "#808080", "Gray": "#696969", "Dark Gray": "#505050",
-                "Black": "#000000", "Pink": "#fc9ea3", "Purple": "#c89efc", "Representative": "#ff0000"}
+                "Black": "#000000", "Pink": "#fc9ea3", "Purple": "#c89efc", "RS": "#ff0000"}
 
 
 class ChromosomesHolder:
@@ -430,7 +430,7 @@ class ChromosomesHolder:
 
 if __name__ == '__main__':
     specie = "Dictyostelium discoideum"
-    ChromosomesHolder(specie).create_chromosomes_files("GCA_000004695.1_dicty_2.7_genomic.fna")
+    # ChromosomesHolder(specie).create_chromosomes_files("GCA_000004695.1_dicty_2.7_genomic.fna")
     genome = ChromosomesHolder(specie)
     all_len = 0
     after_n_remove_seq = 0

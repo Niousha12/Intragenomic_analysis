@@ -74,6 +74,8 @@ SCIENTIFIC_NAMES = {"Human": 'H. sapiens',
                     "Archaea": 'P. furiosus',
                     "Bacteria": 'E. coli'}
 
+REVERSE_SCIENTIFIC_NAMES = {v: k for k, v in SCIENTIFIC_NAMES.items()}
+
 RESOLUTION_DICT = {2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 4, 9: 4}
 
 # REVERSE_COMP = {"1": False, "2": False, "3": True, "4": True, "5": True, "6": True, "7": True, "8": True, "9": True,
