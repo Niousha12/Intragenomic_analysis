@@ -74,7 +74,7 @@ class App(customtkinter.CTk):
         # create tabview
         self.tabview = customtkinter.CTkTabview(self)
         self.tabview.grid(padx=(20, 20), pady=(20, 20), sticky="nsew")
-        tab_names = ["CGR Comparator", "Consecutive Windows", "Common Reference"]
+        tab_names = ["CGR Comparator", "Consecutive Windows", "Common Reference", "Representative"]
         for tab_name in tab_names:
             self.tabview.add(tab_name)
 
@@ -174,9 +174,9 @@ class App(customtkinter.CTk):
         k_mer_label = customtkinter.CTkLabel(self.t1_config_frame, text="k-mer: ", font=self.header_font)
         k_mer_label.grid(row=3, column=0, padx=10, pady=(10, 10))
         values_list = ["2", "3", "4", "5", "6", "7", "8", "9"]
-        self.t1_k_mer_combobox = customtkinter.CTkComboBox(self.t1_config_frame, values=values_list, width=100,
-                                                           state="normal", variable=self.k_var)
-        self.t1_k_mer_combobox.grid(row=3, column=1, sticky="w", pady=(10, 10))
+        k_mer_combobox = customtkinter.CTkComboBox(self.t1_config_frame, values=values_list, width=100,
+                                                   state="normal", variable=self.k_var)
+        k_mer_combobox.grid(row=3, column=1, sticky="w", pady=(10, 10))
 
         # reverse complement and random
         self.t1_seq_rv = customtkinter.CTkFrame(self.t1_config_frame, fg_color=config_frame_color)
@@ -195,13 +195,12 @@ class App(customtkinter.CTk):
 
         # Distance metrics
         self.dist_metric = customtkinter.StringVar()
-        dist_metric_label = customtkinter.CTkLabel(self.t1_config_frame, text="Distance Metric: ",
-                                                   font=self.header_font)
-        dist_metric_label.grid(row=6, column=0, padx=10, pady=(10, 10))
-        self.t1_dist_metric_combobox = customtkinter.CTkComboBox(self.t1_config_frame, values=DISTANCE_METRICS_LIST,
-                                                                 width=120, variable=self.dist_metric)
-        self.t1_dist_metric_combobox.grid(row=6, column=1, sticky="w", padx=10, pady=(10, 10))
-        self.t1_dist_metric_combobox.set("")
+        dist_metric_l = customtkinter.CTkLabel(self.t1_config_frame, text="Distance Metric: ", font=self.header_font)
+        dist_metric_l.grid(row=6, column=0, padx=10, pady=(10, 10))
+        dist_metric_combobox = customtkinter.CTkComboBox(self.t1_config_frame, values=DISTANCE_METRICS_LIST,
+                                                         width=120, variable=self.dist_metric)
+        dist_metric_combobox.grid(row=6, column=1, sticky="w", padx=10, pady=(10, 10))
+        dist_metric_combobox.set("")
 
         # cgr/fcgr option
         self.fcgr = customtkinter.IntVar(value=1)
@@ -368,25 +367,25 @@ class App(customtkinter.CTk):
         # k_mer combo box
         k_mer_label = customtkinter.CTkLabel(self.t2_config_frame, text="k-mer: ", font=self.header_font)
         k_mer_label.grid(row=2, column=0, padx=10, pady=(10, 10))
-        self.t2_k_mer_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=values_list, width=100,
-                                                           state="normal", variable=self.k_var)
-        self.t2_k_mer_combobox.grid(row=2, column=1, sticky="w", pady=(10, 10))
+        k_mer_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=values_list, width=100,
+                                                   state="normal", variable=self.k_var)
+        k_mer_combobox.grid(row=2, column=1, sticky="w", pady=(10, 10))
 
         # Distance metrics
-        t2_dist_metric_l = customtkinter.CTkLabel(self.t2_config_frame, text="Distance Metric: ", font=self.header_font)
-        t2_dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
-        self.t2_dist_metric_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=DISTANCE_METRICS_LIST,
-                                                                 width=120, variable=self.dist_metric)
-        self.t2_dist_metric_combobox.grid(row=3, column=1, pady=(20, 5), sticky="w")
-        self.t2_dist_metric_combobox.set("")
+        dist_metric_l = customtkinter.CTkLabel(self.t2_config_frame, text="Distance Metric: ", font=self.header_font)
+        dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
+        dist_metric_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=DISTANCE_METRICS_LIST,
+                                                         width=120, variable=self.dist_metric)
+        dist_metric_combobox.grid(row=3, column=1, pady=(20, 5), sticky="w")
+        dist_metric_combobox.set("")
 
-        t2_switch = customtkinter.CTkSwitch(self.t2_config_frame, text=f"Frequency CGR", variable=self.fcgr)
-        t2_switch.grid(row=4, columnspan=2, pady=(20, 5))
+        switch = customtkinter.CTkSwitch(self.t2_config_frame, text=f"Frequency CGR", variable=self.fcgr)
+        switch.grid(row=4, columnspan=2, pady=(20, 5))
 
         # run button
-        t2_run_button = customtkinter.CTkButton(self.t2_config_frame, text="Run",
-                                                command=partial(self.run_consecutive, None))
-        t2_run_button.grid(row=7, columnspan=2)  # , sticky="ns")
+        run_button = customtkinter.CTkButton(self.t2_config_frame, text="Run",
+                                             command=partial(self.run_consecutive, None))
+        run_button.grid(row=7, columnspan=2)  # , sticky="ns")
 
         # Appearance mode
         appearance_label = customtkinter.CTkLabel(self.t2_config_frame, text="Theme: ", font=self.header_font)
@@ -567,25 +566,25 @@ class App(customtkinter.CTk):
         # k_mer combo box
         k_mer_label = customtkinter.CTkLabel(self.t3_config_frame, text="k-mer: ", font=self.header_font)
         k_mer_label.grid(row=2, column=0, padx=10, pady=(10, 10))
-        self.t3_k_mer_combobox = customtkinter.CTkComboBox(self.t3_config_frame, values=values_list, width=100,
-                                                           state="normal", variable=self.k_var)
-        self.t3_k_mer_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(10, 10))
+        k_mer_combobox = customtkinter.CTkComboBox(self.t3_config_frame, values=values_list, width=100,
+                                                   state="normal", variable=self.k_var)
+        k_mer_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(10, 10))
 
         # Distance metrics
-        t3_dist_metric_l = customtkinter.CTkLabel(self.t3_config_frame, text="Distance Metric: ", font=self.header_font)
-        t3_dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
-        self.t3_dist_metric_combobox = customtkinter.CTkComboBox(self.t3_config_frame, values=DISTANCE_METRICS_LIST,
-                                                                 width=120, variable=self.dist_metric)
-        self.t3_dist_metric_combobox.grid(row=3, column=1, pady=(20, 5), sticky="w")
-        self.t3_dist_metric_combobox.set("")
+        dist_metric_l = customtkinter.CTkLabel(self.t3_config_frame, text="Distance Metric: ", font=self.header_font)
+        dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
+        dist_metric_combobox = customtkinter.CTkComboBox(self.t3_config_frame, values=DISTANCE_METRICS_LIST,
+                                                         width=120, variable=self.dist_metric)
+        dist_metric_combobox.grid(row=3, column=1, pady=(20, 5), sticky="w")
+        dist_metric_combobox.set("")
 
-        t3_switch = customtkinter.CTkSwitch(self.t3_config_frame, text=f"Frequency CGR", variable=self.fcgr)
-        t3_switch.grid(row=4, columnspan=2, pady=(20, 5))
+        switch = customtkinter.CTkSwitch(self.t3_config_frame, text=f"Frequency CGR", variable=self.fcgr)
+        switch.grid(row=4, columnspan=2, pady=(20, 5))
 
         # run button
-        t3_run_button = customtkinter.CTkButton(self.t3_config_frame, text="Run",
-                                                command=partial(self.run_common_ref, None))
-        t3_run_button.grid(row=7, columnspan=2)  # , sticky="ns")
+        run_button = customtkinter.CTkButton(self.t3_config_frame, text="Run",
+                                             command=partial(self.run_common_ref, None))
+        run_button.grid(row=7, columnspan=2)  # , sticky="ns")
 
         # Appearance mode
         appearance_label = customtkinter.CTkLabel(self.t3_config_frame, text="Theme: ", font=self.header_font)
@@ -626,6 +625,173 @@ class App(customtkinter.CTk):
         self.t3_next_button = customtkinter.CTkButton(self.t3_changing_frame, image=self.next_im, text="",
                                                       width=10, command=partial(self.move_next, "t3", None))
         self.t3_next_button.grid(row=0, column=2)
+
+        '''
+            Fourth Page (Representative)
+            Configuring 
+        '''
+        self.tabview.tab(tab_names[3]).grid_columnconfigure(0, weight=1)
+        self.tabview.tab(tab_names[3]).grid_columnconfigure(1, weight=10)
+
+        self.tabview.tab(tab_names[3]).grid_rowconfigure(0, weight=1)
+        self.tabview.tab(tab_names[3]).grid_rowconfigure(1, weight=20)
+        self.tabview.tab(tab_names[3]).grid_rowconfigure(2, weight=20)
+        self.tabview.tab(tab_names[3]).grid_rowconfigure(3, weight=1)
+
+        # Frames
+        self.t4_config_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[3]), corner_radius=20,
+                                                      border_color="#333333", border_width=2)
+        self.t4_config_frame.grid(row=0, column=0, rowspan=4, sticky="ns")
+        self.t4_plot_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[3]), corner_radius=20,
+                                                    fg_color="white")
+        self.t4_plot_frame.grid(row=1, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
+        self.t4_display_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[3]),
+                                                       corner_radius=20)
+        self.t4_display_frame.grid(row=2, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
+        # frames in the display frame
+        self.t4_display_frame.grid_rowconfigure(0, weight=1)
+        self.t4_display_frame.grid_columnconfigure(0, weight=2)
+        self.t4_display_frame.grid_columnconfigure(1, weight=10)
+        self.t4_display_frame_1 = customtkinter.CTkFrame(self.t4_display_frame, corner_radius=20,
+                                                         fg_color="#707370")  # , width=320, height=180)
+        self.t4_display_frame_1.grid(row=0, column=0, padx=(5, 5), pady=(5, 5), sticky="nsew")
+        self.t4_display_frame_2 = customtkinter.CTkFrame(self.t4_display_frame, corner_radius=20,
+                                                         fg_color="#707370")  # , width=670, height=180)
+        self.t4_display_frame_2.grid(row=0, column=1, padx=(5, 5), pady=(5, 5), sticky="nsew")
+
+        self.t4_plot_frame.grid_rowconfigure(0, weight=1)
+        self.t4_plot_frame.grid_columnconfigure(0, weight=1)
+
+        self.t4_display_frame_1.grid_rowconfigure(0, weight=1)
+        self.t4_display_frame_1.grid_columnconfigure(0, weight=1)
+        self.t4_display_frame_2.grid_rowconfigure(0, weight=1)
+        self.t4_display_frame_2.grid_columnconfigure(0, weight=1)
+
+        # Designing the config frame (F4)
+        for row in range(10):
+            self.t4_config_frame.grid_rowconfigure(row, weight=1)
+
+        # Creating frames for chromosome
+        self.t4_chr_frame = customtkinter.CTkFrame(self.t4_config_frame, corner_radius=20)
+        self.t4_chr_frame.grid(row=0, columnspan=2, padx=5, pady=5, sticky="ew")
+
+        self.t4_ds = {'1': GUIDataStructure()}
+
+        label = customtkinter.CTkLabel(self.t4_chr_frame, text=f"Chromosome: ", font=self.header_font)
+        label.grid(row=0, column=0, sticky="w", padx=10, pady=(5, 0))
+        # upload button
+        upload_button = customtkinter.CTkButton(self.t4_chr_frame, image=upload_image, text="",
+                                                command=partial(self.t4_upload_event, "1", None),
+                                                width=15, height=10)
+        upload_button.grid(row=0, column=1, sticky="w", padx=10, pady=(5, 0))
+
+        specie_label = customtkinter.CTkLabel(self.t4_chr_frame, text="Species: ", font=self.header_font)
+        specie_label.grid(row=1, column=0, sticky="w", padx=10)
+        chr_label = customtkinter.CTkLabel(self.t4_chr_frame, text="Chromosome name: ", font=self.header_font)
+        chr_label.grid(row=1, column=1, sticky="w", padx=10)
+        self.t4_species_combobox = customtkinter.CTkComboBox(self.t4_chr_frame, values=species_list, width=100,
+                                                             command=partial(self.t4_specie_change_event))
+
+        self.t4_species_combobox.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
+        self.t4_species_combobox.set("")
+
+        self.t4_chr_combobox = customtkinter.CTkComboBox(self.t4_chr_frame, values=[],
+                                                         variable=self.t4_ds["1"].chromosome, width=100,
+                                                         command=partial(self.t4_chromosome_change_event))
+        self.t4_chr_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(0, 10))
+        self.t4_chr_combobox.set("")
+
+        # Representative Algorithm
+        representative_l = customtkinter.CTkLabel(self.t4_chr_frame, text="Representative Algorithm:",
+                                                  font=self.header_font)
+        representative_l.grid(row=3, columnspan=2, padx=10, sticky="w")
+        self.representative_algo = customtkinter.StringVar(value="")
+        t4_algo_combobox = customtkinter.CTkComboBox(self.t4_chr_frame, width=200, state="normal",
+                                                     values=["RSSP", "ARSSP", "Random from Outliers"],
+                                                     variable=self.representative_algo,
+                                                     command=partial(self.t4_algo_change_event))
+        t4_algo_combobox.grid(row=4, columnspan=2, sticky="w", padx=10, pady=(0, 10))
+        t4_algo_combobox.set("")
+
+        # Number of Segments
+        num_seg_label = customtkinter.CTkLabel(self.t4_chr_frame, text="# Segments:", font=self.header_font)
+        num_seg_label.grid(row=5, column=0, padx=10, pady=(0, 10))
+        self.t4_num_seg = tkinter.StringVar(value="")
+        self.t4_num_seg_entry = customtkinter.CTkEntry(self.t4_chr_frame, textvariable=self.t4_num_seg)
+        self.t4_num_seg_entry.configure(state="disable")
+        self.t4_num_seg_entry.grid(row=5, column=1, padx=10, pady=(0, 10), sticky="w")
+
+        # Window size
+        window_s_label = customtkinter.CTkLabel(self.t4_config_frame, text="Segment Size:", font=self.header_font)
+        window_s_label.grid(row=1, column=0, padx=10, pady=(20, 5))
+        self.t4_window_s = tkinter.StringVar(value="")
+        self.t4_window_entry = customtkinter.CTkEntry(self.t4_config_frame, textvariable=self.t2_window_s)
+        self.t4_window_entry.configure(state="disable")
+        self.t4_window_entry.grid(row=1, column=1, pady=(20, 5), padx=(0, 20), sticky="w")
+
+        # k_mer combo box
+        k_mer_label = customtkinter.CTkLabel(self.t4_config_frame, text="k-mer: ", font=self.header_font)
+        k_mer_label.grid(row=2, column=0, padx=10, pady=(10, 10))
+        k_mer_combobox = customtkinter.CTkComboBox(self.t4_config_frame, values=values_list, width=100,
+                                                   state="normal", variable=self.k_var)
+        k_mer_combobox.grid(row=2, column=1, sticky="w", pady=(10, 10))
+
+        # Distance metrics
+        dist_metric_l = customtkinter.CTkLabel(self.t4_config_frame, text="Distance Metric: ", font=self.header_font)
+        dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
+        dist_metric_combobox = customtkinter.CTkComboBox(self.t4_config_frame, values=DISTANCE_METRICS_LIST,
+                                                         width=120, variable=self.dist_metric)
+        dist_metric_combobox.grid(row=3, column=1, pady=(20, 5), sticky="w")
+        dist_metric_combobox.set("")
+
+        switch = customtkinter.CTkSwitch(self.t4_config_frame, text=f"Frequency CGR", variable=self.fcgr)
+        switch.grid(row=4, columnspan=2, pady=(20, 5))
+
+        # run button
+        # todo: fix the run button
+        run_button = customtkinter.CTkButton(self.t4_config_frame, text="Run",
+                                             command=partial(self.run_representative, None))
+        run_button.grid(row=7, columnspan=2)  # , sticky="ns")
+
+        # Appearance mode
+        appearance_label = customtkinter.CTkLabel(self.t4_config_frame, text="Theme: ", font=self.header_font)
+        appearance_label.grid(row=8, column=0, padx=10, pady=(20, 10))
+        appearance_mode = customtkinter.CTkOptionMenu(self.t4_config_frame, values=["Dark", "Light"], width=100,
+                                                      variable=self.appearance,
+                                                      command=self.change_appearance_mode_event)
+        appearance_mode.grid(row=8, column=1, sticky="w", pady=(20, 10))
+
+        # placing the progress bars
+        self.t4_step_length = None
+        self.t4_cgr_distance_history = None
+
+        self.t4_progress_bar = customtkinter.CTkProgressBar(self.tabview.tab(tab_names[3]))
+        self.t4_progress_bar.set(0)
+        self.t4_progress_bar.grid(row=0, column=1, padx=(10, 10), pady=(10, 10), sticky="nsew")
+
+        # # placing the slider bar
+        # self.t3_changing_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20)
+        # self.t3_changing_frame.grid(row=3, column=1, sticky="nsew")
+        #
+        # # Designing the changing frame
+        # self.t3_changing_frame.grid_columnconfigure(0, weight=1)
+        # self.t3_changing_frame.grid_columnconfigure(1, weight=10)
+        # self.t3_changing_frame.grid_columnconfigure(2, weight=1)
+        #
+        # self.t3_pic_num = customtkinter.IntVar(value=0)
+        # self.t3_scale = customtkinter.CTkSlider(self.t3_changing_frame, from_=0, orientation=customtkinter.HORIZONTAL,
+        #                                         variable=self.t3_pic_num,
+        #                                         command=partial(self._change_images, self.t3_pic_num.get(), "t3"))
+        # self.t3_scale.grid(row=0, column=1, pady=(10, 10), sticky="nsew")
+        #
+        # # previous-next button
+        # self.t3_previous_button = customtkinter.CTkButton(self.t3_changing_frame, image=self.previous_im, text="",
+        #                                                   width=10, command=partial(self.move_previous, "t3", None))
+        # self.t3_previous_button.grid(row=0, column=0)
+        #
+        # self.t3_next_button = customtkinter.CTkButton(self.t3_changing_frame, image=self.next_im, text="",
+        #                                               width=10, command=partial(self.move_next, "t3", None))
+        # self.t3_next_button.grid(row=0, column=2)
 
     @staticmethod
     def change_appearance_mode_event(new_appearance_mode: str):
@@ -1239,6 +1405,44 @@ class App(customtkinter.CTk):
 
             with open(f"{path}/{i}.pkl", 'wb') as f:
                 pickle.dump(dictionary, f)
+
+    def t4_specie_change_event(self, value):
+        self.t4_species_combobox.set(value)
+        self.t4_ds["1"].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
+
+        specie = self.t4_ds["1"].specie.get()
+        self.t4_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+        self.t4_ds["1"].invalidate_based_specie()
+
+    def t4_chromosome_change_event(self, value):
+        specie = self.t4_ds["1"].specie.get()
+        chromosome = self.t4_ds["1"].chromosome.get()
+        # set its sequence
+        self.t4_ds["1"].seq = ChromosomesHolder(specie).get_chromosome_sequence(chromosome)
+        self.t4_ds["1"].end_seq.set(len(self.t4_ds["1"].seq))
+        # enable window size
+        self.t4_window_entry.configure(state="normal")
+
+    def t4_upload_event(self, sender, value):
+        file_path = filedialog.askopenfilename()
+        _, sequence = ChromosomesHolder.read_fasta(file_path)
+        if len(sequence) > 0:
+            self.t4_ds[sender].specie.set("Custom")
+            self.t4_ds[sender].invalidate_based_specie()
+            self.t4_ds[sender].seq = sequence
+            self.t4_ds[sender].end_seq.set(len(self.t4_ds[sender].seq))
+            self.sync_text_vars(self.t4_ds, sender)
+
+    def t4_algo_change_event(self, value):
+        if value == "ARSSP":
+            self.t4_num_seg.set("")
+            self.t4_num_seg_entry.configure(state="normal")
+        else:
+            self.t4_num_seg.set("1")
+            self.t4_num_seg_entry.configure(state="disable")
+
+    def run_representative(self, value):
+        pass
 
 
 if __name__ == "__main__":
