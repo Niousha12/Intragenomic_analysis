@@ -397,7 +397,6 @@ class App(customtkinter.CTk):
         appearance_mode.grid(row=8, column=1, sticky="w", pady=(20, 10))
 
         # placing the progress bars
-        self.step_length = None
         self.cgr_distance_history = None
         self.t2_progress_bar = customtkinter.CTkProgressBar(self.tabview.tab(tab_names[1]))
         self.t2_progress_bar.set(0)
@@ -494,15 +493,15 @@ class App(customtkinter.CTk):
         chr_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Chromosome name: ", font=self.header_font)
         chr_label.grid(row=1, column=1, sticky="w", padx=10)
         self.t3_species_combobox_1 = customtkinter.CTkComboBox(self.t3_chr_frame, values=species_list, width=100,
-                                                             # variable=self.t3_ds["1"].specie,
-                                                             command=partial(self.t3_specie_change_event, "1"))
+                                                               # variable=self.t3_ds["1"].specie,
+                                                               command=partial(self.t3_specie_change_event, "1"))
 
         self.t3_species_combobox_1.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
         self.t3_species_combobox_1.set("")
 
         self.t3_chr_combobox_1 = customtkinter.CTkComboBox(self.t3_chr_frame, values=[],
-                                                         variable=self.t3_ds["1"].chromosome, width=100,
-                                                         command=partial(self.t3_chromosome_change_event, "1"))
+                                                           variable=self.t3_ds["1"].chromosome, width=100,
+                                                           command=partial(self.t3_chromosome_change_event, "1"))
         self.t3_chr_combobox_1.grid(row=2, column=1, sticky="w", padx=10, pady=(0, 10))
         self.t3_chr_combobox_1.set("")
 
@@ -544,8 +543,8 @@ class App(customtkinter.CTk):
         chr_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Chromosome name: ", font=self.header_font)
         chr_label.grid(row=1, column=1, sticky="w", padx=10)
         self.t3_species_combobox_2 = customtkinter.CTkComboBox(self.t3_chr_frame_2, values=species_list, width=100,
-                                                              # variable=self.t3_ds["2"].specie,
-                                                              command=partial(self.t3_specie_change_event, "2"))
+                                                               # variable=self.t3_ds["2"].specie,
+                                                               command=partial(self.t3_specie_change_event, "2"))
 
         self.t3_species_combobox_2.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
         self.t3_species_combobox_2.set("")
@@ -596,7 +595,6 @@ class App(customtkinter.CTk):
         appearance_mode.grid(row=8, column=1, sticky="w", pady=(20, 10))
 
         # placing the progress bars
-        self.t3_step_length = None
         self.t3_cgr_distance_history = None
 
         self.t3_progress_bar = customtkinter.CTkProgressBar(self.tabview.tab(tab_names[2]))
@@ -762,7 +760,6 @@ class App(customtkinter.CTk):
         appearance_mode.grid(row=8, column=1, sticky="w", pady=(20, 10))
 
         # placing the progress bars
-        self.t4_step_length = None
         self.t4_cgr_distance_history = None
         self.t4_representative_index = None
 
@@ -770,29 +767,28 @@ class App(customtkinter.CTk):
         self.t4_progress_bar.set(0)
         self.t4_progress_bar.grid(row=0, column=1, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
-        # # todo: placing the slider bar
-        # self.t3_changing_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20)
-        # self.t3_changing_frame.grid(row=3, column=1, sticky="nsew")
-        #
-        # # Designing the changing frame
-        # self.t3_changing_frame.grid_columnconfigure(0, weight=1)
-        # self.t3_changing_frame.grid_columnconfigure(1, weight=10)
-        # self.t3_changing_frame.grid_columnconfigure(2, weight=1)
-        #
-        # self.t3_pic_num = customtkinter.IntVar(value=0)
-        # self.t3_scale = customtkinter.CTkSlider(self.t3_changing_frame, from_=0, orientation=customtkinter.HORIZONTAL,
-        #                                         variable=self.t3_pic_num,
-        #                                         command=partial(self._change_images, self.t3_pic_num.get(), "t3"))
-        # self.t3_scale.grid(row=0, column=1, pady=(10, 10), sticky="nsew")
-        #
-        # # previous-next button
-        # self.t3_previous_button = customtkinter.CTkButton(self.t3_changing_frame, image=self.previous_im, text="",
-        #                                                   width=10, command=partial(self.move_previous, "t3", None))
-        # self.t3_previous_button.grid(row=0, column=0)
-        #
-        # self.t3_next_button = customtkinter.CTkButton(self.t3_changing_frame, image=self.next_im, text="",
-        #                                               width=10, command=partial(self.move_next, "t3", None))
-        # self.t3_next_button.grid(row=0, column=2)
+        self.t4_changing_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[3]), corner_radius=20)
+        self.t4_changing_frame.grid(row=3, column=1, sticky="nsew")
+
+        # Designing the changing frame
+        self.t4_changing_frame.grid_columnconfigure(0, weight=1)
+        self.t4_changing_frame.grid_columnconfigure(1, weight=10)
+        self.t4_changing_frame.grid_columnconfigure(2, weight=1)
+
+        self.t4_pic_num = customtkinter.IntVar(value=0)
+        self.t4_scale = customtkinter.CTkSlider(self.t4_changing_frame, from_=0, orientation=customtkinter.HORIZONTAL,
+                                                variable=self.t4_pic_num,
+                                                command=partial(self._change_images, self.t4_pic_num.get(), "t4"))
+        self.t4_scale.grid(row=0, column=1, pady=(10, 10), sticky="nsew")
+
+        # previous-next button
+        self.t4_previous_button = customtkinter.CTkButton(self.t4_changing_frame, image=self.previous_im, text="",
+                                                          width=10, command=partial(self.move_previous, "t4", None))
+        self.t4_previous_button.grid(row=0, column=0)
+
+        self.t4_next_button = customtkinter.CTkButton(self.t4_changing_frame, image=self.next_im, text="",
+                                                      width=10, command=partial(self.move_next, "t4", None))
+        self.t4_next_button.grid(row=0, column=2)
 
     @staticmethod
     def change_appearance_mode_event(new_appearance_mode: str):
@@ -993,6 +989,7 @@ class App(customtkinter.CTk):
 
         # Use grid to place the canvas
         canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+        plt.close()
 
     def plot_fcgrs(self, fcgrs, colormap=False, background_color=None):
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
@@ -1083,12 +1080,12 @@ class App(customtkinter.CTk):
 
     def t2_run(self):
         self.cgr_distance_history = []
-        self.step_length = np.floor(len(self.t2_ds["1"].seq) / int(self.t2_window_s.get()))
+        step_length = np.floor(len(self.t2_ds["1"].seq) / int(self.t2_window_s.get()))
         self.t2_progress_bar.set(0)
         self.t2_pic_num.set(0)
-        for i in range(int(self.step_length) - 1):
+        for i in range(int(step_length) - 1):
             dictionary = {}
-            self.t2_progress_bar.set((i + 2) / int(self.step_length))
+            self.t2_progress_bar.set((i + 2) / int(step_length))
             b1 = i * int(self.t2_window_s.get())
             e1 = (i + 1) * int(self.t2_window_s.get())
             b2 = (i + 1) * int(self.t2_window_s.get())
@@ -1144,6 +1141,9 @@ class App(customtkinter.CTk):
         elif tab_name == "t3":
             dist_history = self.t3_cgr_distance_history
             frame = self.t3_plot_frame
+        elif tab_name == "t4":
+            dist_history = self.t4_cgr_distance_history
+            frame = self.t4_plot_frame
 
         fig, ax1 = plt.subplots(figsize=(200, 3))
         x = np.arange(len(dist_history))
@@ -1168,6 +1168,7 @@ class App(customtkinter.CTk):
         canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
         # Use grid to place the canvas
         canvas.get_tk_widget().grid(row=0, column=0, padx=(8, 8), pady=5, sticky='nsew')
+        plt.close()
 
     def _plot_fcgrs(self, image_index, tab_name):
         frame, fig = None, None
@@ -1183,6 +1184,32 @@ class App(customtkinter.CTk):
             with open(f"{self.temp_output_path}/common_ref/pickle/{image_index}.pkl", 'rb') as handle:
                 dictionary = pickle.load(handle)
             frame = self.t3_display_frame_2
+
+            fig, (ax2, ax3) = plt.subplots(1, 2)
+            extent = 0, 1, 0, 1
+
+            display_frame_color = frame.cget("fg_color")
+            fig.patch.set_facecolor(display_frame_color)
+
+            scale_2, scaling_2 = self.get_scaling(dictionary["chr_len"])
+            b2 = dictionary["b"]
+            e2 = dictionary["e"]
+
+            # plot the data on the subplots
+            im2 = ax2.imshow(dictionary['diff'], cmap='RdBu', norm=plt.Normalize(-100, 100), extent=extent)
+            ax2.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+            ax2.set_title(f'distance = {round(dictionary["distance"], 4)}')
+
+            img2 = CGR.array2img(dictionary["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+            img2 = Image.fromarray(img2, 'L')
+            ax3.imshow(img2, cmap='gray', extent=extent)
+            ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+            ax3.set_title(f'{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
+
+        elif tab_name == "t4":
+            with open(f"{self.temp_output_path}/representative/pickle/{image_index}.pkl", 'rb') as handle:
+                dictionary = pickle.load(handle)
+            frame = self.t4_display_frame_2
 
             fig, (ax2, ax3) = plt.subplots(1, 2)
             extent = 0, 1, 0, 1
@@ -1227,21 +1254,26 @@ class App(customtkinter.CTk):
             pic_num = self.t2_pic_num
         elif tab_name == "t3":
             pic_num = self.t3_pic_num
+        elif tab_name == "t4":
+            pic_num = self.t4_pic_num
 
         if pic_num.get() > 0:
             pic_num.set(pic_num.get() - 1)
             self._change_images(pic_num.get(), tab_name, None)
 
     def move_next(self, tab_name, value):
-        pic_num, dist_history = None, None
+        pic_num, dist_history_len = None, None
         if tab_name == "t2":
             pic_num = self.t2_pic_num
-            dist_history = self.cgr_distance_history
+            dist_history_len = len(self.cgr_distance_history)
         elif tab_name == "t3":
             pic_num = self.t3_pic_num
-            dist_history = self.t3_cgr_distance_history
+            dist_history_len = len(self.t3_cgr_distance_history)
+        elif tab_name == "t4":
+            pic_num = self.t4_pic_num
+            dist_history_len = len(self.t4_cgr_distance_history)
 
-        if pic_num.get() < len(dist_history) - 1:
+        if pic_num.get() < dist_history_len - 1:
             pic_num.set(pic_num.get() + 1)
             self._change_images(pic_num.get(), tab_name, None)
 
@@ -1356,13 +1388,14 @@ class App(customtkinter.CTk):
             canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
             # Use grid to place the canvas
             canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+            plt.close()
 
             # Display the plot and the first set
             self._change_images(0, "t3", None)
 
     def t3_run(self):
         self.t3_cgr_distance_history = []
-        self.t3_step_length = np.floor(len(self.t3_ds["2"].seq) / int(self.t3_window_s.get()))
+        t3_step_length = np.floor(len(self.t3_ds["2"].seq) / int(self.t3_window_s.get()))
         self.t3_progress_bar.set(0)
         self.t3_pic_num.set(0)
 
@@ -1370,14 +1403,14 @@ class App(customtkinter.CTk):
         ref_e = int(self.t3_ds["1"].end_seq.get())
         ref_cgr = CGR(self.t3_ds["1"].seq[ref_b:ref_e], self.k_var.get())
 
-        self.t3_progress_bar.set(1 / (int(self.t3_step_length) + 2))  # start progress bar
+        self.t3_progress_bar.set(1 / (int(t3_step_length) + 2))  # start progress bar
 
         if self.fcgr.get() == 1:
             im1 = ref_cgr.get_fcgr()
         else:
             im1 = ref_cgr.get_cgr()
 
-        self.t3_progress_bar.set(2 / (int(self.t3_step_length) + 2))  # update progress bar
+        self.t3_progress_bar.set(2 / (int(t3_step_length) + 2))  # update progress bar
 
         ref_dict = {"(f)cgr": im1}
 
@@ -1388,8 +1421,8 @@ class App(customtkinter.CTk):
             pickle.dump(ref_dict, f)
 
         # the sliding sequence
-        for i in range(int(self.t3_step_length)):
-            self.t3_progress_bar.set((i + 3) / (int(self.t3_step_length) + 2))
+        for i in range(int(t3_step_length)):
+            self.t3_progress_bar.set((i + 3) / (int(t3_step_length) + 2))
             b2 = i * int(self.t3_window_s.get())
             e2 = (i + 1) * int(self.t3_window_s.get())
 
@@ -1464,54 +1497,54 @@ class App(customtkinter.CTk):
         if foo_thread_3.is_alive():
             self.after(20, self.t4_check_thread)
         else:
-            pass  # todo: complete this
-        #     self.t3_scale.configure(to=int(len(self.t3_cgr_distance_history) - 1))  # Update the scale range
-        #
-        #     # Display the reference image
-        #     with open(f"{self.temp_output_path}/common_ref/pickle/ref.pkl", 'rb') as handle:
-        #         dictionary = pickle.load(handle)
-        #
-        #     fig, (ax1) = plt.subplots(1, 1)
-        #     extent = 0, 1, 0, 1
-        #
-        #     display_frame_color = self.t3_display_frame_1.cget("fg_color")
-        #     fig.patch.set_facecolor(display_frame_color)
-        #
-        #     img1 = CGR.array2img(dictionary["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
-        #     img1 = Image.fromarray(img1, 'L')
-        #     ax1.imshow(img1, cmap='gray', extent=extent)
-        #     ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-        #     ax1.set_title(f'Reference')
-        #
-        #     # Clear the previous figure from the display frame if any
-        #     for widget in self.t3_display_frame_1.winfo_children():
-        #         widget.destroy()
-        #
-        #     # Create a canvas and add the figure to it
-        #     canvas = FigureCanvasTkAgg(fig, master=self.t3_display_frame_1)
-        #     canvas.draw()
-        #
-        #     # Set the canvas size explicitly
-        #     canvas_width = self.t3_display_frame_1.cget("width")
-        #     canvas_height = self.t3_display_frame_1.cget("height")
-        #     canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
-        #     # Use grid to place the canvas
-        #     canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
-        #
-        #     # Display the plot and the first set
-        #     self._change_images(0, "t3", None)
+            self.t4_scale.configure(to=int(len(self.t4_cgr_distance_history) - 1))  # Update the scale range
+
+            # Display the reference image
+            with open(f"{self.temp_output_path}/representative/pickle/{self.t4_representative_index}.pkl",
+                      'rb') as handle:
+                dictionary = pickle.load(handle)
+
+            fig, (ax1) = plt.subplots(1, 1)
+            extent = 0, 1, 0, 1
+
+            display_frame_color = self.t4_display_frame_1.cget("fg_color")
+            fig.patch.set_facecolor(display_frame_color)
+
+            img1 = CGR.array2img(dictionary["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+            img1 = Image.fromarray(img1, 'L')
+            ax1.imshow(img1, cmap='gray', extent=extent)
+            ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+            ax1.set_title(f'Reference')
+
+            # Clear the previous figure from the display frame if any
+            for widget in self.t4_display_frame_1.winfo_children():
+                widget.destroy()
+
+            # Create a canvas and add the figure to it
+            canvas = FigureCanvasTkAgg(fig, master=self.t4_display_frame_1)
+            canvas.draw()
+
+            # Set the canvas size explicitly
+            canvas_width = self.t4_display_frame_1.cget("width")
+            canvas_height = self.t4_display_frame_1.cget("height")
+            canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
+            # Use grid to place the canvas
+            canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+            plt.close()
+
+            # Display the plot and the first set
+            self._change_images(0, "t4", None)
 
     def t4_run(self):
-        # self.t4_pic_num.set(0)
+        self.t4_pic_num.set(0)
         if self.representative_algo.get() == "ARSSP":
             pass  # todo: implement ARSSP
         else:  # RSSP and random
-            self.t4_step_length = np.floor(len(self.t4_ds["1"].seq) / int(self.t4_window_s.get()))
-            # todo: progress bar doesn't work correctly
+            t4_step_length = np.floor(len(self.t4_ds["1"].seq) / int(self.t4_window_s.get()))
             if self.representative_algo.get() == "RSSP":
-                t4_step_length_all = self.t4_step_length + int(self.t4_step_length * (self.t4_step_length + 1) / 2)
+                t4_step_length_all = t4_step_length + int(t4_step_length * (t4_step_length + 1) / 2) + t4_step_length
             else:
-                t4_step_length_all = self.t4_step_length
+                t4_step_length_all = t4_step_length + t4_step_length
             self.t4_progress_bar.set(0)
             progress = 0
 
@@ -1520,7 +1553,8 @@ class App(customtkinter.CTk):
                 os.makedirs(path)
 
             fcgrs_list = []
-            for i in range(int(self.t4_step_length) - 1):
+            information_list = []
+            for i in range(int(t4_step_length)):
                 progress += 1
                 self.t4_progress_bar.set(progress / int(t4_step_length_all))
 
@@ -1538,33 +1572,43 @@ class App(customtkinter.CTk):
                 # get segment information
                 segment_information = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_annotation_of_segment(
                     self.t4_ds["1"].chromosome.get(), b1, int(self.t4_window_s.get()), group="cytoband")
-
-                dictionary = {"(f)cgr": im, "b": b1, "e": e1, "chr_len": len(self.t4_ds["1"].seq),
-                              "information": segment_information}
-
-                with open(f"{path}/{i}.pkl", 'wb') as f:
-                    pickle.dump(dictionary, f)
+                information_list.append(segment_information)
 
             if self.representative_algo.get() == "RSSP":
                 # get distance matrix
-                self.t4_cgr_distance_history = np.zeros((len(fcgrs_list), len(fcgrs_list)))
-                for i in range(self.t4_cgr_distance_history.shape[0]):
+                distance_matrix = np.zeros((len(fcgrs_list), len(fcgrs_list)))
+                for i in range(distance_matrix.shape[0]):
                     for j in range(i + 1):
                         progress += 1
                         self.t4_progress_bar.set(progress / int(t4_step_length_all))
 
-                        self.t4_cgr_distance_history[i, j] = get_dist(fcgrs_list[i], fcgrs_list[j],
-                                                                      dist_m=self.dist_metric.get())
-                        self.t4_cgr_distance_history[j, i] = self.t4_cgr_distance_history[i, j]
+                        distance_matrix[i, j] = get_dist(fcgrs_list[i], fcgrs_list[j], dist_m=self.dist_metric.get())
+                        distance_matrix[j, i] = distance_matrix[i, j]
 
                 # get representative
-                centroid_index = ChromosomeRepresentativeSelection.find_centroid(self.t4_cgr_distance_history, None)
+                self.t4_representative_index = ChromosomeRepresentativeSelection.find_centroid(distance_matrix, None)
             else:  # random
-                centroid_index = ChromosomesHolder(self.t4_ds["1"].specie.get()).choose_random_fragment_index(
+                self.t4_representative_index = ChromosomesHolder(
+                    self.t4_ds["1"].specie.get()).choose_random_fragment_index(
                     self.t4_ds["1"].chromosome.get(), int(self.t4_window_s.get()), outlier=True)
 
-            # save the centroid
-            self.t4_representative_index = centroid_index
+            # get the difference from the centroid
+            self.t4_cgr_distance_history = []
+            centroid_fcgr = fcgrs_list[self.t4_representative_index]
+            for i in range(len(fcgrs_list)):
+                progress += 1
+                self.t4_progress_bar.set(progress / int(t4_step_length_all))
+
+                diff = fcgrs_list[i] - centroid_fcgr
+                dist = get_dist(centroid_fcgr, fcgrs_list[i], dist_m=self.dist_metric.get())
+                self.t4_cgr_distance_history.append(dist)
+
+                dictionary = {"(f)cgr": fcgrs_list[i], "b": i * int(self.t4_window_s.get()),
+                              "e": (i + 1) * int(self.t4_window_s.get()), "chr_len": len(self.t4_ds["1"].seq),
+                              "diff": diff, "distance": dist, "information": information_list[i]}
+
+                with open(f"{path}/{i}.pkl", 'wb') as f:
+                    pickle.dump(dictionary, f)
 
 
 if __name__ == "__main__":
