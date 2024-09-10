@@ -493,18 +493,18 @@ class App(customtkinter.CTk):
         specie_label.grid(row=1, column=0, sticky="w", padx=10)
         chr_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Chromosome name: ", font=self.header_font)
         chr_label.grid(row=1, column=1, sticky="w", padx=10)
-        self.t3_species_combobox = customtkinter.CTkComboBox(self.t3_chr_frame, values=species_list, width=100,
+        self.t3_species_combobox_1 = customtkinter.CTkComboBox(self.t3_chr_frame, values=species_list, width=100,
                                                              # variable=self.t3_ds["1"].specie,
                                                              command=partial(self.t3_specie_change_event, "1"))
 
-        self.t3_species_combobox.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
-        self.t3_species_combobox.set("")
+        self.t3_species_combobox_1.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
+        self.t3_species_combobox_1.set("")
 
-        self.t3_chr_combobox = customtkinter.CTkComboBox(self.t3_chr_frame, values=[],
+        self.t3_chr_combobox_1 = customtkinter.CTkComboBox(self.t3_chr_frame, values=[],
                                                          variable=self.t3_ds["1"].chromosome, width=100,
                                                          command=partial(self.t3_chromosome_change_event, "1"))
-        self.t3_chr_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(0, 10))
-        self.t3_chr_combobox.set("")
+        self.t3_chr_combobox_1.grid(row=2, column=1, sticky="w", padx=10, pady=(0, 10))
+        self.t3_chr_combobox_1.set("")
 
         # start and end
         start_label = customtkinter.CTkLabel(self.t3_chr_frame, text="Start: ", font=self.header_font)
@@ -543,12 +543,12 @@ class App(customtkinter.CTk):
         specie_label.grid(row=1, column=0, sticky="w", padx=10)
         chr_label = customtkinter.CTkLabel(self.t3_chr_frame_2, text="Chromosome name: ", font=self.header_font)
         chr_label.grid(row=1, column=1, sticky="w", padx=10)
-        self.t3_specie_combobox_2 = customtkinter.CTkComboBox(self.t3_chr_frame_2, values=species_list, width=100,
+        self.t3_species_combobox_2 = customtkinter.CTkComboBox(self.t3_chr_frame_2, values=species_list, width=100,
                                                               # variable=self.t3_ds["2"].specie,
                                                               command=partial(self.t3_specie_change_event, "2"))
 
-        self.t3_specie_combobox_2.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
-        self.t3_specie_combobox_2.set("")
+        self.t3_species_combobox_2.grid(row=2, column=0, sticky="w", padx=10, pady=(0, 10))
+        self.t3_species_combobox_2.set("")
 
         self.t3_chr_combobox_2 = customtkinter.CTkComboBox(self.t3_chr_frame_2, values=[],
                                                            variable=self.t3_ds["2"].chromosome, width=100,
@@ -707,13 +707,12 @@ class App(customtkinter.CTk):
                                                   font=self.header_font)
         representative_l.grid(row=3, columnspan=2, padx=10, sticky="w")
         self.representative_algo = customtkinter.StringVar(value="")
-        # todo: random from outlier is only available for human (fix this)
-        t4_algo_combobox = customtkinter.CTkComboBox(self.t4_chr_frame, width=200, state="normal",
-                                                     values=["RSSP", "ARSSP", "Random from Outliers"],
-                                                     variable=self.representative_algo,
-                                                     command=partial(self.t4_algo_change_event))
-        t4_algo_combobox.grid(row=4, columnspan=2, sticky="w", padx=10, pady=(0, 10))
-        t4_algo_combobox.set("")
+        self.t4_algo_combobox = customtkinter.CTkComboBox(self.t4_chr_frame, width=200, state="normal",
+                                                          values=["RSSP", "ARSSP"],
+                                                          variable=self.representative_algo,
+                                                          command=partial(self.t4_algo_change_event))
+        self.t4_algo_combobox.grid(row=4, columnspan=2, sticky="w", padx=10, pady=(0, 10))
+        self.t4_algo_combobox.set("")
 
         # Number of Segments
         num_seg_label = customtkinter.CTkLabel(self.t4_chr_frame, text="# Segments:", font=self.header_font)
@@ -818,6 +817,7 @@ class App(customtkinter.CTk):
         _, sequence = ChromosomesHolder.read_fasta(file_path)
         if len(sequence) > 0:
             self.t1_ds[sender].specie.set("Custom")
+            self.t1_species_combobox[sender].set("Custom")
             self.t1_ds[sender].invalidate_based_specie()
             self.t1_chr_combobox[sender].configure(values=[])
             self.t1_parts_name_combobox[sender].configure(values=[])
@@ -1049,6 +1049,7 @@ class App(customtkinter.CTk):
         _, sequence = ChromosomesHolder.read_fasta(file_path)
         if len(sequence) > 0:
             self.t2_ds[sender].specie.set("Custom")
+            self.t2_species_combobox[sender].set("Custom")
             self.t2_ds[sender].invalidate_based_specie()
             self.t2_chr_combobox.configure(values=[])
             self.t2_window_entry.configure(state="normal")
@@ -1253,23 +1254,25 @@ class App(customtkinter.CTk):
             self.t3_ds[sender].seq = sequence
             self.t3_ds[sender].end_seq.set(len(self.t3_ds[sender].seq))
             if sender == "1":
-                self.t3_chr_combobox.configure(values=[])
+                self.t3_species_combobox_1.set("Custom")
+                self.t3_chr_combobox_1.configure(values=[])
                 self.t3_parts_name_combobox.configure(values=[])
             elif sender == "2":
+                self.t3_species_combobox_2.set("Custom")
                 self.t3_chr_combobox_2.configure(values=[])
                 self.t3_window_entry.configure(state="normal")
             self.sync_text_vars(self.t3_ds, sender)
 
     def t3_specie_change_event(self, sender, value):
         if sender == "1":
-            self.t3_species_combobox.set(value)
+            self.t3_species_combobox_1.set(value)
         elif sender == "2":
-            self.t3_specie_combobox_2.set(value)
+            self.t3_species_combobox_2.set(value)
         self.t3_ds[sender].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
 
         specie = self.t3_ds[sender].specie.get()
         if sender == "1":
-            self.t3_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+            self.t3_chr_combobox_1.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
             # disable annotation combobox
             self.t3_parts_name_combobox.configure(values=[])
         elif sender == "2":
@@ -1416,6 +1419,11 @@ class App(customtkinter.CTk):
         self.t4_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
         self.t4_ds["1"].invalidate_based_specie()
 
+        if specie == "Human":
+            self.t4_algo_combobox.configure(values=["RSSP", "ARSSP", "Random from Outliers"])
+        else:
+            self.t4_algo_combobox.configure(values=["RSSP", "ARSSP"])
+
     def t4_chromosome_change_event(self, value):
         specie = self.t4_ds["1"].specie.get()
         chromosome = self.t4_ds["1"].chromosome.get()
@@ -1430,6 +1438,8 @@ class App(customtkinter.CTk):
         _, sequence = ChromosomesHolder.read_fasta(file_path)
         if len(sequence) > 0:
             self.t4_ds[sender].specie.set("Custom")
+            self.t4_species_combobox.set("Custom")
+            self.t4_algo_combobox.configure(values=["RSSP", "ARSSP"])
             self.t4_ds[sender].invalidate_based_specie()
             self.t4_ds[sender].seq = sequence
             self.t4_ds[sender].end_seq.set(len(self.t4_ds[sender].seq))
