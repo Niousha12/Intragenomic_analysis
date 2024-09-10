@@ -23,6 +23,7 @@ from chaos_game_representation import CGR
 from chromosomes_holder import ChromosomesHolder
 from constants import DISTANCE_METRICS_LIST, SCIENTIFIC_NAMES, RESOLUTION_DICT, REVERSE_SCIENTIFIC_NAMES
 from distances.distance_metrics import get_dist
+from representative_selection import ChromosomeRepresentativeSelection
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -706,6 +707,7 @@ class App(customtkinter.CTk):
                                                   font=self.header_font)
         representative_l.grid(row=3, columnspan=2, padx=10, sticky="w")
         self.representative_algo = customtkinter.StringVar(value="")
+        # todo: random from outlier is only available for human (fix this)
         t4_algo_combobox = customtkinter.CTkComboBox(self.t4_chr_frame, width=200, state="normal",
                                                      values=["RSSP", "ARSSP", "Random from Outliers"],
                                                      variable=self.representative_algo,
@@ -725,7 +727,7 @@ class App(customtkinter.CTk):
         window_s_label = customtkinter.CTkLabel(self.t4_config_frame, text="Segment Size:", font=self.header_font)
         window_s_label.grid(row=1, column=0, padx=10, pady=(20, 5))
         self.t4_window_s = tkinter.StringVar(value="")
-        self.t4_window_entry = customtkinter.CTkEntry(self.t4_config_frame, textvariable=self.t2_window_s)
+        self.t4_window_entry = customtkinter.CTkEntry(self.t4_config_frame, textvariable=self.t4_window_s)
         self.t4_window_entry.configure(state="disable")
         self.t4_window_entry.grid(row=1, column=1, pady=(20, 5), padx=(0, 20), sticky="w")
 
@@ -748,7 +750,6 @@ class App(customtkinter.CTk):
         switch.grid(row=4, columnspan=2, pady=(20, 5))
 
         # run button
-        # todo: fix the run button
         run_button = customtkinter.CTkButton(self.t4_config_frame, text="Run",
                                              command=partial(self.run_representative, None))
         run_button.grid(row=7, columnspan=2)  # , sticky="ns")
@@ -764,12 +765,13 @@ class App(customtkinter.CTk):
         # placing the progress bars
         self.t4_step_length = None
         self.t4_cgr_distance_history = None
+        self.t4_representative_index = None
 
         self.t4_progress_bar = customtkinter.CTkProgressBar(self.tabview.tab(tab_names[3]))
         self.t4_progress_bar.set(0)
         self.t4_progress_bar.grid(row=0, column=1, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
-        # # placing the slider bar
+        # # todo: placing the slider bar
         # self.t3_changing_frame = customtkinter.CTkFrame(self.tabview.tab(tab_names[2]), corner_radius=20)
         # self.t3_changing_frame.grid(row=3, column=1, sticky="nsew")
         #
@@ -1442,7 +1444,117 @@ class App(customtkinter.CTk):
             self.t4_num_seg_entry.configure(state="disable")
 
     def run_representative(self, value):
-        pass
+        global foo_thread_3
+        foo_thread_3 = threading.Thread(target=self.t4_run)
+        foo_thread_3.daemon = True
+        foo_thread_3.start()
+        self.after(20, self.t4_check_thread)
+
+    def t4_check_thread(self):
+        if foo_thread_3.is_alive():
+            self.after(20, self.t4_check_thread)
+        else:
+            pass  # todo: complete this
+        #     self.t3_scale.configure(to=int(len(self.t3_cgr_distance_history) - 1))  # Update the scale range
+        #
+        #     # Display the reference image
+        #     with open(f"{self.temp_output_path}/common_ref/pickle/ref.pkl", 'rb') as handle:
+        #         dictionary = pickle.load(handle)
+        #
+        #     fig, (ax1) = plt.subplots(1, 1)
+        #     extent = 0, 1, 0, 1
+        #
+        #     display_frame_color = self.t3_display_frame_1.cget("fg_color")
+        #     fig.patch.set_facecolor(display_frame_color)
+        #
+        #     img1 = CGR.array2img(dictionary["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+        #     img1 = Image.fromarray(img1, 'L')
+        #     ax1.imshow(img1, cmap='gray', extent=extent)
+        #     ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+        #     ax1.set_title(f'Reference')
+        #
+        #     # Clear the previous figure from the display frame if any
+        #     for widget in self.t3_display_frame_1.winfo_children():
+        #         widget.destroy()
+        #
+        #     # Create a canvas and add the figure to it
+        #     canvas = FigureCanvasTkAgg(fig, master=self.t3_display_frame_1)
+        #     canvas.draw()
+        #
+        #     # Set the canvas size explicitly
+        #     canvas_width = self.t3_display_frame_1.cget("width")
+        #     canvas_height = self.t3_display_frame_1.cget("height")
+        #     canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
+        #     # Use grid to place the canvas
+        #     canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+        #
+        #     # Display the plot and the first set
+        #     self._change_images(0, "t3", None)
+
+    def t4_run(self):
+        # self.t4_pic_num.set(0)
+        if self.representative_algo.get() == "ARSSP":
+            pass  # todo: implement ARSSP
+        else:  # RSSP and random
+            self.t4_step_length = np.floor(len(self.t4_ds["1"].seq) / int(self.t4_window_s.get()))
+            # todo: progress bar doesn't work correctly
+            if self.representative_algo.get() == "RSSP":
+                t4_step_length_all = self.t4_step_length + int(self.t4_step_length * (self.t4_step_length + 1) / 2)
+            else:
+                t4_step_length_all = self.t4_step_length
+            self.t4_progress_bar.set(0)
+            progress = 0
+
+            path = f"{self.temp_output_path}/representative/pickle"
+            if not os.path.exists(path):
+                os.makedirs(path)
+
+            fcgrs_list = []
+            for i in range(int(self.t4_step_length) - 1):
+                progress += 1
+                self.t4_progress_bar.set(progress / int(t4_step_length_all))
+
+                b1 = i * int(self.t4_window_s.get())
+                e1 = (i + 1) * int(self.t4_window_s.get())
+
+                # get fcgr
+                cgr = CGR(self.t4_ds["1"].seq[b1:e1], self.k_var.get())
+                if self.fcgr.get() == 1:
+                    im = cgr.get_fcgr()
+                else:
+                    im = cgr.get_cgr()
+
+                fcgrs_list.append(im)
+                # get segment information
+                segment_information = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_annotation_of_segment(
+                    self.t4_ds["1"].chromosome.get(), b1, int(self.t4_window_s.get()), group="cytoband")
+
+                dictionary = {"(f)cgr": im, "b": b1, "e": e1, "chr_len": len(self.t4_ds["1"].seq),
+                              "information": segment_information}
+
+                with open(f"{path}/{i}.pkl", 'wb') as f:
+                    pickle.dump(dictionary, f)
+
+            if self.representative_algo.get() == "RSSP":
+                # get distance matrix
+                self.t4_cgr_distance_history = np.zeros((len(fcgrs_list), len(fcgrs_list)))
+                for i in range(self.t4_cgr_distance_history.shape[0]):
+                    for j in range(i + 1):
+                        progress += 1
+                        self.t4_progress_bar.set(progress / int(t4_step_length_all))
+
+                        self.t4_cgr_distance_history[i, j] = get_dist(fcgrs_list[i], fcgrs_list[j],
+                                                                      dist_m=self.dist_metric.get())
+                        self.t4_cgr_distance_history[j, i] = self.t4_cgr_distance_history[i, j]
+
+                # get representative
+                centroid_index = ChromosomeRepresentativeSelection.find_centroid(self.t4_cgr_distance_history, None)
+            else:  # random
+                centroid_index = ChromosomesHolder(self.t4_ds["1"].specie.get()).choose_random_fragment_index(
+                    self.t4_ds["1"].chromosome.get(), int(self.t4_window_s.get()), outlier=True)
+
+            # save the centroid
+            self.t4_representative_index = centroid_index
 
 
 if __name__ == "__main__":
