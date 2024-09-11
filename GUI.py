@@ -3,6 +3,7 @@ import pickle
 import threading
 import tkinter
 import tkinter.messagebox
+import time
 from functools import partial
 from pathlib import Path
 import glob
@@ -768,6 +769,7 @@ class App(customtkinter.CTk):
         appearance_mode.grid(row=8, column=1, sticky="w", pady=(20, 10))
 
         # placing the progress bars
+        self.execution_time = None
         self.t4_cgr_distance_history = None
         self.t4_representative_index = None
 
@@ -1505,7 +1507,6 @@ class App(customtkinter.CTk):
         if foo_thread_3.is_alive():
             self.after(20, self.t4_check_thread)
         else:
-            # todo: add message: self.output_message.configure(text="Description: ")
             self.t4_scale.configure(to=int(len(self.t4_cgr_distance_history) - 1))  # Update the scale range
 
             # Display the reference image
@@ -1516,6 +1517,11 @@ class App(customtkinter.CTk):
                 with open(f"{self.temp_output_path}/representative/pickle/{self.t4_representative_index}.pkl",
                           'rb') as handle:
                     dictionary = pickle.load(handle)
+
+            message = f"Description: Total time of execution was {round(self.execution_time)}s"
+            if dictionary["information"] is not None:
+                message += f". Representative is from cytoband {dictionary['information'].name.}"
+            self.output_message.configure(text=message)
 
             fig, (ax1) = plt.subplots(1, 1)
             extent = 0, 1, 0, 1
@@ -1553,6 +1559,7 @@ class App(customtkinter.CTk):
             self._change_images(0, "t4", None)
 
     def t4_run(self):
+        start_time = time.time()
         self.t4_pic_num.set(0)
 
         t4_step_length = np.floor(len(self.t4_ds["1"].seq) / int(self.t4_window_s.get()))
@@ -1644,10 +1651,14 @@ class App(customtkinter.CTk):
             representative_dict = random_sequences_list[np.argmin(avgs)]
 
             centroid_fcgr = representative_dict['(f)cgr']
+            representative_information = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_annotation_of_segment(
+                self.t4_ds["1"].chromosome.get(), representative_dict['start'], int(self.t4_window_s.get()),
+                group="cytoband")
             dictionary = {"(f)cgr": representative_dict['(f)cgr'],
                           "b": representative_dict['start'],
                           "e": representative_dict['start'] + int(self.t4_window_s.get()),
-                          "chr_len": len(self.t4_ds["1"].seq)}
+                          "chr_len": len(self.t4_ds["1"].seq),
+                          "information": representative_information}
             with open(f"{path}/ref.pkl", 'wb') as f:
                 pickle.dump(dictionary, f)
 
@@ -1691,6 +1702,10 @@ class App(customtkinter.CTk):
 
         # complete progress bar
         self.t4_progress_bar.set(1.0)
+
+        # get the execution time
+        end_time = time.time()
+        self.execution_time = end_time - start_time
 
 
 if __name__ == "__main__":
