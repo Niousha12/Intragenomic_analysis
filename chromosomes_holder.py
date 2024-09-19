@@ -54,15 +54,33 @@ class ChromosomesHolder:
         self.reverse_complement = {}
         self._fill_reverse_complement_info()
 
+        self._chromosome_sequence_cache = {}
+        self.genome_length = self._get_genome_length()
+
         self.cytobands = {}
         self._fill_cytobands_info()
 
-        self._chromosome_sequence_cache = {}
+    def get_all_chromosomes_name(self, include_whole_genome=False):
+        # if self.genome_length is None:
+        #     self.genome_length = self._get_genome_length()
 
-    def get_all_chromosomes_name(self):
-        return natsorted(list(self._chromosomes_path.keys()))
+        chr_name_list = natsorted(list(self._chromosomes_path.keys()))
+        if include_whole_genome:
+            if self.genome_length < 1e9:
+                chr_name_list.append("Whole Genome")
+        return chr_name_list
+
+    def _get_genome_length(self):
+        return sum([len(self.get_chromosome_sequence(chromosome_name)) for chromosome_name in
+                    natsorted(list(self._chromosomes_path.keys()))])
 
     def get_chromosome_sequence(self, chromosome_name, apply_reverse_complement=True):
+        if chromosome_name == "Whole Genome":
+            all_chromosomes_sequence = ""
+            for chromosome_name in self.get_all_chromosomes_name():
+                all_chromosomes_sequence += self.get_chromosome_sequence(chromosome_name) + "N"
+            return all_chromosomes_sequence
+
         if chromosome_name in self._chromosome_sequence_cache:
             # if apply_reverse_complement and self.reverse_complement[chromosome_name]:
             #     return self.get_reverse_complement(self._chromosome_sequence_cache[chromosome_name])
@@ -83,12 +101,12 @@ class ChromosomesHolder:
             self._chromosome_sequence_cache[chromosome_name] = sequence
         return sequence
 
-    def get_all_chromosome_length(self):
+    def get_all_chromosome_length(self, include_whole_genome=False):
         return {chromosome_name: len(self.get_chromosome_sequence(chromosome_name)) for chromosome_name in
-                self.get_all_chromosomes_name()}
+                self.get_all_chromosomes_name(include_whole_genome=include_whole_genome)}
 
-    def get_largest_chromosome_length(self):
-        return max(self.get_all_chromosome_length().values())
+    def get_largest_chromosome_length(self, include_whole_genome=False):
+        return max(self.get_all_chromosome_length(include_whole_genome).values())
 
     def get_appropriate_segment_length(self, scale='genome'):
         """
@@ -332,31 +350,6 @@ class ChromosomesHolder:
                     f.write(line)
             f.close()
 
-    '''Run this method to concatenate all chromosomes in one file (Run only once)'''
-
-    def concatenate_all_chromosomes(self):
-        save_path = os.path.join(self.root_path, self.species, 'chromosomes')
-        all_chromosomes_sequence = ""
-        for chromosome_name in self.get_all_chromosomes_name():
-            all_chromosomes_sequence += self.get_chromosome_sequence(chromosome_name) + "N"
-        with open(f"{save_path}/chromosome All.fna", "w") as file:
-            file.write(all_chromosomes_sequence)
-
-        # move the separate chromosomes to another folder called separate
-        for chromosome_name in self.get_all_chromosomes_name():
-            if chromosome_name == "All":
-                continue
-            file_path = self._chromosomes_path[chromosome_name]
-            directory, basename = os.path.split(file_path)
-
-            new_directory = os.path.join(directory, "separate")
-            new_file_path = os.path.join(new_directory, basename)
-            os.makedirs(new_directory, exist_ok=True)
-
-            os.rename(file_path, new_file_path)
-
-            print(f"File moved to: {new_file_path}")
-
     ''' Private Methods '''
 
     def _fill_chromosomes_path(self):
@@ -381,7 +374,7 @@ class ChromosomesHolder:
                 self.reverse_complement[chromosome_name] = False
 
     def _fill_cytobands_info(self):
-        for chromosome_name in self.get_all_chromosomes_name():
+        for chromosome_name in self.get_all_chromosomes_name(include_whole_genome=True):
             self.cytobands[chromosome_name] = {}
         if self.species == "Human":
             file_path = f"{self.root_path}/{self.species}/bedfiles/chm13v2.0_telomere.bed"
@@ -471,7 +464,6 @@ if __name__ == '__main__':
     specie = "Dictyostelium discoideum"
     # ChromosomesHolder(specie).create_chromosomes_files("GCA_000004695.1_dicty_2.7_genomic.fna")
     genome = ChromosomesHolder(specie)
-    genome.concatenate_all_chromosomes()
 
     # genome.get_random_segment(1000, remove_outlier=True)
     # genome.get_chromosome_non_overlapping_segments("1", 1000)

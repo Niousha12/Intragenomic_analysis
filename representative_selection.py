@@ -177,8 +177,14 @@ class ChromosomeRepresentativeSelection:
         plt.plot(distances_from_centroid, marker='o', linestyle='-', markersize=4, color='red')
         plt.grid(True)
 
+        if chromosome_name == "Whole Genome":
+            include_whole_genome = True
+        else:
+            include_whole_genome = False
+
         if x_range is None:
-            x_range = math.ceil(self.chromosomes_holder.get_largest_chromosome_length() / self.length / 20)
+            x_range = math.ceil(
+                self.chromosomes_holder.get_largest_chromosome_length(include_whole_genome) / self.length / 20)
         else:
             x_range = x_range
         x_ticks = []
@@ -336,9 +342,10 @@ class ChromosomeRepresentativeSelection:
 
 
 if __name__ == '__main__':
-    representative = ChromosomeRepresentativeSelection('Dictyostelium discoideum', 6, 'DSSIM', segment_length=500_000)
-    for chr_name in representative.chromosomes_holder.get_all_chromosomes_name():
-        representative.plot_distance_variations(chr_name, plot_random_outliers=False, x_range=1)
+    representative = ChromosomeRepresentativeSelection('Aspergillus terreus', 6, 'DSSIM', segment_length=500_000)
+    representative.plot_distance_variations("Whole Genome", plot_random_outliers=False)
+    # for chr_name in representative.chromosomes_holder.get_all_chromosomes_name():
+    #     representative.plot_distance_variations(chr_name, plot_random_outliers=False, x_range=1)
         # representative.get_approximation_error(chr_name)
 
     # print(np.mean(ttt))

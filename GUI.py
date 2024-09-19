@@ -849,7 +849,8 @@ class App(customtkinter.CTk):
         self.t1_ds[sender].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
 
         specie = self.t1_ds[sender].specie.get()
-        self.t1_chr_combobox[sender].configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+        self.t1_chr_combobox[sender].configure(
+            values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
         self.t1_ds[sender].invalidate_based_specie()
 
         # clear window_s
@@ -1069,7 +1070,8 @@ class App(customtkinter.CTk):
         self.t2_ds["1"].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
 
         specie = self.t2_ds["1"].specie.get()
-        self.t2_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+        self.t2_chr_combobox.configure(
+            values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
         self.t2_ds["1"].invalidate_based_specie()
 
     def t2_chromosome_change_event(self, value):
@@ -1314,11 +1316,13 @@ class App(customtkinter.CTk):
 
         specie = self.t3_ds[sender].specie.get()
         if sender == "1":
-            self.t3_chr_combobox_1.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+            self.t3_chr_combobox_1.configure(
+                values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
             # disable annotation combobox
             self.t3_parts_name_combobox.configure(values=[])
         elif sender == "2":
-            self.t3_chr_combobox_2.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+            self.t3_chr_combobox_2.configure(
+                values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
             self.t3_window_entry.configure(state="disable")
         self.t3_ds[sender].invalidate_based_specie()
         self.sync_text_vars(self.t3_ds, sender)
@@ -1459,7 +1463,8 @@ class App(customtkinter.CTk):
         self.t4_ds["1"].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
 
         specie = self.t4_ds["1"].specie.get()
-        self.t4_chr_combobox.configure(values=ChromosomesHolder(specie).get_all_chromosomes_name())
+        self.t4_chr_combobox.configure(
+            values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
         self.t4_ds["1"].invalidate_based_specie()
 
         if specie == "Human":

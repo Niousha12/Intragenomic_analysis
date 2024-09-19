@@ -72,7 +72,9 @@ SCIENTIFIC_NAMES = {"Human": 'H. sapiens',
                     "Plant": 'A. thaliana',
                     "Protist": 'P. caudatum',
                     "Archaea": 'P. furiosus',
-                    "Bacteria": 'E. coli'}
+                    "Bacteria": 'E. coli',
+                    "Dictyostelium discoideum": 'D. discoideum',
+                    "Aspergillus terreus": 'A. terreus'}
 
 REVERSE_SCIENTIFIC_NAMES = {v: k for k, v in SCIENTIFIC_NAMES.items()}
 
