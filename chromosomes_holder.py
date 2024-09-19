@@ -64,10 +64,10 @@ class ChromosomesHolder:
 
     def get_chromosome_sequence(self, chromosome_name, apply_reverse_complement=True):
         if chromosome_name in self._chromosome_sequence_cache:
-            if apply_reverse_complement and self.reverse_complement[chromosome_name]:
-                return self.get_reverse_complement(self._chromosome_sequence_cache[chromosome_name])
-            else:
-                return self._chromosome_sequence_cache[chromosome_name]
+            # if apply_reverse_complement and self.reverse_complement[chromosome_name]:
+            #     return self.get_reverse_complement(self._chromosome_sequence_cache[chromosome_name])
+            # else:
+            return self._chromosome_sequence_cache[chromosome_name]
         sequence = ""
         chr_path = self._chromosomes_path[chromosome_name]
         with open(chr_path) as file:
@@ -77,10 +77,10 @@ class ChromosomesHolder:
                     pass
                 else:
                     sequence += line
+        if apply_reverse_complement and self.reverse_complement[chromosome_name]:
+            sequence = self.get_reverse_complement(sequence)
         if self.use_cache:
             self._chromosome_sequence_cache[chromosome_name] = sequence
-        if apply_reverse_complement and self.reverse_complement[chromosome_name]:
-            return self.get_reverse_complement(sequence)
         return sequence
 
     def get_all_chromosome_length(self):
@@ -291,6 +291,20 @@ class ChromosomesHolder:
             dpi=300, bbox_inches='tight', transparent=True)
         # plt.show()
 
+    def find_n_counts(self):
+        all_len = 0
+        sequence_removed_n_len = 0
+        for chromosome in self.get_all_chromosomes_name():
+            sequence = self.get_chromosome_sequence(chromosome)
+            all_len += len(sequence)
+            sequence_removed_n = sequence.replace("N", "")
+            sequence_removed_n_len += len(sequence_removed_n)
+            if len(sequence) != len(sequence_removed_n):
+                print(chromosome, len(sequence), len(sequence_removed_n))
+        print(all_len, sequence_removed_n_len)
+        print(all_len - sequence_removed_n_len)
+        print((1 - (sequence_removed_n_len / all_len)) * 100)
+
     def clear_cache(self):
         self._chromosome_sequence_cache = {}
 
@@ -317,6 +331,31 @@ class ChromosomesHolder:
                     line = line.upper()
                     f.write(line)
             f.close()
+
+    '''Run this method to concatenate all chromosomes in one file (Run only once)'''
+
+    def concatenate_all_chromosomes(self):
+        save_path = os.path.join(self.root_path, self.species, 'chromosomes')
+        all_chromosomes_sequence = ""
+        for chromosome_name in self.get_all_chromosomes_name():
+            all_chromosomes_sequence += self.get_chromosome_sequence(chromosome_name) + "N"
+        with open(f"{save_path}/chromosome All.fna", "w") as file:
+            file.write(all_chromosomes_sequence)
+
+        # move the separate chromosomes to another folder called separate
+        for chromosome_name in self.get_all_chromosomes_name():
+            if chromosome_name == "All":
+                continue
+            file_path = self._chromosomes_path[chromosome_name]
+            directory, basename = os.path.split(file_path)
+
+            new_directory = os.path.join(directory, "separate")
+            new_file_path = os.path.join(new_directory, basename)
+            os.makedirs(new_directory, exist_ok=True)
+
+            os.rename(file_path, new_file_path)
+
+            print(f"File moved to: {new_file_path}")
 
     ''' Private Methods '''
 
@@ -432,18 +471,7 @@ if __name__ == '__main__':
     specie = "Dictyostelium discoideum"
     # ChromosomesHolder(specie).create_chromosomes_files("GCA_000004695.1_dicty_2.7_genomic.fna")
     genome = ChromosomesHolder(specie)
-    all_len = 0
-    after_n_remove_seq = 0
-    for chromosome in genome.get_all_chromosomes_name():
-        seq = genome.get_chromosome_sequence(chromosome)
-        all_len += len(seq)
-        seq_1 = seq.replace("N", "")
-        after_n_remove_seq += len(seq_1)
-        if len(seq) != len(seq_1):
-            print(chromosome, len(seq), len(seq_1))
-    print(all_len, after_n_remove_seq)
-    print(all_len - after_n_remove_seq)
-    print((1 - (after_n_remove_seq / all_len)) * 100)
+    genome.concatenate_all_chromosomes()
 
     # genome.get_random_segment(1000, remove_outlier=True)
     # genome.get_chromosome_non_overlapping_segments("1", 1000)

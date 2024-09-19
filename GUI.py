@@ -1520,7 +1520,7 @@ class App(customtkinter.CTk):
 
             message = f"Description: Total time of execution was {round(self.execution_time)}s"
             if dictionary["information"] is not None:
-                message += f". Representative is from cytoband {dictionary['information'].name.}"
+                message += f". Representative is from cytoband {dictionary['information'].name}."
             self.output_message.configure(text=message)
 
             fig, (ax1) = plt.subplots(1, 1)
