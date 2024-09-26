@@ -13,8 +13,6 @@ from chromosomes_holder import ChromosomesHolder, AnnotationRecord
 from distances.distance_metrics import get_dist
 import plotly.express as px
 
-ttt = []
-
 
 class ChromosomeRepresentativeSelection:
     def __init__(self, specie, kmer, distance_metric, segment_length=None):
@@ -144,8 +142,6 @@ class ChromosomeRepresentativeSelection:
             np.abs((distances_from_random_representative - distances_from_representative)))
         # np.sqrt(np.mean((distances_from_random_representative - distances_from_representative) ** 2))
 
-        ttt.append(approximation_error)
-
         print(f"Approximation error: {approximation_error}")
         print(f"Random error: {random_error}")
 
@@ -158,8 +154,6 @@ class ChromosomeRepresentativeSelection:
 
         pipeline_representative_dict = self.get_representative(chromosome_name)
         distances_from_centroid = self.get_distance_from_representative(chromosome_name, pipeline_representative_dict)
-
-        # ttt.append(np.sum(distances_from_centroid < 0.24) / distances_from_centroid.shape[0])
 
         if plot_random_outliers:
             random_outlier_representative_dict = self.get_random_representative(chromosome_name, True)
@@ -304,7 +298,7 @@ class ChromosomeRepresentativeSelection:
 
     @staticmethod
     def plot_multi_dimensional_scaling(distance_matrix, info: list, representative_index=None, coloring_type='NCBI'):
-        mds = MDS(n_components=3, dissimilarity='precomputed', random_state=38)
+        mds = MDS(n_components=3, dissimilarity='precomputed', random_state=42)
         mds_result = mds.fit_transform(distance_matrix)
 
         # Add description for each data
@@ -342,17 +336,15 @@ class ChromosomeRepresentativeSelection:
 
 
 if __name__ == '__main__':
-    representative = ChromosomeRepresentativeSelection('Aspergillus terreus', 6, 'DSSIM', segment_length=500_000)
-    representative.plot_distance_variations("Whole Genome", plot_random_outliers=False)
+    # representative = ChromosomeRepresentativeSelection('Dictyostelium discoideum', 6, 'DSSIM', segment_length=500_000)
+    # representative.plot_distance_variations("Whole Genome", plot_random_outliers=False)
     # for chr_name in representative.chromosomes_holder.get_all_chromosomes_name():
     #     representative.plot_distance_variations(chr_name, plot_random_outliers=False, x_range=1)
-        # representative.get_approximation_error(chr_name)
+    #     representative.get_approximation_error(chr_name)
 
-    # print(np.mean(ttt))
-
-    # chr_n = "21"
-    # human_representative = ChromosomeRepresentativeSelection('human', 6, 'DSSIM', segment_length=500_000)
-    # segments_info = human_representative.get_non_overlapping_segments(chr_n)['segments_information']
-    # RSSP = human_representative.get_representative(chr_n)['index']
-    # ChromosomeRepresentativeSelection.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_n),
-    #                                                                  segments_info, RSSP, coloring_type='NCBI')
+    chr_n = "21"
+    human_representative = ChromosomeRepresentativeSelection('Human', 9, 'DSSIM', segment_length=500_000)
+    segments_info = human_representative.get_non_overlapping_segments(chr_n)['segments_information']
+    RSSP = human_representative.get_representative(chr_n)['index']
+    ChromosomeRepresentativeSelection.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_n),
+                                                                     segments_info, RSSP, coloring_type='NCBI')

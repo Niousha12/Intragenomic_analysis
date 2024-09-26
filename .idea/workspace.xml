@@ -4,11 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Added a function for concatenating all the chromosomes and save to a file.">
+    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Added the whole genome to the chromosome list.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/FCGRs/human/chr_21_range_0_45090682.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/chaos_game_representation.py" beforeDir="false" afterPath="$PROJECT_DIR$/chaos_game_representation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chromosomes_holder.py" beforeDir="false" afterPath="$PROJECT_DIR$/chromosomes_holder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/intergenomic_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/intergenomic_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/intergenome_analysis.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/intergenome_analysis.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/representative_selection.py" beforeDir="false" afterPath="$PROJECT_DIR$/representative_selection.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -57,7 +60,7 @@
       <recent name="$PROJECT_DIR$/misc" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.representative_selection">
+  <component name="RunManager" selected="Python.chromosomes_holder">
     <configuration name="GUI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Intragenomic_analysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -100,27 +103,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="clean_images" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Intragenomic_analysis" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/clean_images.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="distance_metrics" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Intragenomic_analysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -134,6 +116,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/distances/distance_metrics.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="intergenomic_analysis" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Intragenomic_analysis" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/intergenomic_analysis.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -163,7 +166,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="temp" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="temp (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Intragenomic_analysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -171,11 +174,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/temp" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp/temp.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -186,11 +189,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.chromosomes_holder" />
         <item itemvalue="Python.representative_selection" />
         <item itemvalue="Python.GUI" />
-        <item itemvalue="Python.chromosomes_holder" />
-        <item itemvalue="Python.temp" />
-        <item itemvalue="Python.clean_images" />
+        <item itemvalue="Python.intergenomic_analysis" />
+        <item itemvalue="Python.temp (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -441,7 +444,14 @@
       <option name="project" value="LOCAL" />
       <updated>1726774726980</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Added the whole genome to the chromosome list.">
+      <created>1726787499860</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1726787499860</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -456,7 +466,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Plot representative distance analysis is added." />
     <MESSAGE value="misc folder with python code for cleaning images is added." />
     <MESSAGE value="Clean the code for plot distance variation." />
     <MESSAGE value="Do not add pictures to git." />
@@ -481,7 +490,8 @@
     <MESSAGE value="GUI fourth page, ARSSP algorithm is added." />
     <MESSAGE value="GUI fourth page, a description is added for the representative." />
     <MESSAGE value="Added a function for concatenating all the chromosomes and save to a file." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added a function for concatenating all the chromosomes and save to a file." />
+    <MESSAGE value="Added the whole genome to the chromosome list." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added the whole genome to the chromosome list." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -522,29 +532,9 @@
           <option name="timeStamp" value="42" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/intergenomic_analysis.py</url>
-          <line>81</line>
-          <option name="timeStamp" value="62" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/GUI.py</url>
           <line>1410</line>
           <option name="timeStamp" value="87" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>495</line>
-          <option name="timeStamp" value="94" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/intergenomic_analysis.py</url>
-          <line>130</line>
-          <option name="timeStamp" value="96" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/intergenomic_analysis.py</url>
-          <line>131</line>
-          <option name="timeStamp" value="97" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/GUI.py</url>
@@ -563,7 +553,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>314</line>
+          <line>308</line>
           <option name="timeStamp" value="106" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -588,18 +578,38 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>61</line>
+          <line>59</line>
           <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>159</line>
+          <line>155</line>
           <option name="timeStamp" value="124" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/representative_selection.py</url>
-          <line>344</line>
+          <line>338</line>
           <option name="timeStamp" value="131" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/intergenomic_analysis.py</url>
+          <line>89</line>
+          <option name="timeStamp" value="144" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/intergenomic_analysis.py</url>
+          <line>94</line>
+          <option name="timeStamp" value="146" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
+          <line>292</line>
+          <option name="timeStamp" value="147" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
+          <line>476</line>
+          <option name="timeStamp" value="148" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

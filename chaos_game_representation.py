@@ -109,7 +109,10 @@ class CGR:
 
         # invert colors black->white
         img_array = np.ceil(max_color - img_rescaled * max_color)
-        dtype = eval(f"np.int{bits}")
+        if bits == 8 or bits == 16:
+            dtype = eval(f"np.int{bits}")
+        else:
+            dtype = np.uint8
         img_array = np.array(img_array, dtype=dtype)
 
         return img_array

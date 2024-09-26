@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from PIL import Image
 from chaos_game_representation import CGR
-from constants import RESOLUTION_DICT
+from constants import RESOLUTION_DICT, GENOME_LENGTH
 
 random.seed(46)
 np.random.seed(46)
@@ -55,7 +55,7 @@ class ChromosomesHolder:
         self._fill_reverse_complement_info()
 
         self._chromosome_sequence_cache = {}
-        self.genome_length = self._get_genome_length()
+        self.genome_length = GENOME_LENGTH[species]  # self._get_genome_length()
 
         self.cytobands = {}
         self._fill_cytobands_info()
@@ -277,14 +277,19 @@ class ChromosomesHolder:
             segments_information.append(segment_information)
         return {'segments_sequences': segments_sequences, 'segments_information': segments_information}
 
-    def plot_fcgr(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9):
+    def plot_fcgr(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
+                  label=True):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
         if start_of_segment is None:
             start_of_segment = 0
         if segment_length is None:
             segment_length = len(chromosome_sequence)
         segment_sequence = chromosome_sequence[start_of_segment:start_of_segment + segment_length]
-        fcgr = CGR(segment_sequence, k_mer).get_fcgr()
+        if fcgr_cgr == 'fcgr':
+            fcgr = CGR(segment_sequence, k_mer).get_fcgr()
+            print(fcgr)
+        else:
+            fcgr = CGR(segment_sequence, k_mer).get_cgr()
         fcgr_image = CGR.array2img(fcgr, bits=8, resolution=RESOLUTION_DICT[k_mer])
         fcgr_pil = Image.fromarray(fcgr_image, 'L')
 
@@ -293,21 +298,28 @@ class ChromosomesHolder:
         plt.yticks([])  # Remove y ticks
 
         # Coordinates of points to label (example points)
-        points = [(-12, 520), (-15, -6), (522, -6), (525, 520)]  # List of (x, y) tuples
+        if k_mer == 9:
+            points = [(-12, 520), (-15, -6), (522, -6), (525, 520)]  # List of (x, y) tuples
+        elif k_mer == 6:
+            points = [(-2, 65), (-2, -1), (65, -1), (65, 65)]
+
         labels = ["A", "C", "G", "T"]  # Labels for each point
 
-        # Annotating each point
-        for (x, y), label in zip(points, labels):
-            plt.text(x, y, label, color='black', fontsize=14, ha='center', va='center')
-        # plt.title(f"Chromosome {chromosome_name}", fontsize=14)
+        if label:
+            if k_mer == 6 or k_mer == 9:
+                for (x, y), label in zip(points, labels):
+                    plt.text(x, y, label, color='black', fontsize=14, ha='center', va='center')
+            plt.title(f"Chromosome {chromosome_name}", fontsize=14)
 
         save_path = os.path.join('Figures', 'FCGRs', self.species)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         plt.savefig(
-            f"{save_path}/chr_{chromosome_name}_range_{start_of_segment}_{start_of_segment + segment_length}.png",
+            f"{save_path}/chr_{chromosome_name}_range_{start_of_segment}_{start_of_segment + segment_length}_"
+            f"{k_mer}kmer.png",
             dpi=300, bbox_inches='tight', transparent=True)
-        # plt.show()
+        plt.show()
+        plt.close()
 
     def find_n_counts(self):
         all_len = 0
@@ -461,12 +473,17 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    specie = "Dictyostelium discoideum"
-    # ChromosomesHolder(specie).create_chromosomes_files("GCA_000004695.1_dicty_2.7_genomic.fna")
+    specie = "Human"
     genome = ChromosomesHolder(specie)
+    genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True)
 
-    # genome.get_random_segment(1000, remove_outlier=True)
-    # genome.get_chromosome_non_overlapping_segments("1", 1000)
-    # genome.plot_fcgr("Y")
-    # genome.create_chromosomes_files("GCA_022117705.1_Zm-Mo17-REFERENCE-CAU-T2T-assembly_genomic.fna")
-    print("")
+    # l_so_far = 0
+    # for chr_name in genome.get_all_chromosomes_name():
+    #     # print(chr_name)
+    #     l = len(genome.get_chromosome_sequence(chr_name))
+    #     print(f"chr {chr_name} length = ", l)
+    #     l_so_far += l
+    #     print(l_so_far)
+    #     # segment_dict = genome.get_random_segment(1_000_000, chr_name, return_dict=True)
+    #     # start_of_segment = segment_dict['start'], segment_length = 1_000_000,
+    #     genome.plot_fcgr(chr_name, k_mer=9)

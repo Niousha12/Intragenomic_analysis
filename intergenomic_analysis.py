@@ -1,8 +1,10 @@
+import ast
 import os
 
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+import seaborn as sns
 from tqdm import tqdm
 
 from chaos_game_representation import CGR
@@ -47,7 +49,7 @@ class InterGenomicAnalysis:
         if not os.path.exists(experiment_path):
             new_run = True
         if new_run:
-            df = pd.DataFrame(columns=['Category', 'Distance', 'Mean', 'Variance', 'Max'])
+            df = pd.DataFrame(columns=['Category', 'Distance', 'Mean', 'Variance', 'Max', 'Distance_Values'])
             for target_species in self.target_species_list:
                 print(f"Running experiment for {target_species}...")
 
@@ -64,14 +66,14 @@ class InterGenomicAnalysis:
                         distances = self.trim_outliers(distances, percent_to_trim)
 
                     df.loc[len(df)] = [target_species, distance_metric, np.mean(distances), np.var(distances),
-                                       np.max(distances)]
+                                       np.max(distances), distances]
                     df.to_csv(experiment_path, index=False, sep='\t')
 
         df = pd.read_csv(experiment_path, sep='\t')
         return df
 
     @staticmethod
-    def plot_means_variances(df):
+    def plot_means_variances(df, plot_type='barplot'):
         save_path = os.path.join('Figures', 'intergenomic_experiment')
         if not os.path.exists(save_path):
             os.makedirs(save_path)
@@ -80,33 +82,56 @@ class InterGenomicAnalysis:
         for distance_m in df['Distance'].unique():
             subset_df = df[df['Distance'] == distance_m]
             categories = subset_df['Category'].replace(SCIENTIFIC_NAMES)
-            means = subset_df['Mean']
-            stds = np.sqrt(subset_df['Variance'])
 
-            # Create the plot
-            fig, ax = plt.subplots(figsize=(8, 4))
-            bars = ax.bar(categories, means, yerr=stds, capsize=5, color='skyblue', ecolor='red', edgecolor='black')
+            plt.figure(figsize=(8, 6))
 
-            # Annotate the bars with the value
-            for i, bar in enumerate(bars):
-                ax.text(
-                    bar.get_x() + bar.get_width() / 2,
-                    bar.get_height(),  # + stds.iloc[i] + 0.1,
-                    f'{means.iloc[i]:.2f}',
-                    ha='center',
-                    va='bottom',
-                    color='black',  # Change the text color
-                    fontsize=10,
-                    bbox=dict(facecolor='white', edgecolor='none', pad=0.05, alpha=0.6)
-                )
+            # Now you can create the box plot
+            if plot_type == 'boxplot':
+                subset_df.loc[:, 'Distance_Values'] = subset_df['Distance_Values'].apply(ast.literal_eval)
+                exploded_df = subset_df.explode('Distance_Values')
+                exploded_df.loc[:, 'Distance_Values'] = exploded_df['Distance_Values'].astype(float)
 
-            # Set the y-axis label
-            ax.set_ylabel(distance_m)
+                distance_data_dict = {}
+                for cat in categories:
+                    group = exploded_df[exploded_df['Category'].replace(SCIENTIFIC_NAMES) == cat]
+                    distance_data_dict[cat] = list(group['Distance_Values'])
+
+                # Prepare the data for the boxplot
+                distance_data = [np.array(distance_data_dict[cat]) for cat in categories if cat in distance_data_dict]
+
+                plt.boxplot(distance_data)
+
+                # Set x-tick labels as categories, preserving the order
+                plt.xticks(ticks=np.arange(1, len(distance_data) + 1), labels=categories)
+
+            elif plot_type == 'barplot':
+                # Create the bar plot based on the mean and variance
+                means = subset_df['Mean']
+                stds = np.sqrt(subset_df['Variance'])
+                bars = plt.bar(categories, means, yerr=stds, capsize=5, color='skyblue', ecolor='red',
+                               edgecolor='black')
+
+                # Annotate the bars with the value
+                for i, bar in enumerate(bars):
+                    plt.text(
+                        bar.get_x() + bar.get_width() / 2,
+                        bar.get_height(),  # + stds.iloc[i] + 0.1,
+                        f'{means.iloc[i]:.2f}',
+                        ha='center',
+                        va='bottom',
+                        color='black',  # Change the text color
+                        fontsize=10,
+                        bbox=dict(facecolor='white', edgecolor='none', pad=0.05, alpha=0.6)
+                    )
+
+                # Set the y-axis label
+                plt.ylabel(distance_m)
 
             # Rotate category labels for better readability
             plt.xticks(rotation=15, ha='right', fontstyle='italic')
 
-            plt.savefig(f"{save_path}/{distance_m}.png", bbox_inches='tight', transparent=False)
+            # Save the plot
+            plt.savefig(f"{save_path}/{distance_m}_{plot_type}.png", bbox_inches='tight', transparent=False)
             plt.close()
 
     @staticmethod
@@ -129,4 +154,4 @@ if __name__ == '__main__':
     target_list = ["Human", "Chimp", "Mouse", "Insect", "Fungus", "Plant", "Protist", "Archaea", "Bacteria"]
     intergenome = InterGenomicAnalysis(base_specie="Human", target_species_list=target_list, run=False)
     data_frame = intergenome.run_experiment(trim=True, new_run=False)
-    intergenome.plot_means_variances(data_frame)
+    intergenome.plot_means_variances(data_frame, plot_type='boxplot')

@@ -73,12 +73,25 @@ SCIENTIFIC_NAMES = {"Human": 'H. sapiens',
                     "Protist": 'P. caudatum',
                     "Archaea": 'P. furiosus',
                     "Bacteria": 'E. coli',
+                    "Maize": 'Z. mays',
                     "Dictyostelium discoideum": 'D. discoideum',
                     "Aspergillus terreus": 'A. terreus'}
 
+GENOME_LENGTH = {"Human": 3117000000,
+                 "Chimp": 3178,
+                 "Mouse": 2723,
+                 "Insect": 80,
+                 "Fungus": 12,
+                 "Plant": 119,
+                 "Protist": 30,
+                 "Archaea": 2,
+                 "Bacteria": 5,
+                 "Maize": 2179,
+                 "Dictyostelium discoideum": 34,
+                 "Aspergillus terreus": 29}
 REVERSE_SCIENTIFIC_NAMES = {v: k for k, v in SCIENTIFIC_NAMES.items()}
 
-RESOLUTION_DICT = {2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 4, 9: 4}
+RESOLUTION_DICT = {2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 4, 9: 4, 10: 4, 11: 4, 12: 4}
 
 # REVERSE_COMP = {"1": False, "2": False, "3": True, "4": True, "5": True, "6": True, "7": True, "8": True, "9": True,
 #                 "10": True, "11": False, "12": False, "13": False, "14": False, "15": False, "16": False, "17": False,
