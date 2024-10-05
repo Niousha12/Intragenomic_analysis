@@ -22,7 +22,7 @@ from matplotlib import pyplot as plt
 
 from chaos_game_representation import CGR
 from chromosomes_holder import ChromosomesHolder
-from constants import DISTANCE_METRICS_LIST, SCIENTIFIC_NAMES, RESOLUTION_DICT, REVERSE_SCIENTIFIC_NAMES
+from constants import DISTANCE_METRICS_LIST, SCIENTIFIC_NAMES, RESOLUTION_DICT, REVERSE_SCIENTIFIC_NAMES, BITS_DICT
 from distances.distance_metrics import get_dist
 from representative_selection import ChromosomeRepresentativeSelection
 
@@ -76,7 +76,7 @@ class App(customtkinter.CTk):
         # create tabview
         self.tabview = customtkinter.CTkTabview(self)
         self.tabview.grid(padx=(20, 20), pady=(20, 20), sticky="nsew")
-        tab_names = ["CGR Comparator", "Consecutive Windows", "Common Reference", "Representative"]
+        tab_names = ["CGR Comparator", "Consecutive Segments", "Common Reference", "Representative"]
         for tab_name in tab_names:
             self.tabview.add(tab_name)
 
@@ -197,7 +197,7 @@ class App(customtkinter.CTk):
 
         # Distance metrics
         self.dist_metric = customtkinter.StringVar()
-        dist_metric_l = customtkinter.CTkLabel(self.t1_config_frame, text="Distance Metric: ", font=self.header_font)
+        dist_metric_l = customtkinter.CTkLabel(self.t1_config_frame, text="Distance Measure: ", font=self.header_font)
         dist_metric_l.grid(row=6, column=0, padx=10, pady=(10, 10))
         dist_metric_combobox = customtkinter.CTkComboBox(self.t1_config_frame, values=DISTANCE_METRICS_LIST,
                                                          width=120, variable=self.dist_metric)
@@ -374,7 +374,7 @@ class App(customtkinter.CTk):
         k_mer_combobox.grid(row=2, column=1, sticky="w", pady=(10, 10))
 
         # Distance metrics
-        dist_metric_l = customtkinter.CTkLabel(self.t2_config_frame, text="Distance Metric: ", font=self.header_font)
+        dist_metric_l = customtkinter.CTkLabel(self.t2_config_frame, text="Distance Measure: ", font=self.header_font)
         dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
         dist_metric_combobox = customtkinter.CTkComboBox(self.t2_config_frame, values=DISTANCE_METRICS_LIST,
                                                          width=120, variable=self.dist_metric)
@@ -572,7 +572,7 @@ class App(customtkinter.CTk):
         k_mer_combobox.grid(row=2, column=1, sticky="w", padx=10, pady=(10, 10))
 
         # Distance metrics
-        dist_metric_l = customtkinter.CTkLabel(self.t3_config_frame, text="Distance Metric: ", font=self.header_font)
+        dist_metric_l = customtkinter.CTkLabel(self.t3_config_frame, text="Distance Measure: ", font=self.header_font)
         dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
         dist_metric_combobox = customtkinter.CTkComboBox(self.t3_config_frame, values=DISTANCE_METRICS_LIST,
                                                          width=120, variable=self.dist_metric)
@@ -745,7 +745,7 @@ class App(customtkinter.CTk):
         k_mer_combobox.grid(row=2, column=1, sticky="w", pady=(10, 10))
 
         # Distance metrics
-        dist_metric_l = customtkinter.CTkLabel(self.t4_config_frame, text="Distance Metric: ", font=self.header_font)
+        dist_metric_l = customtkinter.CTkLabel(self.t4_config_frame, text="Distance Measure: ", font=self.header_font)
         dist_metric_l.grid(row=3, column=0, pady=(20, 5), padx=(5, 0))
         dist_metric_combobox = customtkinter.CTkComboBox(self.t4_config_frame, values=DISTANCE_METRICS_LIST,
                                                          width=120, variable=self.dist_metric)
@@ -888,13 +888,13 @@ class App(customtkinter.CTk):
         self.end_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
         self.end_seq_scale[sender].set(len(self.t1_ds[sender].seq))
 
-        self.sync_text_vars(self.t1_ds, sender)
+        self.sync_text_vars(self.t1_ds, sender, keep_annotation=False)
         # clear window_s
         self.window_s_toggle.set(0)
         self.window_s.set("")
         self.window_entry.configure(state="disable")
-        for key, value in self.t1_ds.items():
-            self.sync_text_vars(self.t1_ds, key, keep_annotation=False)
+        # for key, value in self.t1_ds.items():
+        #     self.sync_text_vars(self.t1_ds, key, keep_annotation=False)
 
     def annotation_change_event(self, sender, value):
         annotation = self.t1_ds[sender].annotation.get()
@@ -952,10 +952,19 @@ class App(customtkinter.CTk):
                 for key, value in self.t1_ds.items():
                     self.t1_ds[key].end_seq.set(self.t1_ds[key].start_seq.get() + int(self.window_s.get()))
 
-        for key, value in self.t1_ds.items():
-            self.sync_text_vars(self.t1_ds, key)
+        # for key, value in self.t1_ds.items():
+        self.sync_text_vars(self.t1_ds, sender)
 
     def t1_plot(self):
+        if self.t1_ds["1"].seq == "" or self.t1_ds["2"].seq == "":
+            messagebox.showerror("Error", "Please upload or choose the sequences first")
+            return
+        if self.k_var.get() == 0:
+            messagebox.showerror("Error", "Please choose the k-mer value")
+            return
+        if self.dist_metric.get() == "":
+            messagebox.showerror("Error", "Please choose the distance measure")
+            return
         fcgrs_dict = {}
         for key in self.t1_ds.keys():
             fcgrs_dict[key] = {}
@@ -975,6 +984,7 @@ class App(customtkinter.CTk):
             fcgrs_dict[key]["chr_len"] = len(self.t1_ds[key].seq)
             fcgrs_dict[key]["b"] = self.t1_ds[key].start_seq.get()
             fcgrs_dict[key]["e"] = self.t1_ds[key].end_seq.get()
+            fcgrs_dict[key]["species"] = self.t1_ds[key].specie.get()
 
         diff = fcgrs_dict["2"]["(f)cgr"] - fcgrs_dict["1"]["(f)cgr"]
         fcgrs_dict["diff"] = diff
@@ -1017,7 +1027,8 @@ class App(customtkinter.CTk):
         e2 = fcgrs["2"]["e"]
 
         # plot the data on the subplots
-        img1 = CGR.array2img(fcgrs["1"]["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+        img1 = CGR.array2img(fcgrs["1"]["(f)cgr"], bits=BITS_DICT[fcgrs["1"]["species"]],
+                             resolution=RESOLUTION_DICT[self.k_var.get()])
         img1 = Image.fromarray(img1, 'L')
         ax1.imshow(img1, cmap='gray', extent=extent)
         ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
@@ -1027,7 +1038,8 @@ class App(customtkinter.CTk):
         ax2.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
         ax2.set_title(f'distance = {round(fcgrs["distance"], 4)}')
 
-        img2 = CGR.array2img(fcgrs["2"]["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+        img2 = CGR.array2img(fcgrs["2"]["(f)cgr"], bits=BITS_DICT[fcgrs["2"]["species"]],
+                             resolution=RESOLUTION_DICT[self.k_var.get()])
         img2 = Image.fromarray(img2, 'L')
         ax3.imshow(img2, cmap='gray', extent=extent)
         ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
@@ -1084,6 +1096,15 @@ class App(customtkinter.CTk):
         self.t2_window_entry.configure(state="normal")
 
     def run_consecutive(self, event):
+        if self.t2_ds["1"].seq == "":
+            messagebox.showerror("Error", "Please upload or choose the sequence first")
+            return
+        if self.k_var.get() == 0:
+            messagebox.showerror("Error", "Please choose the k-mer value")
+            return
+        if self.dist_metric.get() == "":
+            messagebox.showerror("Error", "Please choose the distance measure")
+            return
         global foo_thread
         foo_thread = threading.Thread(target=self.t2_run)
         foo_thread.daemon = True
@@ -1119,8 +1140,10 @@ class App(customtkinter.CTk):
 
             self.cgr_distance_history.append(dist)
 
-            dictionary["1"] = {"(f)cgr": im1, "b": b1, "e": e1, "chr_len": len(self.t2_ds["1"].seq)}
-            dictionary["2"] = {"(f)cgr": im2, "b": b2, "e": e2, "chr_len": len(self.t2_ds["1"].seq)}
+            dictionary["1"] = {"(f)cgr": im1, "b": b1, "e": e1, "chr_len": len(self.t2_ds["1"].seq),
+                               "species": self.t2_ds["1"].specie.get()}
+            dictionary["2"] = {"(f)cgr": im2, "b": b2, "e": e2, "chr_len": len(self.t2_ds["1"].seq),
+                               "species": self.t2_ds["1"].specie.get()}
             dictionary["diff"] = diff
             dictionary["distance"] = dist
 
@@ -1212,7 +1235,8 @@ class App(customtkinter.CTk):
             ax2.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
             ax2.set_title(f'distance = {round(dictionary["distance"], 4)}')
 
-            img2 = CGR.array2img(dictionary["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+            img2 = CGR.array2img(dictionary["(f)cgr"], bits=BITS_DICT[dictionary["species"]],
+                                 resolution=RESOLUTION_DICT[self.k_var.get()])
             img2 = Image.fromarray(img2, 'L')
             ax3.imshow(img2, cmap='gray', extent=extent)
             ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
@@ -1238,7 +1262,8 @@ class App(customtkinter.CTk):
             ax2.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
             ax2.set_title(f'distance = {round(dictionary["distance"], 4)}')
 
-            img2 = CGR.array2img(dictionary["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+            img2 = CGR.array2img(dictionary["(f)cgr"], bits=BITS_DICT[dictionary["species"]],
+                                 resolution=RESOLUTION_DICT[self.k_var.get()])
             img2 = Image.fromarray(img2, 'L')
             ax3.imshow(img2, cmap='gray', extent=extent)
             ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
@@ -1257,7 +1282,7 @@ class App(customtkinter.CTk):
         canvas_height = frame.cget("height")
         canvas.get_tk_widget().config(width=canvas_width, height=canvas_height)
         # Use grid to place the canvas
-        canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+        canvas.get_tk_widget().grid(row=0, column=0, padx=5, pady=10, sticky='nsew')
         plt.close()
 
     def move_previous(self, tab_name, value):
@@ -1360,6 +1385,15 @@ class App(customtkinter.CTk):
         self.t3_ds["1"].end_seq.set(int(self.t3_ds["1"].end_txt.get()))
 
     def run_common_ref(self, event):
+        if self.t3_ds["1"].seq == "" or self.t3_ds["2"].seq == "":
+            messagebox.showerror("Error", "Please upload or choose the sequences first")
+            return
+        if self.k_var.get() == 0:
+            messagebox.showerror("Error", "Please choose the k-mer value")
+            return
+        if self.dist_metric.get() == "":
+            messagebox.showerror("Error", "Please choose the distance measure")
+            return
         global foo_thread_2
         foo_thread_2 = threading.Thread(target=self.t3_run)
         foo_thread_2.daemon = True
@@ -1382,7 +1416,8 @@ class App(customtkinter.CTk):
             display_frame_color = self.t3_display_frame_1.cget("fg_color")
             fig.patch.set_facecolor(display_frame_color)
 
-            img1 = CGR.array2img(dictionary["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+            img1 = CGR.array2img(dictionary["(f)cgr"], bits=BITS_DICT[dictionary["species"]],
+                                 resolution=RESOLUTION_DICT[self.k_var.get()])
             img1 = Image.fromarray(img1, 'L')
             ax1.imshow(img1, cmap='gray', extent=extent)
             ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
@@ -1426,7 +1461,7 @@ class App(customtkinter.CTk):
 
         self.t3_progress_bar.set(2 / (int(t3_step_length) + 2))  # update progress bar
 
-        ref_dict = {"(f)cgr": im1}
+        ref_dict = {"(f)cgr": im1, "species": self.t3_ds["1"].specie.get()}
 
         path = f"{self.temp_output_path}/common_ref/pickle"
         if not os.path.exists(path):
@@ -1453,7 +1488,7 @@ class App(customtkinter.CTk):
             self.t3_cgr_distance_history.append(dist)
 
             dictionary = {"(f)cgr": im2, "b": b2, "e": e2, "chr_len": len(self.t3_ds["2"].seq),
-                          "diff": diff, "distance": dist}
+                          "diff": diff, "distance": dist, "species": self.t3_ds["2"].specie.get()}
 
             with open(f"{path}/{i}.pkl", 'wb') as f:
                 pickle.dump(dictionary, f)
@@ -1502,6 +1537,15 @@ class App(customtkinter.CTk):
             self.t4_num_seg_entry.configure(state="disable")
 
     def run_representative(self, value):
+        if self.t4_ds["1"].seq == "":
+            messagebox.showerror("Error", "Please upload or choose the sequence first")
+            return
+        if self.k_var.get() == 0:
+            messagebox.showerror("Error", "Please choose the k-mer value")
+            return
+        if self.dist_metric.get() == "":
+            messagebox.showerror("Error", "Please choose the distance measure")
+            return
         global foo_thread_3
         foo_thread_3 = threading.Thread(target=self.t4_run)
         foo_thread_3.daemon = True
@@ -1538,7 +1582,8 @@ class App(customtkinter.CTk):
             display_frame_color = self.t4_display_frame_1.cget("fg_color")
             fig.patch.set_facecolor(display_frame_color)
 
-            img1 = CGR.array2img(dictionary["(f)cgr"], bits=8, resolution=RESOLUTION_DICT[self.k_var.get()])
+            img1 = CGR.array2img(dictionary["(f)cgr"], bits=BITS_DICT[dictionary["species"]],
+                                 resolution=RESOLUTION_DICT[self.k_var.get()])
             img1 = Image.fromarray(img1, 'L')
             ax1.imshow(img1, cmap='gray', extent=extent)
             ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
@@ -1663,7 +1708,8 @@ class App(customtkinter.CTk):
                           "b": representative_dict['start'],
                           "e": representative_dict['start'] + int(self.t4_window_s.get()),
                           "chr_len": len(self.t4_ds["1"].seq),
-                          "information": representative_information}
+                          "information": representative_information,
+                          "species": self.t4_ds["1"].specie.get()}
             with open(f"{path}/ref.pkl", 'wb') as f:
                 pickle.dump(dictionary, f)
 
@@ -1700,7 +1746,8 @@ class App(customtkinter.CTk):
 
             dictionary = {"(f)cgr": fcgrs_list[i], "b": i * int(self.t4_window_s.get()),
                           "e": (i + 1) * int(self.t4_window_s.get()), "chr_len": len(self.t4_ds["1"].seq),
-                          "diff": diff, "distance": dist, "information": information_list[i]}
+                          "diff": diff, "distance": dist, "information": information_list[i],
+                          "species": self.t4_ds["1"].specie.get()}
 
             with open(f"{path}/{i}.pkl", 'wb') as f:
                 pickle.dump(dictionary, f)
