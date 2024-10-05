@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.font_manager import FontProperties
 from tqdm import tqdm
 
 from chromosomes_holder import ChromosomesHolder
@@ -137,11 +138,11 @@ class IntraGenomicAnalysis:
         if not os.path.exists(experiment_path):
             new_run = True
         if new_run:
-            experiments_list = ['Telomere vs Telomere', 'Heterochromatin vs Heterochromatin',
-                                'Heterochromatin vs Euchromatin', 'Y (p-arm vs q-arm)', '13 (p-arm vs q-arm)',
-                                '14 (p-arm vs q-arm)', '15 (p-arm vs q-arm)', '21 (p-arm vs q-arm)',
-                                '22 (p-arm vs q-arm)', 'Y vs Acrocentric tandem repeats',
-                                'Acrocentric tandem repeats', 'Arbitrary vs Arbitrary']
+            experiments_list = ['Telomere vs. Telomere', 'Heterochromatin vs. Heterochromatin',
+                                'Heterochromatin vs. Euchromatin', 'Y (p-arm vs. q-arm)', '13 (p-arm vs. q-arm)',
+                                '14 (p-arm vs. q-arm)', '15 (p-arm vs. q-arm)', '21 (p-arm vs. q-arm)',
+                                '22 (p-arm vs. q-arm)', 'Large Tandem Repeat Arrays-P1',
+                                'Large Tandem Repeat Arrays-P1', 'Arbitrary Sequences']
 
             df = pd.DataFrame({'Experiment': experiments_list})
 
@@ -180,20 +181,35 @@ class IntraGenomicAnalysis:
         fig, axes = plt.subplots(1, len(data), figsize=(16, 5))
 
         # colors = plt.cm.tab20.colors
-        colors = ['#C53A33',
-                  '#F19D99',
-                  '#F5BE82',
+        # colors = ['#C53A33',
+        #           '#F19D99',
+        #           '#F5BE82',
+        #
+        #           '#3A75AE',
+        #           '#B3C6E5',
+        #           '#519E3E',
+        #           '#A7DD93',
+        #           '#8D69B8',
+        #           '#C1B1D2',
+        #
+        #           '#EF8636',
+        #           '#BE9E96',
+        #           '#83584D']
 
-                  '#3A75AE',
-                  '#B3C6E5',
-                  '#519E3E',
-                  '#A7DD93',
-                  '#8D69B8',
-                  '#C1B1D2',
+        colors = ['#ADD8E6',
+                  '#6495ED',
+                  '#1E3A8A',
 
-                  '#EF8636',
-                  '#BE9E96',
-                  '#83584D']
+                  '#FF4500',
+                  '#FF6347',
+                  '#FF7F50',
+                  '#FF8C00',
+                  '#FFA07A',
+                  '#FFD700',
+
+                  '#6A0DAD',
+                  '#9370DB',
+                  '#A89F91']
 
         for i, ax in enumerate(axes):
             for j in range(len(experiments)):
@@ -205,16 +221,18 @@ class IntraGenomicAnalysis:
             ax.tick_params(axis='y', pad=1)  # labelsize=8,
 
         handles, labels = axes[0].get_legend_handles_labels()
-        fig.legend(handles, labels, loc='upper center', ncol=4, bbox_to_anchor=(0.5, 0.1))
+
+        fig.legend(handles, labels, loc='upper center', ncol=4, bbox_to_anchor=(0.5, 0.1),
+                   prop=FontProperties(style='italic'))
 
         plt.tight_layout(rect=[0, 0.1, 1, 1])
         plt.subplots_adjust(wspace=0.4)
 
-        plt.savefig(f"{save_path}/intragenomic_analysis.png", dpi=300, bbox_inches='tight')  # , transparent=True)
+        plt.savefig(f"{save_path}/intragenomic_analysis.png", dpi=300, bbox_inches='tight', transparent=True)
         # plt.show()
 
 
 if __name__ == '__main__':
-    intragenome = IntraGenomicAnalysis('human', kmer=6)
+    intragenome = IntraGenomicAnalysis('Human', kmer=6)
     dataframe = intragenome.run_experiment(new_run=False)
     intragenome.plot_intragenomic_analysis(dataframe)

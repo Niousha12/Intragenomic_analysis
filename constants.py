@@ -92,7 +92,5 @@ GENOME_LENGTH = {"Human": 3117000000,
 REVERSE_SCIENTIFIC_NAMES = {v: k for k, v in SCIENTIFIC_NAMES.items()}
 
 RESOLUTION_DICT = {2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 4, 9: 4, 10: 4, 11: 4, 12: 4}
-
-# REVERSE_COMP = {"1": False, "2": False, "3": True, "4": True, "5": True, "6": True, "7": True, "8": True, "9": True,
-#                 "10": True, "11": False, "12": False, "13": False, "14": False, "15": False, "16": False, "17": False,
-#                 "18": False, "19": False, "20": False, "21": False, "22": False, "X": False, "Y": False}
+BITS_DICT = {"Human": 8, "Chimp": 8, "Mouse": 8, "Insect": 8, "Fungus": 8, "Plant": 8, "Protist": 8, "Archaea": 8,
+             "Bacteria": 8, "Maize": 6, "Dictyostelium discoideum": 8, "Aspergillus terreus": 8}

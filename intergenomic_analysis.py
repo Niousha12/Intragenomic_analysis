@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 import seaborn as sns
+from scipy.stats import wilcoxon
 from tqdm import tqdm
 
 from chaos_game_representation import CGR
@@ -95,6 +96,16 @@ class InterGenomicAnalysis:
                 for cat in categories:
                     group = exploded_df[exploded_df['Category'].replace(SCIENTIFIC_NAMES) == cat]
                     distance_data_dict[cat] = list(group['Distance_Values'])
+
+                # Wilcoxon rank-sum test
+                print(f"----------------------------{distance_m}-------------------------------------")
+                reference_array = distance_data_dict['H. sapiens']
+                for keys in distance_data_dict.keys():
+                    if keys == 'H. sapiens':
+                        continue
+                    print(f"Wilcoxon rank-sum test between Human and {keys}:")
+                    res = wilcoxon(reference_array, distance_data_dict[keys])
+                    print(res)
 
                 # Prepare the data for the boxplot
                 distance_data = [np.array(distance_data_dict[cat]) for cat in categories if cat in distance_data_dict]

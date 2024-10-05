@@ -100,8 +100,9 @@ class CGR:
         return matrix
 
     @staticmethod
-    def array2img(array, bits=8, resolution=4):
-        m, M = array.min(), array.max()
+    def array2img(array, bits=8, resolution=4, m=None, M=None, return_array=False):
+        if m is None and M is None:
+            m, M = array.min(), array.max()
         # rescale to [0,1]
         img_rescaled = (array - m) / (M - m)
 
@@ -115,4 +116,6 @@ class CGR:
             dtype = np.uint8
         img_array = np.array(img_array, dtype=dtype)
 
+        if return_array:
+            return img_rescaled, img_array
         return img_array

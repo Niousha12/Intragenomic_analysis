@@ -74,7 +74,7 @@ class ChromosomesHolder:
         return sum([len(self.get_chromosome_sequence(chromosome_name)) for chromosome_name in
                     natsorted(list(self._chromosomes_path.keys()))])
 
-    def get_chromosome_sequence(self, chromosome_name, apply_reverse_complement=True):
+    def get_chromosome_sequence(self, chromosome_name, apply_reverse_complement=False):
         if chromosome_name == "Whole Genome":
             all_chromosomes_sequence = ""
             for chromosome_name in self.get_all_chromosomes_name():
@@ -82,9 +82,6 @@ class ChromosomesHolder:
             return all_chromosomes_sequence
 
         if chromosome_name in self._chromosome_sequence_cache:
-            # if apply_reverse_complement and self.reverse_complement[chromosome_name]:
-            #     return self.get_reverse_complement(self._chromosome_sequence_cache[chromosome_name])
-            # else:
             return self._chromosome_sequence_cache[chromosome_name]
         sequence = ""
         chr_path = self._chromosomes_path[chromosome_name]
@@ -278,7 +275,7 @@ class ChromosomesHolder:
         return {'segments_sequences': segments_sequences, 'segments_information': segments_information}
 
     def plot_fcgr(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                  label=True):
+                  label=True, global_min=None, global_max=None):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
         if start_of_segment is None:
             start_of_segment = 0
@@ -287,10 +284,15 @@ class ChromosomesHolder:
         segment_sequence = chromosome_sequence[start_of_segment:start_of_segment + segment_length]
         if fcgr_cgr == 'fcgr':
             fcgr = CGR(segment_sequence, k_mer).get_fcgr()
-            print(fcgr)
+            # print(fcgr)
         else:
             fcgr = CGR(segment_sequence, k_mer).get_cgr()
-        fcgr_image = CGR.array2img(fcgr, bits=8, resolution=RESOLUTION_DICT[k_mer])
+
+        # rescale_1, fcgr_image_1 = CGR.array2img(fcgr, bits=8, resolution=RESOLUTION_DICT[k_mer], return_array=True)
+        rescale_fcgr, _ = CGR.array2img(fcgr, bits=6, resolution=RESOLUTION_DICT[k_mer], m=global_min, M=global_max,
+                                        return_array=True)
+        rescale_2, fcgr_image = CGR.array2img(rescale_fcgr, bits=6, resolution=RESOLUTION_DICT[k_mer],
+                                              return_array=True)
         fcgr_pil = Image.fromarray(fcgr_image, 'L')
 
         plt.imshow(fcgr_pil, cmap="gray")
@@ -318,7 +320,7 @@ class ChromosomesHolder:
             f"{save_path}/chr_{chromosome_name}_range_{start_of_segment}_{start_of_segment + segment_length}_"
             f"{k_mer}kmer.png",
             dpi=300, bbox_inches='tight', transparent=True)
-        plt.show()
+        # plt.show()
         plt.close()
 
     def find_n_counts(self):
@@ -473,17 +475,37 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    specie = "Human"
+    specie = "Maize"
     genome = ChromosomesHolder(specie)
-    genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True)
+    # genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True)
 
+    '''FCGR global min and max test'''
+    # global_m = np.inf
+    # global_M = 0
+    # for chr_name in tqdm(genome.get_all_chromosomes_name()):
+    #     seq = genome.get_chromosome_sequence(chr_name)
+    #     fcgr = CGR(seq, k_mer=9).get_fcgr()
+    #     m, M = fcgr.min(), fcgr.max()
+    #     global_m = min(global_m, m)
+    #     global_M = max(global_M, M)
+    # print(global_m, global_M)  # 0 1134132 human / 21 246147 maize
+
+    global_m = 21
+    global_M = 246147
+    for chr_name in tqdm(genome.get_all_chromosomes_name()):
+        genome.plot_fcgr(chr_name, k_mer=9, fcgr_cgr='fcgr', label=True, global_min=global_m, global_max=global_M)
+
+    '''Genome length test'''
     # l_so_far = 0
-    # for chr_name in genome.get_all_chromosomes_name():
-    #     # print(chr_name)
-    #     l = len(genome.get_chromosome_sequence(chr_name))
+    # lengths = []
+    # for chr_name in tqdm(genome.get_all_chromosomes_name()):
+    #     seq = genome.get_chromosome_sequence(chr_name)
+    #     l = len(seq)
+    #     lengths.append(l)
     #     print(f"chr {chr_name} length = ", l)
     #     l_so_far += l
-    #     print(l_so_far)
-    #     # segment_dict = genome.get_random_segment(1_000_000, chr_name, return_dict=True)
-    #     # start_of_segment = segment_dict['start'], segment_length = 1_000_000,
-    #     genome.plot_fcgr(chr_name, k_mer=9)
+    #     # print("Length so far is: ", l_so_far)
+    # print("Total length: ", sum(lengths))
+    # print("Max length: ", max(lengths))
+    # print("Min length: ", min(lengths))
+    # print("Mean length: ", np.mean(lengths))
