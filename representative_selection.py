@@ -340,7 +340,7 @@ class ChromosomeRepresentativeSelection:
 
 
 if __name__ == '__main__':
-    representative = ChromosomeRepresentativeSelection('Dictyostelium discoideum', 6, 'DSSIM', segment_length=500_000)
+    representative = ChromosomeRepresentativeSelection('Aspergillus nidulans', 6, 'DSSIM', segment_length=500_000)
     x_r = 1  # math.ceil(ChromosomesHolder('Maize').get_largest_chromosome_length() / 500_000 / 20)
     # representative.plot_distance_variations("Whole Genome", plot_random_outliers=False)
     segment_length, threshold_list, apx_list, rand_list = [], [], [], []

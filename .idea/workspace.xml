@@ -4,17 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Small changes applied for plot_fcgr function.">
+    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Add message Box to GUI and change the bits per species.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Figures/Representative/human/Different_centroids/distance_from_centroid_1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Figures/intragenomic_experiment/intragenomic_analysis.png" beforeDir="false" afterPath="$PROJECT_DIR$/Figures/intragenomic_experiment/intragenomic_analysis.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chaos_game_representation.py" beforeDir="false" afterPath="$PROJECT_DIR$/chaos_game_representation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chromosomes_holder.py" beforeDir="false" afterPath="$PROJECT_DIR$/chromosomes_holder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/constants.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/intergenomic_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/intergenomic_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/intragenomic_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/intragenomic_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/intragenome_analysis.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/intragenome_analysis.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/representative_selection.py" beforeDir="false" afterPath="$PROJECT_DIR$/representative_selection.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -63,7 +57,7 @@
       <recent name="$PROJECT_DIR$/misc" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.GUI">
+  <component name="RunManager" selected="Python.chromosomes_holder">
     <configuration name="GUI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Intragenomic_analysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -192,11 +186,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.GUI" />
         <item itemvalue="Python.chromosomes_holder" />
         <item itemvalue="Python.intergenomic_analysis" />
-        <item itemvalue="Python.intragenomic_analysis" />
         <item itemvalue="Python.representative_selection" />
+        <item itemvalue="Python.GUI" />
+        <item itemvalue="Python.intragenomic_analysis" />
       </list>
     </recent_temporary>
   </component>
@@ -461,7 +455,21 @@
       <option name="project" value="LOCAL" />
       <updated>1727379761207</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Small changes for running some experiments, also removed the reverse complement file.">
+      <created>1728101721619</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1728101721620</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Add message Box to GUI and change the bits per species.">
+      <created>1728101771758</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1728101771758</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -476,8 +484,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Clean the code for plot distance variation." />
-    <MESSAGE value="Do not add pictures to git." />
     <MESSAGE value="Added multi_dimensional_scaling function and tested it." />
     <MESSAGE value="Intergenomic experiment is added." />
     <MESSAGE value="First page of GUI is added." />
@@ -501,7 +507,9 @@
     <MESSAGE value="Added a function for concatenating all the chromosomes and save to a file." />
     <MESSAGE value="Added the whole genome to the chromosome list." />
     <MESSAGE value="Small changes applied for plot_fcgr function." />
-    <option name="LAST_COMMIT_MESSAGE" value="Small changes applied for plot_fcgr function." />
+    <MESSAGE value="Small changes for running some experiments, also removed the reverse complement file." />
+    <MESSAGE value="Add message Box to GUI and change the bits per species." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add message Box to GUI and change the bits per species." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -538,7 +546,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/GUI.py</url>
-          <line>1436</line>
+          <line>1445</line>
           <option name="timeStamp" value="87" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -558,17 +566,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/GUI.py</url>
-          <line>1697</line>
+          <line>1715</line>
           <option name="timeStamp" value="112" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/GUI.py</url>
-          <line>1646</line>
+          <line>1664</line>
           <option name="timeStamp" value="113" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/GUI.py</url>
-          <line>1636</line>
+          <line>1654</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -613,7 +621,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chromosomes_holder.py</url>
-          <line>495</line>
+          <line>497</line>
           <option name="timeStamp" value="168" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

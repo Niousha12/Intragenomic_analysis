@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from PIL import Image
 from chaos_game_representation import CGR
-from constants import RESOLUTION_DICT, GENOME_LENGTH
+from constants import RESOLUTION_DICT, GENOME_LENGTH, BITS_DICT
 
 random.seed(46)
 np.random.seed(46)
@@ -289,10 +289,10 @@ class ChromosomesHolder:
             fcgr = CGR(segment_sequence, k_mer).get_cgr()
 
         # rescale_1, fcgr_image_1 = CGR.array2img(fcgr, bits=8, resolution=RESOLUTION_DICT[k_mer], return_array=True)
-        rescale_fcgr, _ = CGR.array2img(fcgr, bits=6, resolution=RESOLUTION_DICT[k_mer], m=global_min, M=global_max,
-                                        return_array=True)
-        rescale_2, fcgr_image = CGR.array2img(rescale_fcgr, bits=6, resolution=RESOLUTION_DICT[k_mer],
-                                              return_array=True)
+        rescale_fcgr, _ = CGR.array2img(fcgr, bits=BITS_DICT[self.species], resolution=RESOLUTION_DICT[k_mer],
+                                        m=global_min, M=global_max, return_array=True)
+        rescale_2, fcgr_image = CGR.array2img(rescale_fcgr, bits=BITS_DICT[self.species],
+                                              resolution=RESOLUTION_DICT[k_mer], return_array=True)
         fcgr_pil = Image.fromarray(fcgr_image, 'L')
 
         plt.imshow(fcgr_pil, cmap="gray")
@@ -475,8 +475,10 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    specie = "Maize"
+    specie = "Human"
+    # ChromosomesHolder(specie).create_chromosomes_files("GCA_000011425.1_ASM1142v1_genomic.fna")
     genome = ChromosomesHolder(specie)
+    # genome.find_n_counts()
     # genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True)
 
     '''FCGR global min and max test'''
@@ -492,8 +494,8 @@ if __name__ == '__main__':
 
     global_m = 21
     global_M = 246147
-    for chr_name in tqdm(genome.get_all_chromosomes_name()):
-        genome.plot_fcgr(chr_name, k_mer=9, fcgr_cgr='fcgr', label=True, global_min=global_m, global_max=global_M)
+    # for chr_name in tqdm(genome.get_all_chromosomes_name()):
+    genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True, global_min=global_m, global_max=global_M)
 
     '''Genome length test'''
     # l_so_far = 0

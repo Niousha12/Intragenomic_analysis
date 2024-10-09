@@ -75,7 +75,8 @@ SCIENTIFIC_NAMES = {"Human": 'H. sapiens',
                     "Bacteria": 'E. coli',
                     "Maize": 'Z. mays',
                     "Dictyostelium discoideum": 'D. discoideum',
-                    "Aspergillus terreus": 'A. terreus'}
+                    "Aspergillus terreus": 'A. terreus',
+                    "Aspergillus nidulans": 'A. nidulans'}
 
 GENOME_LENGTH = {"Human": 3117000000,
                  "Chimp": 3178,
@@ -88,9 +89,11 @@ GENOME_LENGTH = {"Human": 3117000000,
                  "Bacteria": 5,
                  "Maize": 2179,
                  "Dictyostelium discoideum": 34,
-                 "Aspergillus terreus": 29}
+                 "Aspergillus terreus": 29,
+                 "Aspergillus nidulans": 30}
 REVERSE_SCIENTIFIC_NAMES = {v: k for k, v in SCIENTIFIC_NAMES.items()}
 
 RESOLUTION_DICT = {2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 4, 9: 4, 10: 4, 11: 4, 12: 4}
 BITS_DICT = {"Human": 8, "Chimp": 8, "Mouse": 8, "Insect": 8, "Fungus": 8, "Plant": 8, "Protist": 8, "Archaea": 8,
-             "Bacteria": 8, "Maize": 6, "Dictyostelium discoideum": 8, "Aspergillus terreus": 8}
+             "Bacteria": 8, "Maize": 6, "Dictyostelium discoideum": 8, "Aspergillus terreus": 8,
+             "Aspergillus nidulans": 8}
