@@ -12,6 +12,8 @@ from tqdm import tqdm
 from PIL import Image
 from chaos_game_representation import CGR
 from constants import RESOLUTION_DICT, GENOME_LENGTH, BITS_DICT
+import pandas as pd
+import plotly.graph_objects as go
 
 random.seed(46)
 np.random.seed(46)
@@ -39,7 +41,7 @@ class AnnotationRecord:
     @staticmethod
     def get_color_display_dict():
         return {"White": "#C0C0C0", "Light Gray": "#808080", "Gray": "#696969", "Dark Gray": "#505050",
-                "Black": "#000000", "Pink": "#fc9ea3", "Purple": "#c89efc", "RS": "#ff0000"}
+                "Black": "#000000", "Pink": "#ffb3d9", "Purple": "#c89efc", "RS": "#ff0000"}
 
 
 class ChromosomesHolder:
@@ -55,7 +57,7 @@ class ChromosomesHolder:
         self._fill_reverse_complement_info()
 
         self._chromosome_sequence_cache = {}
-        self.genome_length = GENOME_LENGTH[species]  # self._get_genome_length()
+        self.genome_length = GENOME_LENGTH[species] * 1_000_000  # self._get_genome_length()
 
         self.cytobands = {}
         self._fill_cytobands_info()
@@ -195,7 +197,11 @@ class ChromosomesHolder:
         retry_count = 0
         while num_segments * length > len(chosen_chromosome_sequence) and retry_count < 100:
             if chromosome_name:
-                raise Exception("Number of segments times length is greater than chromosome")
+                if overlap:
+                    print("Number of segments times length is greater than chromosome")
+                    break
+                else:
+                    raise Exception("Number of segments times length is greater than chromosome")
             else:
                 chosen_chromosome_name = random.choice(self.get_all_chromosomes_name())
                 chosen_chromosome_sequence = self.get_chromosome_sequence(chosen_chromosome_name)
@@ -275,7 +281,7 @@ class ChromosomesHolder:
         return {'segments_sequences': segments_sequences, 'segments_information': segments_information}
 
     def plot_fcgr(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                  label=True, global_min=None, global_max=None):
+                  label=True, global_min=None, global_max=None, _3d=False):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
         if start_of_segment is None:
             start_of_segment = 0
@@ -293,6 +299,57 @@ class ChromosomesHolder:
                                         m=global_min, M=global_max, return_array=True)
         rescale_2, fcgr_image = CGR.array2img(rescale_fcgr, bits=BITS_DICT[self.species],
                                               resolution=RESOLUTION_DICT[k_mer], return_array=True)
+
+        if _3d:
+            fig = go.Figure()
+            fig.add_trace(go.Surface(
+                z=fcgr,  # FCGR values as the height map
+                colorscale="Blues",  # Choose a color scheme
+                showscale=True  # Show color bar
+            ))
+            # Set layout for better visualization
+            fig.update_layout(
+                title=f"Interactive 3D FCGR Plot for chromosome {chromosome_name}",
+                scene=dict(
+                    xaxis_title="X Axis",
+                    yaxis_title="Y Axis",
+                    zaxis_title="FCGR Value",
+                )
+            )
+
+            # Show the interactive plot
+            fig.show()
+
+            # size = rescale_2.shape[0]
+            # x, y = np.meshgrid(np.arange(size), np.arange(size))  # Grid for positions
+            # x = x.flatten()
+            # y = y.flatten()
+            # z = np.zeros_like(x)  # Bars start at z = 0
+            # dx = dy = 1.0  # Width of bars
+            # dz = rescale_2.flatten()  # Heights are the intensity values
+            #
+            # fig = plt.figure(figsize=(12, 9))
+            # ax = fig.add_subplot(111, projection='3d')
+            #
+            # cmap = plt.cm.inferno  # Alternative: 'viridis', 'inferno'
+            # colors = cmap(dz)  # Direct mapping from FCGR values
+            #
+            # # Plot 3D bars
+            # ax.bar3d(x, y, z, dx, dy, dz, color=colors, shade=True)
+            #
+            # ax.set_title(f"3D Bar Plot of FCGR for Chromosome {chromosome_name}")
+            #
+            # # Save the figure
+            # save_path = os.path.join('Figures', 'FCGRs', self.species, '3D')
+            # if not os.path.exists(save_path):
+            #     os.makedirs(save_path)
+            # plt.savefig(
+            #     f"{save_path}/chr_{chromosome_name}_range_{start_of_segment}_{start_of_segment + segment_length}_"
+            #     f"{k_mer}kmer.png",
+            #     dpi=300, bbox_inches='tight', transparent=True)
+            # # plt.show()
+            # plt.close()
+
         fcgr_pil = Image.fromarray(fcgr_image, 'L')
 
         plt.imshow(fcgr_pil, cmap="gray")
@@ -475,7 +532,7 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    specie = "Human"
+    specie = "Aspergillus nidulans"
     # ChromosomesHolder(specie).create_chromosomes_files("GCA_000011425.1_ASM1142v1_genomic.fna")
     genome = ChromosomesHolder(specie)
     # genome.find_n_counts()
@@ -492,22 +549,22 @@ if __name__ == '__main__':
     #     global_M = max(global_M, M)
     # print(global_m, global_M)  # 0 1134132 human / 21 246147 maize
 
-    global_m = 21
-    global_M = 246147
+    # global_m = 21
+    # global_M = 246147
     # for chr_name in tqdm(genome.get_all_chromosomes_name()):
-    genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True, global_min=global_m, global_max=global_M)
+    # genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True, global_min=global_m, global_max=global_M)
 
     '''Genome length test'''
-    # l_so_far = 0
-    # lengths = []
-    # for chr_name in tqdm(genome.get_all_chromosomes_name()):
-    #     seq = genome.get_chromosome_sequence(chr_name)
-    #     l = len(seq)
-    #     lengths.append(l)
-    #     print(f"chr {chr_name} length = ", l)
-    #     l_so_far += l
-    #     # print("Length so far is: ", l_so_far)
-    # print("Total length: ", sum(lengths))
-    # print("Max length: ", max(lengths))
-    # print("Min length: ", min(lengths))
-    # print("Mean length: ", np.mean(lengths))
+    l_so_far = 0
+    lengths = []
+    for chr_name in tqdm(genome.get_all_chromosomes_name()):
+        seq = genome.get_chromosome_sequence(chr_name)
+        l = len(seq)
+        lengths.append(l)
+        print(f"chr {chr_name} length = ", l)
+        l_so_far += l
+        # print("Length so far is: ", l_so_far)
+    print("Total length: ", sum(lengths))
+    print("Max length: ", max(lengths))
+    print("Min length: ", min(lengths))
+    print("Mean length: ", np.mean(lengths))

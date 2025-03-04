@@ -61,24 +61,27 @@ TANDEM_REPEAT_DICT = {
     "22": ["p13", "p12", "p11.2"]
 }
 
-DISTANCE_METRICS_LIST = ["Normalized Euclidean", "Cosine", "Manhattan", "Descriptor", "DSSIM", "K-S", "Wasserstein",
-                         "LPIPS"]
+DISTANCE_METRICS_LIST = ["Normalized Euclidean", "Cosine", "Manhattan",
+                         "Descriptor", "DSSIM", "LPIPS",
+                         "K-S", "Wasserstein"]
 
-SCIENTIFIC_NAMES = {"Human": 'H. sapiens',
-                    "Chimp": 'P. troglodytes',
-                    "Mouse": 'M. musculus',
-                    "Insect": 'D. melanogaster',
-                    "Fungus": 'S. cerevisiae',
-                    "Plant": 'A. thaliana',
-                    "Protist": 'P. caudatum',
-                    "Archaea": 'P. furiosus',
-                    "Bacteria": 'E. coli',
-                    "Maize": 'Z. mays',
-                    "Dictyostelium discoideum": 'D. discoideum',
-                    "Aspergillus terreus": 'A. terreus',
-                    "Aspergillus nidulans": 'A. nidulans'}
+SCIENTIFIC_NAMES = {
+    "Human": 'H. sapiens',
+    "Chimp": 'P. troglodytes',
+    "Mouse": 'M. musculus',
+    "Insect": 'D. melanogaster',
+    "Fungus": 'S. cerevisiae',
+    "Plant": 'A. thaliana',
+    "Protist": 'P. caudatum',
+    "Archaea": 'P. furiosus',
+    "Bacteria": 'E. coli',
+    "Maize": 'Z. mays',
+    "Dictyostelium discoideum": 'D. discoideum',
+    "Aspergillus terreus": 'A. terreus',
+    "Aspergillus nidulans": 'A. nidulans'
+}
 
-GENOME_LENGTH = {"Human": 3117000000,
+GENOME_LENGTH = {"Human": 3117,
                  "Chimp": 3178,
                  "Mouse": 2723,
                  "Insect": 80,

@@ -90,7 +90,7 @@ class IntraGenomicAnalysis:
             distance_values[distance_metric] = np.mean(np.asarray(distance_values[distance_metric]))
         return distance_values
 
-    def p_vs_q(self, chromosome_name, distance_metrics, end_p, sequence_length=100000, num_samples=100):
+    def p_vs_q(self, chromosome_name, distance_metrics, end_p, sequence_length=500000, num_samples=100):
         chromosome_sequence = self.chromosomes_holder.get_chromosome_sequence(chromosome_name)
 
         distance_values = {}
@@ -112,7 +112,7 @@ class IntraGenomicAnalysis:
             distance_values[distance_metric] = np.mean(np.asarray(distance_values[distance_metric]))
         return distance_values
 
-    def arbitrary_vs_arbitrary(self, distance_metrics, sequence_length=100000, num_samples=100):
+    def arbitrary_vs_arbitrary(self, distance_metrics, sequence_length=500000, num_samples=100):
         distance_values = {}
         for distance_metric in distance_metrics:
             distance_values[distance_metric] = []
@@ -142,7 +142,7 @@ class IntraGenomicAnalysis:
                                 'Heterochromatin vs. Euchromatin', 'Y (p-arm vs. q-arm)', '13 (p-arm vs. q-arm)',
                                 '14 (p-arm vs. q-arm)', '15 (p-arm vs. q-arm)', '21 (p-arm vs. q-arm)',
                                 '22 (p-arm vs. q-arm)', 'Large Tandem Repeat Arrays-P1',
-                                'Large Tandem Repeat Arrays-P1', 'Arbitrary Sequences']
+                                'Large Tandem Repeat Arrays-P2', 'Arbitrary Sequences']
 
             df = pd.DataFrame({'Experiment': experiments_list})
 
@@ -223,7 +223,7 @@ class IntraGenomicAnalysis:
         handles, labels = axes[0].get_legend_handles_labels()
 
         fig.legend(handles, labels, loc='upper center', ncol=4, bbox_to_anchor=(0.5, 0.1),
-                   prop=FontProperties(style='italic'))
+                   prop=FontProperties(style='italic', size=12))
 
         plt.tight_layout(rect=[0, 0.1, 1, 1])
         plt.subplots_adjust(wspace=0.4)
@@ -234,5 +234,5 @@ class IntraGenomicAnalysis:
 
 if __name__ == '__main__':
     intragenome = IntraGenomicAnalysis('Human', kmer=6)
-    dataframe = intragenome.run_experiment(new_run=False)
+    dataframe = intragenome.run_experiment(new_run=True)
     intragenome.plot_intragenomic_analysis(dataframe)

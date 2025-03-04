@@ -83,19 +83,17 @@ class InterGenomicAnalysis:
         for distance_m in df['Distance'].unique():
             subset_df = df[df['Distance'] == distance_m]
             categories = subset_df['Category'].replace(SCIENTIFIC_NAMES)
+            categories = categories.to_list()
 
             plt.figure(figsize=(8, 6))
 
-            # Now you can create the box plot
             if plot_type == 'boxplot':
-                subset_df.loc[:, 'Distance_Values'] = subset_df['Distance_Values'].apply(ast.literal_eval)
-                exploded_df = subset_df.explode('Distance_Values')
-                exploded_df.loc[:, 'Distance_Values'] = exploded_df['Distance_Values'].astype(float)
-
                 distance_data_dict = {}
-                for cat in categories:
-                    group = exploded_df[exploded_df['Category'].replace(SCIENTIFIC_NAMES) == cat]
-                    distance_data_dict[cat] = list(group['Distance_Values'])
+                temp_list = subset_df['Distance_Values'].to_list()
+                for index, temp_species in enumerate(temp_list):
+                    temp_species = temp_species.replace('[', '').replace(']', '').replace('\n', ' ').split()
+                    temp_species = np.array(temp_species, dtype=float)
+                    distance_data_dict[categories[index]] = temp_species
 
                 # Wilcoxon rank-sum test
                 print(f"----------------------------{distance_m}-------------------------------------")
@@ -110,7 +108,7 @@ class InterGenomicAnalysis:
                 # Prepare the data for the boxplot
                 distance_data = [np.array(distance_data_dict[cat]) for cat in categories if cat in distance_data_dict]
 
-                plt.boxplot(distance_data)
+                plt.boxplot(distance_data, medianprops=dict(color='red', linewidth=1))
 
                 # Set x-tick labels as categories, preserving the order
                 plt.xticks(ticks=np.arange(1, len(distance_data) + 1), labels=categories)
@@ -135,11 +133,10 @@ class InterGenomicAnalysis:
                         bbox=dict(facecolor='white', edgecolor='none', pad=0.05, alpha=0.6)
                     )
 
-                # Set the y-axis label
-                plt.ylabel(distance_m)
+            plt.ylabel(distance_m, fontsize=14)
 
             # Rotate category labels for better readability
-            plt.xticks(rotation=15, ha='right', fontstyle='italic')
+            plt.xticks(rotation=20, ha='right', fontstyle='italic', fontsize=14)
 
             # Save the plot
             plt.savefig(f"{save_path}/{distance_m}_{plot_type}.png", bbox_inches='tight', transparent=False)
@@ -164,5 +161,5 @@ class InterGenomicAnalysis:
 if __name__ == '__main__':
     target_list = ["Human", "Chimp", "Mouse", "Insect", "Fungus", "Plant", "Protist", "Archaea", "Bacteria"]
     intergenome = InterGenomicAnalysis(base_specie="Human", target_species_list=target_list, run=False)
-    data_frame = intergenome.run_experiment(trim=True, new_run=False)
-    intergenome.plot_means_variances(data_frame, plot_type='boxplot')
+    data_frame = intergenome.run_experiment(trim=False, new_run=False)
+    intergenome.plot_means_variances(data_frame, plot_type='barplot')
