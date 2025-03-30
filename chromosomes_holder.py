@@ -175,6 +175,31 @@ class ChromosomesHolder:
         else:
             return random_sequence
 
+    @staticmethod
+    def get_random_segment_from_any(length, sequence=None, return_dict=False):
+        # This condition only happens when the sequence is too short to fit the desired length
+        if len(sequence) < (length // 2):
+            raise ValueError("Sequence is too short to fit the desired length.")
+
+        if len(sequence) < length:
+            sequence += 'N' * (length - len(sequence))
+
+        # Find the random start position where it doesn't return a sequence with all N
+        random_start = -1
+
+        processed_chosen_seq = ""
+        while len(processed_chosen_seq) < (length // 2):
+            random_start = random.randint(0, len(sequence) - length)
+            random_sequence = sequence[random_start:random_start + length]
+            processed_chosen_seq = random_sequence.replace("N", "")
+
+        random_sequence = sequence[random_start:random_start + length]
+
+        if return_dict:
+            return {'chromosome_name': 'Custom', 'sequence': random_sequence, 'start': random_start}
+        else:
+            return random_sequence
+
     def choose_random_fragment_index(self, chromosome_name, length, outlier=True):
         candidates = []
         for i in range(len(self.get_chromosome_sequence(chromosome_name)) // length):
@@ -281,7 +306,7 @@ class ChromosomesHolder:
         return {'segments_sequences': segments_sequences, 'segments_information': segments_information}
 
     def plot_fcgr(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                  label=True, global_min=None, global_max=None, _3d=False):
+                  label=True, global_min=None, global_max=None, _3d=False, global_norm=True):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
         if start_of_segment is None:
             start_of_segment = 0
@@ -291,14 +316,22 @@ class ChromosomesHolder:
         if fcgr_cgr == 'fcgr':
             fcgr = CGR(segment_sequence, k_mer).get_fcgr()
             # print(fcgr)
+            if global_norm:
+                rescale_fcgr, _ = CGR.array2img(fcgr, bits=BITS_DICT[self.species], resolution=RESOLUTION_DICT[k_mer],
+                                                m=global_min, M=global_max, return_array=True)
+                rescale_2, fcgr_image = CGR.array2img(rescale_fcgr, bits=BITS_DICT[self.species],
+                                                      resolution=RESOLUTION_DICT[k_mer], return_array=True)
+                fcgr_pil = Image.fromarray(fcgr_image, 'L')
+            else:
+                low, high = np.percentile(fcgr, [2, 98])
+                # clamp value higher than high to high and lower than low to low
+                # fcgr = np.clip(fcgr, low, high)
+                composite_cgr = (fcgr - low) / (high - low)  # Normalize to 0-1
+                fcgr_pil = 1.0 - composite_cgr  # Invert colors for visualization
         else:
             fcgr = CGR(segment_sequence, k_mer).get_cgr()
-
-        # rescale_1, fcgr_image_1 = CGR.array2img(fcgr, bits=8, resolution=RESOLUTION_DICT[k_mer], return_array=True)
-        rescale_fcgr, _ = CGR.array2img(fcgr, bits=BITS_DICT[self.species], resolution=RESOLUTION_DICT[k_mer],
-                                        m=global_min, M=global_max, return_array=True)
-        rescale_2, fcgr_image = CGR.array2img(rescale_fcgr, bits=BITS_DICT[self.species],
-                                              resolution=RESOLUTION_DICT[k_mer], return_array=True)
+            fcgr_image = CGR.array2img(fcgr, bits=BITS_DICT[self.species], resolution=RESOLUTION_DICT[k_mer])
+            fcgr_pil = Image.fromarray(fcgr_image, 'L')
 
         if _3d:
             fig = go.Figure()
@@ -350,8 +383,6 @@ class ChromosomesHolder:
             # # plt.show()
             # plt.close()
 
-        fcgr_pil = Image.fromarray(fcgr_image, 'L')
-
         plt.imshow(fcgr_pil, cmap="gray")
         plt.xticks([])  # Remove x ticks
         plt.yticks([])  # Remove y ticks
@@ -375,9 +406,9 @@ class ChromosomesHolder:
             os.makedirs(save_path)
         plt.savefig(
             f"{save_path}/chr_{chromosome_name}_range_{start_of_segment}_{start_of_segment + segment_length}_"
-            f"{k_mer}kmer.png",
+            f"{k_mer}kmer_{fcgr_cgr}.png",
             dpi=300, bbox_inches='tight', transparent=True)
-        # plt.show()
+        plt.show()
         plt.close()
 
     def find_n_counts(self):
@@ -532,9 +563,14 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    specie = "Aspergillus nidulans"
+    specie = "Human"
     # ChromosomesHolder(specie).create_chromosomes_files("GCA_000011425.1_ASM1142v1_genomic.fna")
     genome = ChromosomesHolder(specie)
+    genome.plot_fcgr("Y", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
+                     label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
+    genome.plot_fcgr("21", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
+                     label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
+
     # genome.find_n_counts()
     # genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True)
 
@@ -554,17 +590,17 @@ if __name__ == '__main__':
     # for chr_name in tqdm(genome.get_all_chromosomes_name()):
     # genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True, global_min=global_m, global_max=global_M)
 
-    '''Genome length test'''
-    l_so_far = 0
-    lengths = []
-    for chr_name in tqdm(genome.get_all_chromosomes_name()):
-        seq = genome.get_chromosome_sequence(chr_name)
-        l = len(seq)
-        lengths.append(l)
-        print(f"chr {chr_name} length = ", l)
-        l_so_far += l
-        # print("Length so far is: ", l_so_far)
-    print("Total length: ", sum(lengths))
-    print("Max length: ", max(lengths))
-    print("Min length: ", min(lengths))
-    print("Mean length: ", np.mean(lengths))
+    # '''Genome length test'''
+    # l_so_far = 0
+    # lengths = []
+    # for chr_name in tqdm(genome.get_all_chromosomes_name()):
+    #     seq = genome.get_chromosome_sequence(chr_name)
+    #     l = len(seq)
+    #     lengths.append(l)
+    #     print(f"chr {chr_name} length = ", l)
+    #     l_so_far += l
+    #     # print("Length so far is: ", l_so_far)
+    # print("Total length: ", sum(lengths))
+    # print("Max length: ", max(lengths))
+    # print("Min length: ", min(lengths))
+    # print("Mean length: ", np.mean(lengths))

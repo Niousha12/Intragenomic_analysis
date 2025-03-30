@@ -117,7 +117,7 @@ class App(customtkinter.CTk):
         upload_image = customtkinter.CTkImage(light_image=Image.open(f"{self.assets_path}/upload-sign.png"),
                                               size=(12, 12))
         for i in range(2):
-            label = customtkinter.CTkLabel(self.t1_chr_frame, text=f"Chromosome {i + 1}: ", font=self.header_font)
+            label = customtkinter.CTkLabel(self.t1_chr_frame, text=f"Genome {i + 1}: ", font=self.header_font)
             label.grid(row=i * 3, column=0, sticky="w", padx=10, pady=(5, 0))
 
             # upload button
@@ -303,7 +303,7 @@ class App(customtkinter.CTk):
 
         self.tabview.tab(tab_names[1]).grid_rowconfigure(0, weight=1)
         self.tabview.tab(tab_names[1]).grid_rowconfigure(1, weight=20)
-        self.tabview.tab(tab_names[1]).grid_rowconfigure(2, weight=20)
+        self.tabview.tab(tab_names[1]).grid_rowconfigure(2, weight=50)
         self.tabview.tab(tab_names[1]).grid_rowconfigure(3, weight=1)
 
         # Frames
@@ -333,7 +333,7 @@ class App(customtkinter.CTk):
 
         self.t2_ds = {'1': GUIDataStructure()}
 
-        label = customtkinter.CTkLabel(self.t2_chr_frame, text=f"Chromosome: ", font=self.header_font)
+        label = customtkinter.CTkLabel(self.t2_chr_frame, text=f"Genome: ", font=self.header_font)
         label.grid(row=0, column=0, sticky="w", padx=10, pady=(5, 0))
         # upload button
         upload_button = customtkinter.CTkButton(self.t2_chr_frame, image=upload_image, text="",
@@ -440,7 +440,7 @@ class App(customtkinter.CTk):
 
         self.tabview.tab(tab_names[2]).grid_rowconfigure(0, weight=1)
         self.tabview.tab(tab_names[2]).grid_rowconfigure(1, weight=20)
-        self.tabview.tab(tab_names[2]).grid_rowconfigure(2, weight=20)
+        self.tabview.tab(tab_names[2]).grid_rowconfigure(2, weight=50)
         self.tabview.tab(tab_names[2]).grid_rowconfigure(3, weight=1)
 
         # Frames
@@ -456,7 +456,7 @@ class App(customtkinter.CTk):
         # frames in the display frame
         self.t3_display_frame.grid_rowconfigure(0, weight=1)
         self.t3_display_frame.grid_columnconfigure(0, weight=2)
-        self.t3_display_frame.grid_columnconfigure(1, weight=10)
+        self.t3_display_frame.grid_columnconfigure(1, weight=8)
         self.t3_display_frame_1 = customtkinter.CTkFrame(self.t3_display_frame, corner_radius=20,
                                                          fg_color="#707370")  # , width=320, height=180)
         self.t3_display_frame_1.grid(row=0, column=0, padx=(5, 5), pady=(5, 5), sticky="nsew")
@@ -533,7 +533,7 @@ class App(customtkinter.CTk):
         self.t3_chr_frame_2 = customtkinter.CTkFrame(self.t3_config_frame, corner_radius=20)
         self.t3_chr_frame_2.grid(row=1, columnspan=2, padx=5, pady=5, sticky="ew")
 
-        label = customtkinter.CTkLabel(self.t3_chr_frame_2, text=f"Chromosome: ", font=self.header_font)
+        label = customtkinter.CTkLabel(self.t3_chr_frame_2, text=f"Genome: ", font=self.header_font)
         label.grid(row=0, columnspan=2, sticky="w", padx=10, pady=(5, 0))
         upload_button = customtkinter.CTkButton(self.t3_chr_frame_2, image=upload_image, text="",
                                                 command=partial(self.t3_upload_event, "2", None),
@@ -634,7 +634,7 @@ class App(customtkinter.CTk):
         self.tabview.tab(tab_names[3]).grid_columnconfigure(1, weight=10)
 
         self.tabview.tab(tab_names[3]).grid_rowconfigure(0, weight=1)
-        self.tabview.tab(tab_names[3]).grid_rowconfigure(1, weight=100)
+        self.tabview.tab(tab_names[3]).grid_rowconfigure(1, weight=50)
         self.tabview.tab(tab_names[3]).grid_rowconfigure(2, weight=1)
         self.tabview.tab(tab_names[3]).grid_rowconfigure(3, weight=100)
         self.tabview.tab(tab_names[3]).grid_rowconfigure(4, weight=1)
@@ -685,7 +685,7 @@ class App(customtkinter.CTk):
 
         self.t4_ds = {'1': GUIDataStructure()}
 
-        label = customtkinter.CTkLabel(self.t4_chr_frame, text=f"Chromosome: ", font=self.header_font)
+        label = customtkinter.CTkLabel(self.t4_chr_frame, text=f"Genome: ", font=self.header_font)
         label.grid(row=0, column=0, sticky="w", padx=10, pady=(5, 0))
         # upload button
         upload_button = customtkinter.CTkButton(self.t4_chr_frame, image=upload_image, text="",
@@ -893,6 +893,13 @@ class App(customtkinter.CTk):
         self.window_s_toggle.set(0)
         self.window_s.set("")
         self.window_entry.configure(state="disable")
+        # end scales
+        for key, value in self.end_seq_scale.items():
+            if len(self.t1_ds[key].seq) > 0:
+                value.configure(state="normal", button_color=self.scale_normal_color)
+        for key, value in self.t1_end_seq_entry.items():
+            if len(self.t1_ds[key].seq) > 0:
+                value.configure(state="normal")
         # for key, value in self.t1_ds.items():
         #     self.sync_text_vars(self.t1_ds, key, keep_annotation=False)
 
@@ -909,6 +916,13 @@ class App(customtkinter.CTk):
         self.window_s_toggle.set(0)
         self.window_s.set("")
         self.window_entry.configure(state="disable")
+        # end scales
+        for key, value in self.end_seq_scale.items():
+            if len(self.t1_ds[key].seq) > 0:
+                value.configure(state="normal", button_color=self.scale_normal_color)
+        for key, value in self.t1_end_seq_entry.items():
+            if len(self.t1_ds[key].seq) > 0:
+                value.configure(state="normal")
 
     def window_size_toggle_event(self, keep_annotation=False):
         if self.window_s_toggle.get() == 0:
@@ -1012,7 +1026,7 @@ class App(customtkinter.CTk):
         canvas.get_tk_widget().grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
         plt.close()
 
-    def plot_fcgrs(self, fcgrs, colormap=False, background_color=None):
+    def plot_fcgrs(self, fcgrs, colormap=False, background_color=None, name="Sequence"):
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
         extent = 0, 1, 0, 1
 
@@ -1032,18 +1046,18 @@ class App(customtkinter.CTk):
         img1 = Image.fromarray(img1, 'L')
         ax1.imshow(img1, cmap='gray', extent=extent)
         ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-        ax1.set_title(f'{round(b1 / scale_1, 2)} - {round(e1 / scale_1, 2)} {scaling_1}')
+        ax1.set_title(f'{name} 1\n{round(b1 / scale_1, 2)} - {round(e1 / scale_1, 2)} {scaling_1}')
 
         im2 = ax2.imshow(fcgrs['diff'], cmap='RdBu', norm=plt.Normalize(-100, 100), extent=extent)
         ax2.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-        ax2.set_title(f'distance = {round(fcgrs["distance"], 4)}')
+        ax2.set_title(f'Difference\ndistance = {round(fcgrs["distance"], 4)}')
 
         img2 = CGR.array2img(fcgrs["2"]["(f)cgr"], bits=BITS_DICT[fcgrs["2"]["species"]],
                              resolution=RESOLUTION_DICT[self.k_var.get()])
         img2 = Image.fromarray(img2, 'L')
         ax3.imshow(img2, cmap='gray', extent=extent)
         ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-        ax3.set_title(f'{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
+        ax3.set_title(f'{name} 2\n{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
 
         if colormap:
             cbar_ax2 = fig.add_axes([0.36, 0.1, 0.3, 0.02])  # Adjust position as needed
@@ -1069,7 +1083,7 @@ class App(customtkinter.CTk):
         _, sequence = ChromosomesHolder.read_fasta(file_path)
         if len(sequence) > 0:
             self.t2_ds[sender].specie.set("Custom")
-            self.t2_species_combobox[sender].set("Custom")
+            self.t2_species_combobox.set("Custom")
             self.t2_ds[sender].invalidate_based_specie()
             self.t2_chr_combobox.configure(values=[])
             self.t2_window_entry.configure(state="normal")
@@ -1213,7 +1227,7 @@ class App(customtkinter.CTk):
             frame = self.t2_display_frame
 
             display_frame_color = frame.cget("fg_color")
-            fig = self.plot_fcgrs(dictionary, colormap=False, background_color=display_frame_color)
+            fig = self.plot_fcgrs(dictionary, colormap=False, background_color=display_frame_color, name="Segment")
 
         elif tab_name == "t3":
             with open(f"{self.temp_output_path}/common_ref/pickle/{image_index}.pkl", 'rb') as handle:
@@ -1233,14 +1247,14 @@ class App(customtkinter.CTk):
             # plot the data on the subplots
             im2 = ax2.imshow(dictionary['diff'], cmap='RdBu', norm=plt.Normalize(-100, 100), extent=extent)
             ax2.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-            ax2.set_title(f'distance = {round(dictionary["distance"], 4)}')
+            ax2.set_title(f'Difference\ndistance = {round(dictionary["distance"], 4)}')
 
             img2 = CGR.array2img(dictionary["(f)cgr"], bits=BITS_DICT[dictionary["species"]],
                                  resolution=RESOLUTION_DICT[self.k_var.get()])
             img2 = Image.fromarray(img2, 'L')
             ax3.imshow(img2, cmap='gray', extent=extent)
             ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-            ax3.set_title(f'{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
+            ax3.set_title(f'Segment\n{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
 
         elif tab_name == "t4":
             with open(f"{self.temp_output_path}/representative/pickle/{image_index}.pkl", 'rb') as handle:
@@ -1248,6 +1262,7 @@ class App(customtkinter.CTk):
             frame = self.t4_display_frame_2
 
             fig, (ax2, ax3) = plt.subplots(1, 2)
+            fig.subplots_adjust(top=0.85)
             extent = 0, 1, 0, 1
 
             display_frame_color = frame.cget("fg_color")
@@ -1260,14 +1275,14 @@ class App(customtkinter.CTk):
             # plot the data on the subplots
             im2 = ax2.imshow(dictionary['diff'], cmap='RdBu', norm=plt.Normalize(-100, 100), extent=extent)
             ax2.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-            ax2.set_title(f'distance = {round(dictionary["distance"], 4)}')
+            ax2.set_title(f'Difference\ndistance = {round(dictionary["distance"], 4)}')
 
             img2 = CGR.array2img(dictionary["(f)cgr"], bits=BITS_DICT[dictionary["species"]],
                                  resolution=RESOLUTION_DICT[self.k_var.get()])
             img2 = Image.fromarray(img2, 'L')
             ax3.imshow(img2, cmap='gray', extent=extent)
             ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-            ax3.set_title(f'{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
+            ax3.set_title(f'Segment\n{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
 
         # Clear the previous figure from the display frame if any
         for widget in frame.winfo_children():
@@ -1421,7 +1436,19 @@ class App(customtkinter.CTk):
             img1 = Image.fromarray(img1, 'L')
             ax1.imshow(img1, cmap='gray', extent=extent)
             ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-            ax1.set_title(f'Reference')
+            scale_1, scaling_1 = self.get_scaling(dictionary["chr_len"])
+            b1 = int(self.t3_ds["1"].start_seq.get())
+            e1 = int(self.t3_ds["1"].end_seq.get())
+            if self.t3_ds["1"].specie.get() == "Custom":
+                ax1.set_title(f'Reference\nCustom / '
+                              f'{round(b1 / scale_1, 2)} - {round(e1 / scale_1, 2)} {scaling_1}')
+            else:
+                if self.t3_ds["1"].chromosome.get() == "Whole Genome":
+                    chromosome = "Genome"
+                else:
+                    chromosome = f'chr {self.t3_ds["1"].chromosome.get()}'
+                ax1.set_title(f'Reference\n{SCIENTIFIC_NAMES[self.t3_ds["1"].specie.get()]} / {chromosome} / '
+                              f'{round(b1 / scale_1, 2)} - {round(e1 / scale_1, 2)} {scaling_1}')
 
             # Clear the previous figure from the display frame if any
             for widget in self.t3_display_frame_1.winfo_children():
@@ -1461,7 +1488,8 @@ class App(customtkinter.CTk):
 
         self.t3_progress_bar.set(2 / (int(t3_step_length) + 2))  # update progress bar
 
-        ref_dict = {"(f)cgr": im1, "species": self.t3_ds["1"].specie.get()}
+        ref_dict = {"(f)cgr": im1, "species": self.t3_ds["1"].specie.get(),
+                    "chr_len": len(self.t3_ds["1"].seq)}
 
         path = f"{self.temp_output_path}/common_ref/pickle"
         if not os.path.exists(path):
@@ -1527,6 +1555,7 @@ class App(customtkinter.CTk):
             self.t4_ds[sender].seq = sequence
             self.t4_ds[sender].end_seq.set(len(self.t4_ds[sender].seq))
             self.sync_text_vars(self.t4_ds, sender)
+            self.t4_window_entry.configure(state="normal")
 
     def t4_algo_change_event(self, value):
         if value == "ARSSP":
@@ -1545,6 +1574,9 @@ class App(customtkinter.CTk):
             return
         if self.dist_metric.get() == "":
             messagebox.showerror("Error", "Please choose the distance measure")
+            return
+        if self.t4_algo_combobox.get() == "ARSSP" and self.t4_num_seg.get() == "":
+            messagebox.showerror("Error", "Please enter the number of segments")
             return
         global foo_thread_3
         foo_thread_3 = threading.Thread(target=self.t4_run)
@@ -1573,6 +1605,7 @@ class App(customtkinter.CTk):
             self.output_message.configure(text=message)
 
             fig, (ax1) = plt.subplots(1, 1)
+            fig.subplots_adjust(top=0.85)
             extent = 0, 1, 0, 1
 
             scale, scaling = self.get_scaling(dictionary["chr_len"])
@@ -1587,7 +1620,7 @@ class App(customtkinter.CTk):
             img1 = Image.fromarray(img1, 'L')
             ax1.imshow(img1, cmap='gray', extent=extent)
             ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-            ax1.set_title(f'{round(b / scale, 2)} - {round(e / scale, 2)} {scaling}')
+            ax1.set_title(f'Representative\n{round(b / scale, 2)} - {round(e / scale, 2)} {scaling}')
 
             # Clear the previous figure from the display frame if any
             for widget in self.t4_display_frame_1.winfo_children():
@@ -1646,8 +1679,11 @@ class App(customtkinter.CTk):
 
             fcgrs_list.append(im)
             # get segment information
-            segment_information = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_annotation_of_segment(
-                self.t4_ds["1"].chromosome.get(), b1, int(self.t4_window_s.get()), group="cytoband")
+            if self.t4_ds["1"].specie.get() == "Custom":
+                segment_information = None
+            else:
+                segment_information = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_annotation_of_segment(
+                    self.t4_ds["1"].chromosome.get(), b1, int(self.t4_window_s.get()), group="cytoband")
             information_list.append(segment_information)
 
         # Find the representative
@@ -1662,8 +1698,13 @@ class App(customtkinter.CTk):
 
                 retry_count += 1
                 for _ in range(random_sequences_number - len(random_sequences_list)):
-                    random_sequence_dict = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_random_segment(
-                        int(self.t4_window_s.get()), self.t4_ds["1"].chromosome.get(), return_dict=True)
+                    # if its custom
+                    if self.t4_ds["1"].specie.get() == "Custom":
+                        random_sequence_dict = ChromosomesHolder.get_random_segment_from_any(
+                            int(self.t4_window_s.get()), self.t4_ds["1"].seq, return_dict=True)
+                    else:
+                        random_sequence_dict = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_random_segment(
+                            int(self.t4_window_s.get()), self.t4_ds["1"].chromosome.get(), return_dict=True)
 
                     cgr = CGR(random_sequence_dict['sequence'], self.k_var.get())
                     if self.fcgr.get() == 1:
@@ -1701,9 +1742,12 @@ class App(customtkinter.CTk):
             representative_dict = random_sequences_list[np.argmin(avgs)]
 
             centroid_fcgr = representative_dict['(f)cgr']
-            representative_information = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_annotation_of_segment(
-                self.t4_ds["1"].chromosome.get(), representative_dict['start'], int(self.t4_window_s.get()),
-                group="cytoband")
+            if self.t4_ds["1"].specie.get() != "Custom":
+                representative_information = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_annotation_of_segment(
+                    self.t4_ds["1"].chromosome.get(), representative_dict['start'], int(self.t4_window_s.get()),
+                    group="cytoband")
+            else:
+                representative_information = None
             dictionary = {"(f)cgr": representative_dict['(f)cgr'],
                           "b": representative_dict['start'],
                           "e": representative_dict['start'] + int(self.t4_window_s.get()),

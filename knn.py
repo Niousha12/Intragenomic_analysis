@@ -30,7 +30,7 @@ if __name__ == '__main__':
             y_test = pickle.load(f)
     else:
         for species in SCIENTIFIC_NAMES.keys():
-            if species == "Protist":
+            if species == "Paramecium caudatum":
                 continue
             print(f"Create test dataset for {species}...")
             chromosomes_holder = ChromosomesHolder(species)
@@ -72,7 +72,7 @@ if __name__ == '__main__':
         X_train = []
         y_train = []
         for species in SCIENTIFIC_NAMES.keys():
-            if species == "Protist":
+            if species == "Paramecium caudatum":
                 continue
             # print(f"Creating train dataset for {species}...")
             chromosomes_holder = ChromosomesHolder(species)

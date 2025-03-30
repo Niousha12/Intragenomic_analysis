@@ -172,13 +172,6 @@ class IntraGenomicAnalysis:
         save_path = os.path.join('Figures', 'intragenomic_experiment')
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-        metrics = list(df.columns)
-        experiments = list(df.index)
-        data = df.transpose().values
-        bar_width = 0.8
-        x = np.arange(len(experiments))
-
-        fig, axes = plt.subplots(1, len(data), figsize=(16, 5))
 
         # colors = plt.cm.tab20.colors
         # colors = ['#C53A33',
@@ -207,12 +200,30 @@ class IntraGenomicAnalysis:
                   '#FFA07A',
                   '#FFD700',
 
-                  '#6A0DAD',
                   '#9370DB',
+                  '#6A0DAD',
                   '#A89F91']
+
+        exclude_color = '#6A0DAD'  # Color to remove
+        exclude_index = colors.index(exclude_color) if exclude_color in colors else None
+
+        # Remove corresponding row in df
+        if exclude_index is not None and exclude_index < len(df):
+            df = df.drop(df.index[exclude_index])  # Drop experiment by index
+            colors.pop(exclude_index)  # Remove color to keep alignment
+
+        metrics = list(df.columns)
+        experiments = list(df.index)
+        data = df.transpose().values  # Shape: (num_metrics, num_experiments)
+        bar_width = 0.8
+        x = np.arange(len(experiments))
+
+        fig, axes = plt.subplots(1, len(data), figsize=(16, 5))
 
         for i, ax in enumerate(axes):
             for j in range(len(experiments)):
+                if experiments[j] == "Large Tandem Repeat Arrays-P1":
+                    experiments[j] = "Large Tandem Repeat Arrays"
                 ax.bar(j, data[i][j], width=bar_width, color=colors[j], label=experiments[j] if i == 0 else "")
             ax.set_title(metrics[i])
             ax.grid(True, axis='y', color='lightgrey', linestyle='-', linewidth=0.5)  # Adjust grid properties
@@ -234,5 +245,5 @@ class IntraGenomicAnalysis:
 
 if __name__ == '__main__':
     intragenome = IntraGenomicAnalysis('Human', kmer=6)
-    dataframe = intragenome.run_experiment(new_run=True)
+    dataframe = intragenome.run_experiment(new_run=False)
     intragenome.plot_intragenomic_analysis(dataframe)

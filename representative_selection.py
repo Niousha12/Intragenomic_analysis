@@ -187,7 +187,7 @@ class ChromosomeRepresentativeSelection:
         return distances_from_representative, approximation_error, random_error, end_time
 
     def plot_distance_variations(self, chromosome_name, plot_random_outliers=True, plot_approximate=True, x_range=None):
-        figure_path = os.path.join('Figures', 'Representative', self.specie, 'Different_centroids')
+        figure_path = os.path.join('Figures', 'Representative', self.specie, 'Different_centroids', 'N')
         if not os.path.exists(figure_path):
             os.makedirs(figure_path)
 
@@ -225,7 +225,7 @@ class ChromosomeRepresentativeSelection:
         x_ticks = []
         for i in range(0, int(x_range) + 1):
             x_ticks.append(i * 20)
-        y_ticks = [0.0, 0.025, 0.05]  # , 0.6, 0.8, 1.0]
+        y_ticks = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
         plt.xticks(x_ticks)
         plt.yticks(y_ticks)
         plt.savefig(f'{figure_path}/distance_from_centroid_{chromosome_name}_k{self.kmer}_size{self.length}.png')
@@ -390,7 +390,7 @@ class ChromosomeRepresentativeSelection:
 
 
 if __name__ == '__main__':
-    representative = ChromosomeRepresentativeSelection('Human', 6, 'DSSIM', segment_length=500_000)
+    representative = ChromosomeRepresentativeSelection('Maize', 6, 'DSSIM', segment_length=500_000)
 
     # n_list = [1, 50, 40, 30, 20, 10]
     # for n in n_list:
@@ -420,9 +420,13 @@ if __name__ == '__main__':
     # print(f"Average approximation error: {np.mean(apx_list)}")
     # print(f"Average random error: {np.mean(rand_list)}")
 
-    chr_n = "21"
-    human_representative = ChromosomeRepresentativeSelection('Human', 9, 'DSSIM', segment_length=500_000)
-    segments_info = human_representative.get_non_overlapping_segments(chr_n)['segments_information']
-    RSSP = human_representative.get_representative(chr_n)['index']
-    ChromosomeRepresentativeSelection.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_n),
-                                                                     segments_info, RSSP, coloring_type='NCBI')
+    x_r = math.ceil(len(representative.chromosomes_holder.get_chromosome_sequence("1")) / 500_000 / 20)
+    # for chr_name in representative.chromosomes_holder.get_all_chromosomes_name():
+    representative.plot_distance_variations("1", x_range=x_r, plot_random_outliers=False, plot_approximate=False)
+
+    # chr_n = "21"
+    # human_representative = ChromosomeRepresentativeSelection('Human', 9, 'DSSIM', segment_length=500_000)
+    # segments_info = human_representative.get_non_overlapping_segments(chr_n)['segments_information']
+    # RSSP = human_representative.get_representative(chr_n)['index']
+    # ChromosomeRepresentativeSelection.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_n),
+    #                                                                  segments_info, RSSP, coloring_type='NCBI')

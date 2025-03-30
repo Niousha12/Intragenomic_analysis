@@ -159,7 +159,8 @@ class InterGenomicAnalysis:
 
 
 if __name__ == '__main__':
-    target_list = ["Human", "Chimp", "Mouse", "Insect", "Fungus", "Plant", "Protist", "Archaea", "Bacteria"]
+    target_list = ["Human", "Chimp", "Mouse", "Drosophila melanogaster", "Saccharomyces cerevisiae",
+                   "Arabidopsis thailana", "Paramecium caudatum", "Pyrococcus furiosus", "Escherichia coli"]
     intergenome = InterGenomicAnalysis(base_specie="Human", target_species_list=target_list, run=False)
     data_frame = intergenome.run_experiment(trim=False, new_run=False)
     intergenome.plot_means_variances(data_frame, plot_type='barplot')
