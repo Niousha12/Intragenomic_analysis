@@ -206,7 +206,7 @@ class App(customtkinter.CTk):
 
         # cgr/fcgr option
         self.fcgr = customtkinter.IntVar(value=1)
-        switch = customtkinter.CTkSwitch(self.t1_config_frame, text=f"FCGR", variable=self.fcgr)
+        switch = customtkinter.CTkSwitch(self.t1_config_frame, text=f"Frequency CGR", variable=self.fcgr)
         switch.grid(row=7, columnspan=2, pady=(10, 10))
 
         # plot button
@@ -1027,7 +1027,8 @@ class App(customtkinter.CTk):
         plt.close()
 
     def plot_fcgrs(self, fcgrs, colormap=False, background_color=None, name="Sequence"):
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 6))
+        fig.subplots_adjust(top=0.85)
         extent = 0, 1, 0, 1
 
         if background_color is not None:
@@ -1060,9 +1061,14 @@ class App(customtkinter.CTk):
         ax3.set_title(f'{name} 2\n{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
 
         if colormap:
+            fig.subplots_adjust(bottom=0.2)  # Adjust the bottom margin
             cbar_ax2 = fig.add_axes([0.36, 0.1, 0.3, 0.02])  # Adjust position as needed
-            fig.colorbar(im2, cax=cbar_ax2, orientation='horizontal')
-
+            cbar = fig.colorbar(im2, cax=cbar_ax2, orientation='horizontal')
+            cbar.set_label(f'Scale for absolute value of ({name} 2 - {name} 1)', fontsize=10)
+            cbar.ax.xaxis.set_label_position('top')  # Position label at top of colorbar
+            cbar.ax.xaxis.labelpad = 5
+            cbar.ax.tick_params(labelsize=8)
+        # fig.subplots_adjust(bottom=0.0001)  # Adjust bottom margin
         return fig
 
     @staticmethod
@@ -1194,14 +1200,23 @@ class App(customtkinter.CTk):
             dist_history = self.t4_cgr_distance_history
             frame = self.t4_plot_frame
 
-        fig, ax1 = plt.subplots(figsize=(200, 3))
-        x = np.arange(len(dist_history))
+        fig, ax1 = plt.subplots(figsize=(100, 2))
+        # Set x-axis limits
+        ax1.set_xlim(0, len(dist_history) + 1)  # Set the x-axis to start at 1
+        x = np.arange(1, len(dist_history) + 1)  # Start from 1 instead of 0
         y = np.asarray(dist_history)
-        mask1 = x == highlighted_index
-        mask2 = x != highlighted_index
+        mask1 = x == highlighted_index + 1
+        mask2 = x != highlighted_index + 1
         # bar_width = 0.5
         ax1.bar(x[mask1], y[mask1], color='red')  # , width=bar_width)
         ax1.bar(x[mask2], y[mask2], color='blue')  # , width=bar_width)
+
+        # Set titles for x and y axes
+        ax1.set_xlabel('Segment number')
+        ax1.set_ylabel('Distance value')
+
+        # Adjust layout to make room for x-axis title
+        fig.subplots_adjust(bottom=0.2)  # Increase the bottom margin
 
         # Clear the previous figure from the display frame if any
         for widget in frame.winfo_children():
@@ -1227,7 +1242,7 @@ class App(customtkinter.CTk):
             frame = self.t2_display_frame
 
             display_frame_color = frame.cget("fg_color")
-            fig = self.plot_fcgrs(dictionary, colormap=False, background_color=display_frame_color, name="Segment")
+            fig = self.plot_fcgrs(dictionary, colormap=True, background_color=display_frame_color, name="Segment")
 
         elif tab_name == "t3":
             with open(f"{self.temp_output_path}/common_ref/pickle/{image_index}.pkl", 'rb') as handle:
@@ -1235,6 +1250,7 @@ class App(customtkinter.CTk):
             frame = self.t3_display_frame_2
 
             fig, (ax2, ax3) = plt.subplots(1, 2)
+            fig.subplots_adjust(top=0.85)
             extent = 0, 1, 0, 1
 
             display_frame_color = frame.cget("fg_color")
@@ -1255,6 +1271,14 @@ class App(customtkinter.CTk):
             ax3.imshow(img2, cmap='gray', extent=extent)
             ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
             ax3.set_title(f'Segment\n{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
+
+            fig.subplots_adjust(bottom=0.2)  # Adjust the bottom margin
+            cbar_ax2 = fig.add_axes([0.36, 0.1, 0.3, 0.02])  # Adjust position as needed
+            cbar = fig.colorbar(im2, cax=cbar_ax2, orientation='horizontal')
+            cbar.set_label('Scale for absolute value of (Segment - Reference)', fontsize=10)
+            cbar.ax.xaxis.set_label_position('top')  # Position label at top of colorbar
+            cbar.ax.xaxis.labelpad = 5
+            cbar.ax.tick_params(labelsize=8)
 
         elif tab_name == "t4":
             with open(f"{self.temp_output_path}/representative/pickle/{image_index}.pkl", 'rb') as handle:
@@ -1283,6 +1307,14 @@ class App(customtkinter.CTk):
             ax3.imshow(img2, cmap='gray', extent=extent)
             ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
             ax3.set_title(f'Segment\n{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
+
+            fig.subplots_adjust(bottom=0.2)  # Adjust the bottom margin
+            cbar_ax2 = fig.add_axes([0.36, 0.1, 0.3, 0.02])  # Adjust position as needed
+            cbar = fig.colorbar(im2, cax=cbar_ax2, orientation='horizontal')
+            cbar.set_label('Scale for absolute value of (Segment - Representative)', fontsize=10)
+            cbar.ax.xaxis.set_label_position('top')  # Position label at top of colorbar
+            cbar.ax.xaxis.labelpad = 5
+            cbar.ax.tick_params(labelsize=8)
 
         # Clear the previous figure from the display frame if any
         for widget in frame.winfo_children():
