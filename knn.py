@@ -65,8 +65,9 @@ if __name__ == '__main__':
 
     # Run the random t times to see the accuracy
     pipeline_accuracy = 0
+    approximate_pipeline_accuracy = 0
     random_accuracy = []
-    run_times = 51
+    run_times = 52
     for t in range(run_times):
         # Create train dataset from representative
         X_train = []
@@ -85,6 +86,14 @@ if __name__ == '__main__':
                 else:
                     rep_dict = ChromosomeRepresentativeSelection(species, 6, 'DSSIM', segment_length=sequence_length). \
                         get_representative_of_representatives()
+            elif t == 1:
+                # This is using ARSSP
+                if chromosomes_holder.genome_length < 100_000_000:
+                    rep_dict = ChromosomeRepresentativeSelection(species, 6, 'DSSIM', segment_length=sequence_length). \
+                        get_approximate_representative("Whole Genome")
+                else:
+                    rep_dict = ChromosomeRepresentativeSelection(species, 6, 'DSSIM', segment_length=sequence_length). \
+                        get_representative_of_representatives(pipeline="ARSSP")
             else:
                 # print("Starting the random representative selection...")
                 if chromosomes_holder.genome_length < 100_000_000:
@@ -117,30 +126,34 @@ if __name__ == '__main__':
         if t == 0:
             pipeline_accuracy = accuracy
             pipeline_used = "RSSP"
+        elif t == 1:
+            approximate_pipeline_accuracy = accuracy
+            pipeline_used = "ARSSP"
         else:
             random_accuracy.append(accuracy)
             pipeline_used = "Random"
 
-        # Compute confusion matrix
-        cm = confusion_matrix(y_test, y_pred)
-
-        plt.figure(figsize=(7, 6))  # Adjust the size as needed
-        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
-        disp.plot(cmap='plasma', ax=plt.gca())  # You can change the color map 'plasma', 'viridis' or 'Blues'
-        plt.xticks(rotation=45, ha='right')  # Rotate x labels (Predicted)
-        # Adjust layout to fit everything
-        plt.tight_layout()
-
-        plt.title(f'{pipeline_used} Representative - Acc {accuracy:.2f}')
-        plt.xlabel('Predicted Label')
-        plt.ylabel('True Label')
-        if not os.path.exists(Figures_path):
-            os.makedirs(Figures_path)
-        plt.savefig(f'{Figures_path}/{pipeline_used}_{t}.png')
-        # plt.show()
-        plt.close()
+        # # Compute confusion matrix
+        # cm = confusion_matrix(y_test, y_pred)
+        #
+        # plt.figure(figsize=(7, 6))  # Adjust the size as needed
+        # disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
+        # disp.plot(cmap='plasma', ax=plt.gca())  # You can change the color map 'plasma', 'viridis' or 'Blues'
+        # plt.xticks(rotation=45, ha='right')  # Rotate x labels (Predicted)
+        # # Adjust layout to fit everything
+        # plt.tight_layout()
+        #
+        # plt.title(f'{pipeline_used} Representative - Acc {accuracy:.2f}')
+        # plt.xlabel('Predicted Label')
+        # plt.ylabel('True Label')
+        # if not os.path.exists(Figures_path):
+        #     os.makedirs(Figures_path)
+        # plt.savefig(f'{Figures_path}/{pipeline_used}_{t}.png')
+        # # plt.show()
+        # plt.close()
 
     print(f'Pipeline Accuracy: {pipeline_accuracy}')
+    print(f'Approximate Pipeline Accuracy: {approximate_pipeline_accuracy}')
     for acc in random_accuracy:
         if acc > pipeline_accuracy:
             print(f'Random accuracy was bigger than the Pipeline accuracy: {acc}')

@@ -16,7 +16,7 @@ from chaos_game_representation import CGR
 #
 # root_folder = os.path.dirname(__file__)
 # checkpoint_path_lpips = os.path.join(root_folder, "checkpoints", f"model_{epoch}.pth")
-# lpip_model = lpips.LPIPS(net='vgg')
+lpip_model = lpips.LPIPS(net='vgg')
 # lpip_model.load_state_dict(torch.load(checkpoint_path_lpips, map_location=torch.device('cpu')))
 
 DISTANCE_PARAM_DICT = {"Normalized Euclidean": {'prob': False, 'require_norm': True},
@@ -41,13 +41,33 @@ def get_dist_ensemble(cgr_1, cgr_2, dist_list=None, weight=None):
     return overall_dist
 
 
-def get_dist(cgr_img1, cgr_img2, dist_m="DSSIM"):
+def get_dist(img1, img2, dist_m="DSSIM"):
     if DISTANCE_PARAM_DICT[dist_m]['prob']:
-        cgr_img1 = cgr_img1 / np.sum(cgr_img1)
-        cgr_img2 = cgr_img2 / np.sum(cgr_img2)
+        if np.sum(img1) == 0.0:
+            cgr_img1 = np.zeros_like(img1)
+        else:
+            cgr_img1 = img1 / np.sum(img1)
+        if np.sum(img2) == 0.0:
+            cgr_img2 = np.zeros_like(img2)
+        else:
+            cgr_img2 = img2 / np.sum(img2)
     if DISTANCE_PARAM_DICT[dist_m]['require_norm']:
-        cgr_img1 = CGR.normalize(cgr_img1)
-        cgr_img2 = CGR.normalize(cgr_img2)
+        if img1.min() == img1.max():
+            if img1.min() == 0:
+                cgr_img1 = np.zeros_like(img1)
+                cgr_img1 = cgr_img1 + 0.000000000000001
+            else:
+                cgr_img1 = np.ones_like(img1)
+        else:
+            cgr_img1 = CGR.normalize(img1)
+        if img2.min() == img2.max():
+            if img2.min() == 0:
+                cgr_img2 = np.zeros_like(img2)
+            else:
+                cgr_img2 = np.ones_like(img2)
+                cgr_img2 = cgr_img2 + 0.000000000000001
+        else:
+            cgr_img2 = CGR.normalize(img2)
 
     distance = None
     if dist_m.lower() == "cosine":

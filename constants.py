@@ -97,7 +97,7 @@ GENOME_LENGTH = {"Human": 3117,
 REVERSE_SCIENTIFIC_NAMES = {v: k for k, v in SCIENTIFIC_NAMES.items()}
 
 RESOLUTION_DICT = {2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 4, 9: 4, 10: 4, 11: 4, 12: 4}
-BITS_DICT = {"Human": 8, "Chimp": 8, "Mouse": 8, "Drosophila melanogaster": 8, "Saccharomyces cerevisiae": 8,
-             "Arabidopsis thailana": 8, "Paramecium caudatum": 8, "Pyrococcus furiosus": 8,
-             "Escherichia coli": 8, "Maize": 6, "Dictyostelium discoideum": 8, "Aspergillus terreus": 8,
+BITS_DICT = {"Human": 8, "Chimp": 8, "Mouse": 8, "Drosophila melanogaster": 8, "Saccharomyces cerevisiae": 6,
+             "Arabidopsis thailana": 8, "Paramecium caudatum": 8, "Pyrococcus furiosus": 6,
+             "Escherichia coli": 5, "Maize": 6, "Dictyostelium discoideum": 9, "Aspergillus terreus": 8,
              "Aspergillus nidulans": 8, "Custom": 8}

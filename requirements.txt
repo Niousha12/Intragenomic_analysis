@@ -10,5 +10,6 @@ pandas
 matplotlib
 pillow
 scikit-learn
+scikit-learn-extra
 plotly
 customtkinter

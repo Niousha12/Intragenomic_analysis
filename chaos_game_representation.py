@@ -94,17 +94,35 @@ class CGR:
         return X, Y
 
     @staticmethod
-    def normalize(input_matrix):
-        matrix = input_matrix - np.min(input_matrix)
+    def normalize(input_matrix, clamp_outliers=False, reverse=False):
+        # take a copy of the input_matrix to not change the original
+        input_matrix_copy = np.copy(input_matrix)
+        if clamp_outliers:
+            low, high = np.percentile(input_matrix_copy, [2, 98])
+            # clamp values to avoid extreme outliers
+            input_matrix_copy[input_matrix_copy < low] = low
+            input_matrix_copy[input_matrix_copy > high] = high
+            # matrix = (input_matrix_copy - low) / (high - low)  # Normalize to 0-1
+        if np.max(input_matrix_copy) == 0:
+            return input_matrix_copy
+        # import matplotlib.pyplot as plt
+        # plt.imshow(input_matrix_copy)
+        # plt.show()
+        matrix = input_matrix_copy - np.min(input_matrix_copy)
         matrix = matrix / np.max(matrix)
+        if reverse:
+            matrix = 1.0 - matrix  # Invert colors for visualization
         return matrix
 
     @staticmethod
     def array2img(array, bits=8, resolution=4, m=None, M=None, return_array=False):
         if m is None and M is None:
             m, M = array.min(), array.max()
-        # rescale to [0,1]
-        img_rescaled = (array - m) / (M - m)
+        if m == M:
+            img_rescaled = array
+        else:
+            # rescale to [0,1]
+            img_rescaled = (array - m) / (M - m)
 
         max_color = resolution ** bits - 1
 

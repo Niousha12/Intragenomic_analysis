@@ -45,7 +45,7 @@ def process_images(directory, crop_margins):  # , output_size):
 
 
 # Specify the directory containing the images
-image_directory = "../Figures/Representative/Human/Different_centroids"
+image_directory = "../Figures/Representative/Human/Different_centroids/kmedoids"
 
 
 # Specify the crop margins as percentages of each side

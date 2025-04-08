@@ -134,7 +134,7 @@ class IntraGenomicAnalysis:
         return distance_values
 
     def run_experiment(self, new_run=False):
-        experiment_path = os.path.join('outputs', 'intragenome_analysis.csv')
+        experiment_path = os.path.join('outputs', 'intragenome_analysis_clamped.csv')
         if not os.path.exists(experiment_path):
             new_run = True
         if new_run:
@@ -239,11 +239,11 @@ class IntraGenomicAnalysis:
         plt.tight_layout(rect=[0, 0.1, 1, 1])
         plt.subplots_adjust(wspace=0.4)
 
-        plt.savefig(f"{save_path}/intragenomic_analysis.png", dpi=300, bbox_inches='tight', transparent=True)
+        plt.savefig(f"{save_path}/intragenomic_analysis_clamped.png", dpi=300, bbox_inches='tight', transparent=True)
         # plt.show()
 
 
 if __name__ == '__main__':
     intragenome = IntraGenomicAnalysis('Human', kmer=6)
-    dataframe = intragenome.run_experiment(new_run=False)
+    dataframe = intragenome.run_experiment(new_run=True)
     intragenome.plot_intragenomic_analysis(dataframe)

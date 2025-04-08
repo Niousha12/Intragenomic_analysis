@@ -1,5 +1,6 @@
 import os
 import pickle
+import sys
 import threading
 import tkinter
 import tkinter.messagebox
@@ -57,10 +58,13 @@ class GUIDataStructure:
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        self.temp_output_path = "./.gui_temp_outputs"
+        self.temp_output_path = self.resource_path(".gui_temp_outputs")
+        # self.temp_output_path = "./.gui_temp_outputs"
         if not os.path.exists(self.temp_output_path):
             os.makedirs(self.temp_output_path)
-        self.assets_path = "./assets"
+        # self.assets_path = "./assets"
+        self.assets_path = self.resource_path("assets")
+        self.data_path = self.resource_path("Data/species")
 
         self.title("CGR GUI.py")
         screen_width = self.winfo_screenwidth()
@@ -801,6 +805,16 @@ class App(customtkinter.CTk):
         self.t4_next_button.grid(row=0, column=2)
 
     @staticmethod
+    def resource_path(relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        if getattr(sys, 'frozen', False):  # If running as a bundled .app
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
+
+    @staticmethod
     def change_appearance_mode_event(new_appearance_mode: str):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
@@ -845,48 +859,55 @@ class App(customtkinter.CTk):
             self.sync_text_vars(self.t1_ds, sender)
 
     def specie_change_event(self, sender, value):
-        self.t1_species_combobox[sender].set(value)
-        self.t1_ds[sender].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
+        try:
+            self.t1_species_combobox[sender].set(value)
+            self.t1_ds[sender].specie.set(REVERSE_SCIENTIFIC_NAMES[value])
 
-        specie = self.t1_ds[sender].specie.get()
-        self.t1_chr_combobox[sender].configure(
-            values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
-        self.t1_ds[sender].invalidate_based_specie()
+            specie = self.t1_ds[sender].specie.get()
+            self.t1_chr_combobox[sender].configure(
+                values=ChromosomesHolder(specie, self.data_path).get_all_chromosomes_name(include_whole_genome=True))
+            self.t1_ds[sender].invalidate_based_specie()
 
-        # clear window_s
-        self.window_s_toggle.set(0)
-        self.window_s.set("")
-        self.window_entry.configure(state="disable")
-        for key, value in self.t1_ds.items():
-            self.sync_text_vars(self.t1_ds, key, keep_annotation=False)
+            # clear window_s
+            self.window_s_toggle.set(0)
+            self.window_s.set("")
+            self.window_entry.configure(state="disable")
+            for key, value in self.t1_ds.items():
+                self.sync_text_vars(self.t1_ds, key, keep_annotation=False)
 
-        self.start_seq_scale[sender].configure(state="disabled", button_color="#888888")
-        self.end_seq_scale[sender].configure(state="disabled", button_color="#888888")
+            self.start_seq_scale[sender].configure(state="disabled", button_color="#888888")
+            self.end_seq_scale[sender].configure(state="disabled", button_color="#888888")
 
-        # Empty the list of annotations
-        self.t1_parts_name_combobox[sender].configure(values=[])
+            # Empty the list of annotations
+            self.t1_parts_name_combobox[sender].configure(values=[])
+        except Exception as e:
+            messagebox.showerror("Error", f"Error: {e}")
 
     def chromosome_change_event(self, sender, value):
         specie = self.t1_ds[sender].specie.get()
         chromosome = self.t1_ds[sender].chromosome.get()
         # set its sequence
-        self.t1_ds[sender].seq = ChromosomesHolder(specie).get_chromosome_sequence(chromosome)
+        self.t1_ds[sender].seq = ChromosomesHolder(specie, self.data_path).get_chromosome_sequence(chromosome)
         # set the annotation combobox
         self.t1_parts_name_combobox[sender].configure(state="normal")
-        self.t1_parts_name_combobox[sender].configure(values=ChromosomesHolder(specie).cytobands[chromosome])
+        self.t1_parts_name_combobox[sender].configure(
+            values=ChromosomesHolder(specie, self.data_path).cytobands[chromosome])
         self.t1_ds[sender].invalidate_based_chromosome()
         # set start and end
-        self.t1_ds[sender].end_seq.set(len(self.t1_ds[sender].seq))
-        if len(self.t1_ds[sender].seq) > 0:
-            self.start_seq_scale[sender].configure(state="normal", button_color=self.scale_normal_color)
-            self.end_seq_scale[sender].configure(state="normal", button_color=self.scale_normal_color)
-        else:
-            self.start_seq_scale[sender].configure(state="disable", button_color="#888888")
-            self.end_seq_scale[sender].configure(state="disable", button_color="#888888")
-        self.start_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
-        self.end_seq_scale[sender].set(0)
-        self.end_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
-        self.end_seq_scale[sender].set(len(self.t1_ds[sender].seq))
+        try:
+            self.t1_ds[sender].end_seq.set(len(self.t1_ds[sender].seq))
+            if len(self.t1_ds[sender].seq) > 0:
+                self.start_seq_scale[sender].configure(state="normal", button_color=self.scale_normal_color)
+                self.end_seq_scale[sender].configure(state="normal", button_color=self.scale_normal_color)
+            else:
+                self.start_seq_scale[sender].configure(state="disable", button_color="#888888")
+                self.end_seq_scale[sender].configure(state="disable", button_color="#888888")
+            self.start_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
+            self.end_seq_scale[sender].set(0)
+            self.end_seq_scale[sender].configure(to=len(self.t1_ds[sender].seq))
+            self.end_seq_scale[sender].set(len(self.t1_ds[sender].seq))
+        except Exception as e:
+            messagebox.showerror("Sequence is Empty!")
 
         self.sync_text_vars(self.t1_ds, sender, keep_annotation=False)
         # clear window_s
@@ -906,7 +927,8 @@ class App(customtkinter.CTk):
     def annotation_change_event(self, sender, value):
         annotation = self.t1_ds[sender].annotation.get()
         chromosome_name = self.t1_ds[sender].chromosome.get()
-        annotation_info = ChromosomesHolder(self.t1_ds[sender].specie.get()).cytobands[chromosome_name][annotation]
+        annotation_info = ChromosomesHolder(self.t1_ds[sender].specie.get(), self.data_path).cytobands[chromosome_name][
+            annotation]
         self.t1_ds[sender].start_seq.set(annotation_info.start)
         self.t1_ds[sender].end_seq.set(annotation_info.end)
         self.sync_text_vars(self.t1_ds, sender, keep_annotation=True)
@@ -1045,7 +1067,7 @@ class App(customtkinter.CTk):
         img1 = CGR.array2img(fcgrs["1"]["(f)cgr"], bits=BITS_DICT[fcgrs["1"]["species"]],
                              resolution=RESOLUTION_DICT[self.k_var.get()])
         img1 = Image.fromarray(img1, 'L')
-        ax1.imshow(img1, cmap='gray', extent=extent)
+        ax1.imshow(img1, cmap='gray', extent=extent)  # Reds_r
         ax1.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
         ax1.set_title(f'{name} 1\n{round(b1 / scale_1, 2)} - {round(e1 / scale_1, 2)} {scaling_1}')
 
@@ -1056,7 +1078,7 @@ class App(customtkinter.CTk):
         img2 = CGR.array2img(fcgrs["2"]["(f)cgr"], bits=BITS_DICT[fcgrs["2"]["species"]],
                              resolution=RESOLUTION_DICT[self.k_var.get()])
         img2 = Image.fromarray(img2, 'L')
-        ax3.imshow(img2, cmap='gray', extent=extent)
+        ax3.imshow(img2, cmap='gray', extent=extent)  # Blues_r
         ax3.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
         ax3.set_title(f'{name} 2\n{round(b2 / scale_2, 2)} - {round(e2 / scale_2, 2)} {scaling_2}')
 
@@ -1064,7 +1086,8 @@ class App(customtkinter.CTk):
             fig.subplots_adjust(bottom=0.2)  # Adjust the bottom margin
             cbar_ax2 = fig.add_axes([0.36, 0.1, 0.3, 0.02])  # Adjust position as needed
             cbar = fig.colorbar(im2, cax=cbar_ax2, orientation='horizontal')
-            cbar.set_label(f'Scale for absolute value of ({name} 2 - {name} 1)', fontsize=10)
+            # Red: Greater k-mer value in Sequence 1, Blue: Greater k-mer value in Sequence 2
+            cbar.set_label(f'Red: Greater k-mer value in {name} 1 , Blue: Greater k-mer value in {name} 2', fontsize=10)
             cbar.ax.xaxis.set_label_position('top')  # Position label at top of colorbar
             cbar.ax.xaxis.labelpad = 5
             cbar.ax.tick_params(labelsize=8)
@@ -1103,14 +1126,14 @@ class App(customtkinter.CTk):
 
         specie = self.t2_ds["1"].specie.get()
         self.t2_chr_combobox.configure(
-            values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
+            values=ChromosomesHolder(specie, self.data_path).get_all_chromosomes_name(include_whole_genome=True))
         self.t2_ds["1"].invalidate_based_specie()
 
     def t2_chromosome_change_event(self, value):
         specie = self.t2_ds["1"].specie.get()
         chromosome = self.t2_ds["1"].chromosome.get()
         # set its sequence
-        self.t2_ds["1"].seq = ChromosomesHolder(specie).get_chromosome_sequence(chromosome)
+        self.t2_ds["1"].seq = ChromosomesHolder(specie, self.data_path).get_chromosome_sequence(chromosome)
         self.t2_ds["1"].end_seq.set(len(self.t2_ds["1"].seq))
         # enable window size
         self.t2_window_entry.configure(state="normal")
@@ -1202,9 +1225,10 @@ class App(customtkinter.CTk):
 
         fig, ax1 = plt.subplots(figsize=(100, 2))
         # Set x-axis limits
-        ax1.set_xlim(0, len(dist_history) + 1)  # Set the x-axis to start at 1
+        # ax1.set_xlim(0, len(dist_history) + 1)  # Set the x-axis to start at 1
         x = np.arange(1, len(dist_history) + 1)  # Start from 1 instead of 0
         y = np.asarray(dist_history)
+        ax1.set_xlim(x[0] - 0.9, x[-1] + 0.9)
         mask1 = x == highlighted_index + 1
         mask2 = x != highlighted_index + 1
         # bar_width = 0.5
@@ -1275,7 +1299,7 @@ class App(customtkinter.CTk):
             fig.subplots_adjust(bottom=0.2)  # Adjust the bottom margin
             cbar_ax2 = fig.add_axes([0.36, 0.1, 0.3, 0.02])  # Adjust position as needed
             cbar = fig.colorbar(im2, cax=cbar_ax2, orientation='horizontal')
-            cbar.set_label('Scale for absolute value of (Segment - Reference)', fontsize=10)
+            cbar.set_label('Red: Greater k-mer value in Reference , Blue: Greater k-mer value in Segment', fontsize=10)
             cbar.ax.xaxis.set_label_position('top')  # Position label at top of colorbar
             cbar.ax.xaxis.labelpad = 5
             cbar.ax.tick_params(labelsize=8)
@@ -1311,7 +1335,7 @@ class App(customtkinter.CTk):
             fig.subplots_adjust(bottom=0.2)  # Adjust the bottom margin
             cbar_ax2 = fig.add_axes([0.36, 0.1, 0.3, 0.02])  # Adjust position as needed
             cbar = fig.colorbar(im2, cax=cbar_ax2, orientation='horizontal')
-            cbar.set_label('Scale for absolute value of (Segment - Representative)', fontsize=10)
+            cbar.set_label('Red: Greater k-mer value in Representative , Blue: Greater k-mer value in Segment', fontsize=10)
             cbar.ax.xaxis.set_label_position('top')  # Position label at top of colorbar
             cbar.ax.xaxis.labelpad = 5
             cbar.ax.tick_params(labelsize=8)
@@ -1389,12 +1413,12 @@ class App(customtkinter.CTk):
         specie = self.t3_ds[sender].specie.get()
         if sender == "1":
             self.t3_chr_combobox_1.configure(
-                values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
+                values=ChromosomesHolder(specie, self.data_path).get_all_chromosomes_name(include_whole_genome=True))
             # disable annotation combobox
             self.t3_parts_name_combobox.configure(values=[])
         elif sender == "2":
             self.t3_chr_combobox_2.configure(
-                values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
+                values=ChromosomesHolder(specie, self.data_path).get_all_chromosomes_name(include_whole_genome=True))
             self.t3_window_entry.configure(state="disable")
         self.t3_ds[sender].invalidate_based_specie()
         self.sync_text_vars(self.t3_ds, sender)
@@ -1404,11 +1428,12 @@ class App(customtkinter.CTk):
         specie = self.t3_ds[sender].specie.get()
         chromosome = self.t3_ds[sender].chromosome.get()
         # set its sequence
-        self.t3_ds[sender].seq = ChromosomesHolder(specie).get_chromosome_sequence(chromosome)
+        self.t3_ds[sender].seq = ChromosomesHolder(specie, self.data_path).get_chromosome_sequence(chromosome)
         # set the annotation combobox
         if sender == "1":
             self.t3_parts_name_combobox.configure(state="normal")
-            self.t3_parts_name_combobox.configure(values=ChromosomesHolder(specie).cytobands[chromosome])
+            self.t3_parts_name_combobox.configure(
+                values=ChromosomesHolder(specie, self.data_path).cytobands[chromosome])
         elif sender == "2":
             self.t3_window_entry.configure(state="normal")
         self.t3_ds[sender].invalidate_based_chromosome()
@@ -1421,7 +1446,8 @@ class App(customtkinter.CTk):
     def t3_annotation_change_event(self, sender, value):
         annotation = self.t3_ds[sender].annotation.get()
         chromosome_name = self.t3_ds[sender].chromosome.get()
-        annotation_info = ChromosomesHolder(self.t3_ds[sender].specie.get()).cytobands[chromosome_name][annotation]
+        annotation_info = ChromosomesHolder(self.t3_ds[sender].specie.get(), self.data_path).cytobands[chromosome_name][
+            annotation]
         self.t3_ds[sender].start_seq.set(annotation_info.start)
         self.t3_ds[sender].end_seq.set(annotation_info.end)
         self.sync_text_vars(self.t3_ds, sender, keep_annotation=True)
@@ -1559,7 +1585,7 @@ class App(customtkinter.CTk):
 
         specie = self.t4_ds["1"].specie.get()
         self.t4_chr_combobox.configure(
-            values=ChromosomesHolder(specie).get_all_chromosomes_name(include_whole_genome=True))
+            values=ChromosomesHolder(specie, self.data_path).get_all_chromosomes_name(include_whole_genome=True))
         self.t4_ds["1"].invalidate_based_specie()
 
         if specie == "Human":
@@ -1571,7 +1597,7 @@ class App(customtkinter.CTk):
         specie = self.t4_ds["1"].specie.get()
         chromosome = self.t4_ds["1"].chromosome.get()
         # set its sequence
-        self.t4_ds["1"].seq = ChromosomesHolder(specie).get_chromosome_sequence(chromosome)
+        self.t4_ds["1"].seq = ChromosomesHolder(specie, self.data_path).get_chromosome_sequence(chromosome)
         self.t4_ds["1"].end_seq.set(len(self.t4_ds["1"].seq))
         # enable window size
         self.t4_window_entry.configure(state="normal")
@@ -1714,7 +1740,8 @@ class App(customtkinter.CTk):
             if self.t4_ds["1"].specie.get() == "Custom":
                 segment_information = None
             else:
-                segment_information = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_annotation_of_segment(
+                segment_information = ChromosomesHolder(self.t4_ds["1"].specie.get(),
+                                                        self.data_path).get_annotation_of_segment(
                     self.t4_ds["1"].chromosome.get(), b1, int(self.t4_window_s.get()), group="cytoband")
             information_list.append(segment_information)
 
@@ -1735,7 +1762,8 @@ class App(customtkinter.CTk):
                         random_sequence_dict = ChromosomesHolder.get_random_segment_from_any(
                             int(self.t4_window_s.get()), self.t4_ds["1"].seq, return_dict=True)
                     else:
-                        random_sequence_dict = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_random_segment(
+                        random_sequence_dict = ChromosomesHolder(self.t4_ds["1"].specie.get(),
+                                                                 self.data_path).get_random_segment(
                             int(self.t4_window_s.get()), self.t4_ds["1"].chromosome.get(), return_dict=True)
 
                     cgr = CGR(random_sequence_dict['sequence'], self.k_var.get())
@@ -1775,7 +1803,8 @@ class App(customtkinter.CTk):
 
             centroid_fcgr = representative_dict['(f)cgr']
             if self.t4_ds["1"].specie.get() != "Custom":
-                representative_information = ChromosomesHolder(self.t4_ds["1"].specie.get()).get_annotation_of_segment(
+                representative_information = ChromosomesHolder(self.t4_ds["1"].specie.get(),
+                                                               self.data_path).get_annotation_of_segment(
                     self.t4_ds["1"].chromosome.get(), representative_dict['start'], int(self.t4_window_s.get()),
                     group="cytoband")
             else:
@@ -1806,7 +1835,7 @@ class App(customtkinter.CTk):
 
         else:  # random
             self.t4_representative_index = ChromosomesHolder(
-                self.t4_ds["1"].specie.get()).choose_random_fragment_index(
+                self.t4_ds["1"].specie.get(), self.data_path).choose_random_fragment_index(
                 self.t4_ds["1"].chromosome.get(), int(self.t4_window_s.get()), outlier=True)
             centroid_fcgr = fcgrs_list[self.t4_representative_index]
 
@@ -1839,3 +1868,15 @@ class App(customtkinter.CTk):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
+
+    # pyinstaller --onefile --windowed --name "MyApp" --add-data "assets:assets" GUI.py
+    # open dist/MyApp.app or ./dist/MyApp.app/Contents/MacOS/MyApp
+
+    # pyinstaller --onefile --windowed --name "MyApp" --icon=icon.icns GUI.py
+
+    # def load_matplotlib():
+    #     import matplotlib.pyplot as plt
+    #     return plt
+
+    # xattr - cr MyApp.app
+    # chmod + x MyApp.app/Contents/MacOS/MyApp

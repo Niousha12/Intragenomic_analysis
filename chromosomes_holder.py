@@ -399,16 +399,16 @@ class ChromosomesHolder:
             if k_mer == 6 or k_mer == 9:
                 for (x, y), label in zip(points, labels):
                     plt.text(x, y, label, color='black', fontsize=14, ha='center', va='center')
-            plt.title(f"Chromosome {chromosome_name}", fontsize=14)
+            # plt.title(f"Chromosome {chromosome_name}", fontsize=14)
 
-        save_path = os.path.join('Figures', 'FCGRs', self.species)
+        save_path = os.path.join('Figures', 'FCGRs', 'each kingdom')
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         plt.savefig(
             f"{save_path}/chr_{chromosome_name}_range_{start_of_segment}_{start_of_segment + segment_length}_"
             f"{k_mer}kmer_{fcgr_cgr}.png",
             dpi=300, bbox_inches='tight', transparent=True)
-        plt.show()
+        # plt.show()
         plt.close()
 
     def find_n_counts(self):
@@ -567,9 +567,9 @@ if __name__ == '__main__':
     # ChromosomesHolder(specie).create_chromosomes_files("GCA_000011425.1_ASM1142v1_genomic.fna")
     genome = ChromosomesHolder(specie)
     genome.plot_fcgr("Y", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                     label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
-    genome.plot_fcgr("21", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                     label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
+                     label=True, global_min=None, global_max=None, _3d=False, global_norm=True)
+    # genome.plot_fcgr("21", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
+    #                  label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
 
     # genome.find_n_counts()
     # genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True)
