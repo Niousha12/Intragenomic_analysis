@@ -12,7 +12,7 @@ Data/
 temp*
 outputs/
 .gui_temp_outputs/
-#Figures/
+Figures/
 processed/
 *.pickle
 distances/checkpoints/*

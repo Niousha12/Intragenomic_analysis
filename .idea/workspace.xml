@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="The bug in GUI is addressed.">
+    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Figures are added for Readme.">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Figures/intragenomic_experiment/intragenomic_analysis.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/distances/distance_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/distances/distance_metrics.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -518,7 +516,21 @@
       <option name="project" value="LOCAL" />
       <updated>1745174360190</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="Figures are added for Readme.">
+      <created>1745180725283</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1745180725284</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Figures are added for Readme.">
+      <created>1745180766015</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1745180766016</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -533,7 +545,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Second page plots are added, but I need to resize them." />
     <MESSAGE value="Second page plots bug fixed and also the images are resized." />
     <MESSAGE value="Make the functions in the second tab more flexible." />
     <MESSAGE value="Third tab is completed." />
@@ -558,7 +569,8 @@
     <MESSAGE value="Add some changes to the GUI." />
     <MESSAGE value="Clamp normalization is added. Also, KMedoids is added for representative selection" />
     <MESSAGE value="The bug in GUI is addressed." />
-    <option name="LAST_COMMIT_MESSAGE" value="The bug in GUI is addressed." />
+    <MESSAGE value="Figures are added for Readme." />
+    <option name="LAST_COMMIT_MESSAGE" value="Figures are added for Readme." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
