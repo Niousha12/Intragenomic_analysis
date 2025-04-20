@@ -4,7 +4,7 @@ This repository contains the code for the experiments and the CGR-Diff software 
 
 ![Experiments](Figures/Experiments.jpg)
 
-## Dataset Summary
+### Dataset
 
 The dataset used in our paper includes genomes from various kingdoms, organized into three subsets based on the type of analysis performed: Reference (Subset 1), Intergenomic Analysis (Subset 2), and Intragenomic Analysis (Subset 3). Below is a summary of the datasets used in our experiments, along with links to their corresponding assemblies in the NCBI database.
 

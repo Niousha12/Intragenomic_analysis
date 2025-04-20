@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Update Readme.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Update the table in Readme.">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -535,7 +535,14 @@
       <option name="project" value="LOCAL" />
       <updated>1745181956661</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Update the table in Readme.">
+      <created>1745182569476</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1745182569476</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -550,7 +557,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Make the functions in the second tab more flexible." />
     <MESSAGE value="Third tab is completed." />
     <MESSAGE value="The GUI window size is fixed" />
     <MESSAGE value="In GUI uploading sequence is added to all pages." />
@@ -575,7 +581,8 @@
     <MESSAGE value="The bug in GUI is addressed." />
     <MESSAGE value="Figures are added for Readme." />
     <MESSAGE value="Update Readme." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update Readme." />
+    <MESSAGE value="Update the table in Readme." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update the table in Readme." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
