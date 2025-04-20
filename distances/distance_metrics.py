@@ -16,7 +16,7 @@ from chaos_game_representation import CGR
 #
 # root_folder = os.path.dirname(__file__)
 # checkpoint_path_lpips = os.path.join(root_folder, "checkpoints", f"model_{epoch}.pth")
-# lpip_model = lpips.LPIPS(net='vgg')
+lpip_model = lpips.LPIPS(net='vgg')
 # lpip_model.load_state_dict(torch.load(checkpoint_path_lpips, map_location=torch.device('cpu')))
 
 DISTANCE_PARAM_DICT = {"Normalized Euclidean": {'prob': False, 'require_norm': True},

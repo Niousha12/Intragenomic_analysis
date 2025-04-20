@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Clamp normalization is added. Also, KMedoids is added for representative selection">
+    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="The bug in GUI is addressed.">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chromosomes_holder.py" beforeDir="false" afterPath="$PROJECT_DIR$/chromosomes_holder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/intragenomic_experiment/intragenomic_analysis.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/distances/distance_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/distances/distance_metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/knn.py" beforeDir="false" afterPath="$PROJECT_DIR$/knn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/representative_selection.py" beforeDir="false" afterPath="$PROJECT_DIR$/representative_selection.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +57,7 @@
       <recent name="$PROJECT_DIR$/misc" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.temp">
+  <component name="RunManager" selected="Python.GUI">
     <configuration name="GUI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Intragenomic_analysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -188,9 +186,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.GUI" />
         <item itemvalue="Python.temp" />
         <item itemvalue="Python.knn" />
-        <item itemvalue="Python.GUI" />
         <item itemvalue="Python.chromosomes_holder" />
         <item itemvalue="Python.clean_images" />
       </list>
@@ -513,7 +511,14 @@
       <option name="project" value="LOCAL" />
       <updated>1744137881509</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="The bug in GUI is addressed.">
+      <created>1745174360190</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1745174360190</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -528,7 +533,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Second page configuration frame is completed." />
     <MESSAGE value="Second page plots are added, but I need to resize them." />
     <MESSAGE value="Second page plots bug fixed and also the images are resized." />
     <MESSAGE value="Make the functions in the second tab more flexible." />
@@ -553,7 +557,8 @@
     <MESSAGE value="Change the species name and some small updates on the GUI." />
     <MESSAGE value="Add some changes to the GUI." />
     <MESSAGE value="Clamp normalization is added. Also, KMedoids is added for representative selection" />
-    <option name="LAST_COMMIT_MESSAGE" value="Clamp normalization is added. Also, KMedoids is added for representative selection" />
+    <MESSAGE value="The bug in GUI is addressed." />
+    <option name="LAST_COMMIT_MESSAGE" value="The bug in GUI is addressed." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
