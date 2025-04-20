@@ -566,10 +566,10 @@ if __name__ == '__main__':
     specie = "Human"
     # ChromosomesHolder(specie).create_chromosomes_files("GCA_000011425.1_ASM1142v1_genomic.fna")
     genome = ChromosomesHolder(specie)
-    genome.plot_fcgr("Y", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                     label=True, global_min=None, global_max=None, _3d=False, global_norm=True)
-    # genome.plot_fcgr("21", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-    #                  label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
+    genome.plot_fcgr("1", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
+                     label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
+    genome.plot_fcgr("2", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
+                     label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
 
     # genome.find_n_counts()
     # genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True)

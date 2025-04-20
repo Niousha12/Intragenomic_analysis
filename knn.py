@@ -18,6 +18,9 @@ if __name__ == '__main__':
     y_test = []
     n_samples = 100
     sequence_length = 200_000
+    species_list = ["Human", "Saccharomyces cerevisiae", "Maize", "Dictyostelium discoideum", "Pyrococcus furiosus",
+                    "Escherichia coli"]
+
     X_pickle_path = f'outputs/knn/X_test_{sequence_length}_{n_samples}.pkl'
     y_pickle_path = f'outputs/knn/y_test_{sequence_length}_{n_samples}.pkl'
 
@@ -30,7 +33,7 @@ if __name__ == '__main__':
             y_test = pickle.load(f)
     else:
         for species in SCIENTIFIC_NAMES.keys():
-            if species == "Paramecium caudatum":
+            if species == "Paramecium caudatum" or species == "Aspergillus terreus":  # or species == "Chimp":
                 continue
             print(f"Create test dataset for {species}...")
             chromosomes_holder = ChromosomesHolder(species)
@@ -60,9 +63,6 @@ if __name__ == '__main__':
               "run again with the same parameters.")
         quit()
 
-    # Create the label list, excluding 'P. caudatum'
-    labels = [value for key, value in SCIENTIFIC_NAMES.items() if value != 'P. caudatum']
-
     # Run the random t times to see the accuracy
     pipeline_accuracy = 0
     approximate_pipeline_accuracy = 0
@@ -73,7 +73,7 @@ if __name__ == '__main__':
         X_train = []
         y_train = []
         for species in SCIENTIFIC_NAMES.keys():
-            if species == "Paramecium caudatum":
+            if species == "Paramecium caudatum" or species == "Aspergillus terreus":  # or species == "Chimp":
                 continue
             # print(f"Creating train dataset for {species}...")
             chromosomes_holder = ChromosomesHolder(species)
@@ -133,24 +133,37 @@ if __name__ == '__main__':
             random_accuracy.append(accuracy)
             pipeline_used = "Random"
 
-        # # Compute confusion matrix
-        # cm = confusion_matrix(y_test, y_pred)
-        #
-        # plt.figure(figsize=(7, 6))  # Adjust the size as needed
+        # Step 1: Get all unique classes
+        all_labels = sorted(set(y_test + y_pred))
+
+        # Step 2: Map class names to integers
+        label_to_int = {label: idx for idx, label in enumerate(all_labels)}
+        int_to_label = {idx: label for label, idx in label_to_int.items()}  # optional reverse map
+
+        # Step 3: Convert to integer labels
+        y_test_int = [label_to_int[label] for label in y_test]
+        y_pred_int = [label_to_int[label] for label in y_pred]
+
+        # Compute confusion matrix
+        cm = confusion_matrix(y_test_int, y_pred_int)
+
+        plt.figure(figsize=(7, 6))  # Adjust the size as needed
         # disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
-        # disp.plot(cmap='plasma', ax=plt.gca())  # You can change the color map 'plasma', 'viridis' or 'Blues'
-        # plt.xticks(rotation=45, ha='right')  # Rotate x labels (Predicted)
-        # # Adjust layout to fit everything
-        # plt.tight_layout()
-        #
-        # plt.title(f'{pipeline_used} Representative - Acc {accuracy:.2f}')
-        # plt.xlabel('Predicted Label')
-        # plt.ylabel('True Label')
-        # if not os.path.exists(Figures_path):
-        #     os.makedirs(Figures_path)
-        # plt.savefig(f'{Figures_path}/{pipeline_used}_{t}.png')
-        # # plt.show()
-        # plt.close()
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm,
+                                      display_labels=[int_to_label[i] for i in range(len(all_labels))])
+        disp.plot(cmap='plasma', ax=plt.gca())  # You can change the color map 'plasma', 'viridis' or 'Blues'
+        plt.xticks(rotation=45, ha='right')  # Rotate x labels (Predicted)
+        # Adjust layout to fit everything
+        plt.tight_layout()
+
+        plt.title(f'{pipeline_used} Representative - Acc {accuracy:.2f}')
+        plt.xlabel('Predicted Label')
+        plt.ylabel('True Label')
+        if not os.path.exists(Figures_path):
+            os.makedirs(Figures_path)
+        plt.savefig(f'{Figures_path}/{pipeline_used}_{t}.png')
+        # plt.show()
+        plt.close()
 
     print(f'Pipeline Accuracy: {pipeline_accuracy}')
     print(f'Approximate Pipeline Accuracy: {approximate_pipeline_accuracy}')

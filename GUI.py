@@ -1830,7 +1830,7 @@ class App(customtkinter.CTk):
                     distance_matrix[j, i] = distance_matrix[i, j]
 
             # get representative
-            self.t4_representative_index = ChromosomeRepresentativeSelection.find_centroid(distance_matrix, None)
+            self.t4_representative_index = ChromosomeRepresentativeSelection.find_centroid(distance_matrix)
             centroid_fcgr = fcgrs_list[self.t4_representative_index]
 
         else:  # random

@@ -293,7 +293,7 @@ class ChromosomeRepresentativeSelection:
             raise FileNotFoundError("Pickle file not found")
 
     @staticmethod
-    def find_centroid(distance_matrix, mode="kmedoid", exclude_indices=None):
+    def find_centroid(distance_matrix, mode="mean", exclude_indices=None):
         if exclude_indices is None:
             exclude_indices = []
 

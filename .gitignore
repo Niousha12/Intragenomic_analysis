@@ -10,6 +10,7 @@ __pycache__/
 .Python
 Data/
 temp*
+outputs/
 .gui_temp_outputs/
 Figures/
 processed/
