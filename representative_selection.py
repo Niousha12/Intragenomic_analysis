@@ -19,9 +19,9 @@ np.random.seed(24)
 
 
 class ChromosomeRepresentativeSelection:
-    def __init__(self, specie, kmer, distance_metric, segment_length=None):
+    def __init__(self, specie, kmer, distance_metric, segment_length=None, root_path='./Data/species'):
         self.specie = specie
-        self.chromosomes_holder = ChromosomesHolder(specie)
+        self.chromosomes_holder = ChromosomesHolder(specie, root_path=root_path)
         self.kmer = kmer
         if segment_length is not None:
             self.length = segment_length

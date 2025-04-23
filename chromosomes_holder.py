@@ -57,7 +57,11 @@ class ChromosomesHolder:
         self._fill_reverse_complement_info()
 
         self._chromosome_sequence_cache = {}
-        self.genome_length = GENOME_LENGTH[species] * 1_000_000  # self._get_genome_length()
+        # if species is not in the genome_length list, find its genome_length
+        if species not in GENOME_LENGTH.keys():
+            self.genome_length = self._get_genome_length()
+        else:
+            self.genome_length = GENOME_LENGTH[species] * 1_000_000  # self._get_genome_length()
 
         self.cytobands = {}
         self._fill_cytobands_info()

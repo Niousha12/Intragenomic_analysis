@@ -12,6 +12,7 @@ Data/
 temp*
 outputs/
 .gui_temp_outputs/
+Documents/
 Figures/
 processed/
 *.pickle
