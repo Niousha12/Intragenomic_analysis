@@ -401,8 +401,12 @@ class ChromosomeRepresentativeSelection:
 
         axis_value = 0.15
         fig.update_layout(
-            scene=dict(xaxis=dict(range=[-axis_value, axis_value]), yaxis=dict(range=[-axis_value, axis_value]),
-                       zaxis=dict(range=[-axis_value, axis_value])))
+            scene=dict(xaxis=dict(range=[-axis_value, axis_value], gridcolor="lightgrey",
+                                  zerolinecolor="lightgrey", linecolor="lightgrey"),
+                       yaxis=dict(range=[-axis_value, axis_value], gridcolor="lightgrey",
+                                  zerolinecolor="lightgrey", linecolor="lightgrey"),
+                       zaxis=dict(range=[-axis_value, axis_value], gridcolor="lightgrey",
+                                  zerolinecolor="lightgrey", linecolor="lightgrey")))
         fig.show()
 
 

@@ -134,7 +134,7 @@ class IntraGenomicAnalysis:
         return distance_values
 
     def run_experiment(self, new_run=False):
-        experiment_path = os.path.join('outputs', 'intragenome_analysis_clamped.csv')
+        experiment_path = os.path.join('outputs', 'intragenome_analysis_test.csv')
         if not os.path.exists(experiment_path):
             new_run = True
         if new_run:
@@ -172,22 +172,6 @@ class IntraGenomicAnalysis:
         save_path = os.path.join('Figures', 'intragenomic_experiment')
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-
-        # colors = plt.cm.tab20.colors
-        # colors = ['#C53A33',
-        #           '#F19D99',
-        #           '#F5BE82',
-        #
-        #           '#3A75AE',
-        #           '#B3C6E5',
-        #           '#519E3E',
-        #           '#A7DD93',
-        #           '#8D69B8',
-        #           '#C1B1D2',
-        #
-        #           '#EF8636',
-        #           '#BE9E96',
-        #           '#83584D']
 
         colors = ['#ADD8E6',
                   '#6495ED',

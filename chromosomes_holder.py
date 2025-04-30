@@ -45,7 +45,7 @@ class AnnotationRecord:
 
 
 class ChromosomesHolder:
-    def __init__(self, species, root_path='./Data/species', use_cache=True):
+    def __init__(self, species, root_path='./Data', use_cache=True):
         self.species = species
         self.root_path = root_path
         self.use_cache = use_cache
@@ -433,7 +433,6 @@ class ChromosomesHolder:
         self._chromosome_sequence_cache = {}
 
     '''Run this method to create chromosome files from a whole genome file (Run only once)'''
-
     def create_chromosomes_files(self, whole_genome_path):
         file_path = os.path.join(self.root_path, self.species, 'extra', whole_genome_path)
         save_path = os.path.join(self.root_path, self.species, 'chromosomes')
@@ -457,7 +456,6 @@ class ChromosomesHolder:
             f.close()
 
     ''' Private Methods '''
-
     def _fill_chromosomes_path(self):
         chromosomes_path = os.path.join(self.root_path, self.species, 'chromosomes')
         for filename in os.listdir(chromosomes_path):
@@ -483,7 +481,7 @@ class ChromosomesHolder:
         for chromosome_name in self.get_all_chromosomes_name(include_whole_genome=True):
             self.cytobands[chromosome_name] = {}
         if self.species == "Human":
-            file_path = f"{self.root_path}/{self.species}/bedfiles/chm13v2.0_telomere.bed"
+            file_path = f"{self.root_path}/{self.species}/bedfiles/telomere.bed"
             switch = 0
             with open(file_path) as file:
                 for line in file:
@@ -499,7 +497,7 @@ class ChromosomesHolder:
 
                     switch = 1 - switch
 
-            file_path = f"{self.root_path}/{self.species}/bedfiles/chm13v2.0_censat_v2.0.bed"
+            file_path = f"{self.root_path}/{self.species}/bedfiles/centromere.bed"
             chr_name = None
             last_start = None
             last_end = None
@@ -524,7 +522,7 @@ class ChromosomesHolder:
 
                     last_end = int(parts[2])
 
-            file_path = f"{self.root_path}/{self.species}/bedfiles/chm13v2.0_cytobands_allchrs_color.bed"
+            file_path = f"{self.root_path}/{self.species}/bedfiles/cytobands.bed"
             with open(file_path) as file:
                 for line in file:
                     line = line.strip()
@@ -539,12 +537,11 @@ class ChromosomesHolder:
 
     @staticmethod
     def _extract_chromosome_number(string):
-        match = re.search(r'(chromosome\s*|scaffold_|contig_)(\d+|[A-Za-z]+)', string, re.IGNORECASE)
+        match = re.search(r'(chromosome\s*|chr|scaffold_|contig_)(\d+|[A-Za-z]+)', string, re.IGNORECASE)
         if match:
             return match.group(2)
         if match is None:
             return "N"
-        # return None
 
     @staticmethod
     def get_reverse_complement(sequence):

@@ -18,13 +18,31 @@ if __name__ == '__main__':
     y_test = []
     n_samples = 100
     sequence_length = 200_000
-    species_list = ["Human", "Saccharomyces cerevisiae", "Maize", "Dictyostelium discoideum", "Pyrococcus furiosus",
-                    "Escherichia coli"]
 
-    X_pickle_path = f'outputs/knn/X_test_{sequence_length}_{n_samples}.pkl'
-    y_pickle_path = f'outputs/knn/y_test_{sequence_length}_{n_samples}.pkl'
+    # Modify the species list to include only the desired species
+    # Mode 1: All species, or remove some species
+    species_list = list(SCIENTIFIC_NAMES.keys())
+    to_remove = ['Paramecium caudatum', 'Aspergillus terreus']  # Chimp, Mouse
+    species_list = [s for s in species_list if s not in to_remove]
+    data_path = './Data'
+    name = 'all'
 
-    Figures_path = f'Figures/knn/{sequence_length}_{n_samples}'
+    # Mode 2: Each kingdom or specific species
+    # species_list = ["Human", "Saccharomyces cerevisiae", "Maize", "Dictyostelium discoideum", "Pyrococcus furiosus",
+    #                 "Escherichia coli"]
+    # species_list = ["Human", "Mouse"]
+    # data_path = './Data'
+    # name = 'human_mouse'
+
+    # # Mode 3: Hyena
+    # species_list = ["hippo", "humans", "lemur", "mouse", "pig"]
+    # data_path = './Data/hyena_data'
+    # name = 'hyena'
+
+    X_pickle_path = f'outputs/knn/X_test_{sequence_length}_{n_samples}_{name}.pkl'
+    y_pickle_path = f'outputs/knn/y_test_{sequence_length}_{n_samples}_{name}.pkl'
+
+    Figures_path = f'Figures/knn/{sequence_length}_{n_samples}_{name}'
 
     if os.path.exists(X_pickle_path) and os.path.exists(y_pickle_path):
         with open(X_pickle_path, 'rb') as f:
@@ -32,11 +50,9 @@ if __name__ == '__main__':
         with open(y_pickle_path, 'rb') as f:
             y_test = pickle.load(f)
     else:
-        for species in SCIENTIFIC_NAMES.keys():
-            if species == "Paramecium caudatum" or species == "Aspergillus terreus":  # or species == "Chimp":
-                continue
+        for species in species_list:
             print(f"Create test dataset for {species}...")
-            chromosomes_holder = ChromosomesHolder(species)
+            chromosomes_holder = ChromosomesHolder(species, data_path)
             if chromosomes_holder.genome_length < 100_000_000:
                 # rep_chr = "Whole Genome"
                 seg_dict = chromosomes_holder.get_random_segments_list(sequence_length, n_samples,
@@ -72,28 +88,25 @@ if __name__ == '__main__':
         # Create train dataset from representative
         X_train = []
         y_train = []
-        for species in SCIENTIFIC_NAMES.keys():
-            if species == "Paramecium caudatum" or species == "Aspergillus terreus":  # or species == "Chimp":
-                continue
+        for species in species_list:
             # print(f"Creating train dataset for {species}...")
-            chromosomes_holder = ChromosomesHolder(species)
+            chromosomes_holder = ChromosomesHolder(species, data_path)
+            representative_selection = ChromosomeRepresentativeSelection(species, 6, 'DSSIM',
+                                                                         segment_length=sequence_length,
+                                                                         root_path=data_path)
 
             if t == 0:
                 # This is using RSSP
                 if chromosomes_holder.genome_length < 100_000_000:
-                    rep_dict = ChromosomeRepresentativeSelection(species, 6, 'DSSIM', segment_length=sequence_length). \
-                        get_representative("Whole Genome")
+                    rep_dict = representative_selection.get_representative("Whole Genome")
                 else:
-                    rep_dict = ChromosomeRepresentativeSelection(species, 6, 'DSSIM', segment_length=sequence_length). \
-                        get_representative_of_representatives()
+                    rep_dict = representative_selection.get_representative_of_representatives()
             elif t == 1:
                 # This is using ARSSP
                 if chromosomes_holder.genome_length < 100_000_000:
-                    rep_dict = ChromosomeRepresentativeSelection(species, 6, 'DSSIM', segment_length=sequence_length). \
-                        get_approximate_representative("Whole Genome")
+                    rep_dict = representative_selection.get_approximate_representative("Whole Genome")
                 else:
-                    rep_dict = ChromosomeRepresentativeSelection(species, 6, 'DSSIM', segment_length=sequence_length). \
-                        get_representative_of_representatives(pipeline="ARSSP")
+                    rep_dict = representative_selection.get_representative_of_representatives(pipeline="ARSSP")
             else:
                 # print("Starting the random representative selection...")
                 if chromosomes_holder.genome_length < 100_000_000:
@@ -101,8 +114,7 @@ if __name__ == '__main__':
                 else:
                     rep_chr = random.choice(chromosomes_holder.get_all_chromosomes_name())
                 # Get representative randomly
-                rep_dict = ChromosomeRepresentativeSelection(species, 6, 'DSSIM', segment_length=sequence_length). \
-                    get_random_representative(rep_chr)
+                rep_dict = representative_selection.get_random_representative(rep_chr)
             X_train.append(rep_dict['fcgr'])
             y_train.append(species)
 
