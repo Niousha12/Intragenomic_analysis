@@ -67,7 +67,7 @@ database.
     </tr>
     <tr>
       <td rowspan="1">Protista</td>
-      <td><em>Paramecium caudatum</em> 📌</td>
+      <td><em>Paramecium caudatum</em><sup>📌</sup></td>
       <td><a href="https://www.ncbi.nlm.nih.gov/datasets/genome/GCA_000715435.1/">GCA_000715435.1</a></td>
       <td>30</td>
       <td>2.16</td>
@@ -111,7 +111,7 @@ database.
   </tbody>
 </table>
 
-<p>📌 Among all the species in this table, the assembly for <em>Paramecium caudatum</em> is at the scaffold level.</p>
+<p><sup>📌</sup> Among all the species in this table, the assembly for <em>Paramecium caudatum</em> is at the scaffold level.</p>
 
 ## Run the experiments in our paper
 
