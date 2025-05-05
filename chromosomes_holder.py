@@ -309,32 +309,68 @@ class ChromosomesHolder:
             segments_information.append(segment_information)
         return {'segments_sequences': segments_sequences, 'segments_information': segments_information}
 
-    def plot_fcgr(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                  label=True, global_min=None, global_max=None, _3d=False, global_norm=True):
+    def get_chromosome_fcgr_min_max(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
         if start_of_segment is None:
             start_of_segment = 0
+        else:
+            if (start_of_segment < 0) or (start_of_segment >= len(chromosome_sequence)):
+                raise ValueError(f"Start of segment {start_of_segment} is out of range of the chromosome length "
+                                 f"{len(self.get_chromosome_sequence(chromosome_name))}")
         if segment_length is None:
             segment_length = len(chromosome_sequence)
+        else:
+            if (segment_length <= 0) or (start_of_segment + segment_length > len(chromosome_sequence)):
+                raise ValueError(f"Segment length {segment_length} is out of range of the chromosome length "
+                                 f"{len(self.get_chromosome_sequence(chromosome_name))}")
         segment_sequence = chromosome_sequence[start_of_segment:start_of_segment + segment_length]
+
+        fcgr = CGR(segment_sequence, k_mer).get_fcgr()
+        m, M = fcgr.min(), fcgr.max()
+        return m, M
+
+    def get_global_min_max(self, start_of_segment=None, segment_length=None, k_mer=9):
+        global_min = np.inf
+        global_max = 0
+        for chr_name in tqdm(self.get_all_chromosomes_name()):
+            m, M = self.get_chromosome_fcgr_min_max(chr_name, start_of_segment, segment_length, k_mer)
+            if m < global_min:
+                global_min = m
+            if M > global_max:
+                global_max = M
+        return global_min, global_max
+
+    def plot_fcgr(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
+                  label=True, global_min=None, global_max=None, _3d=False, resolution=None, bits=None):
+        chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
+        if start_of_segment is None:
+            start_of_segment = 0
+        else:
+            if (start_of_segment < 0) or (start_of_segment >= len(chromosome_sequence)):
+                raise ValueError(f"Start of segment {start_of_segment} is out of range of the chromosome length "
+                                 f"{len(self.get_chromosome_sequence(chromosome_name))}")
+        if segment_length is None:
+            segment_length = len(chromosome_sequence)
+        else:
+            if (segment_length <= 0) or (start_of_segment + segment_length > len(chromosome_sequence)):
+                raise ValueError(f"Segment length {segment_length} is out of range of the chromosome length "
+                                 f"{len(self.get_chromosome_sequence(chromosome_name))}")
+        segment_sequence = chromosome_sequence[start_of_segment:start_of_segment + segment_length]
+
+        if resolution is None:
+            resolution = RESOLUTION_DICT[k_mer]
+        if bits is None:
+            bits = BITS_DICT[self.species]
+
         if fcgr_cgr == 'fcgr':
             fcgr = CGR(segment_sequence, k_mer).get_fcgr()
-            # print(fcgr)
-            if global_norm:
-                rescale_fcgr, _ = CGR.array2img(fcgr, bits=BITS_DICT[self.species], resolution=RESOLUTION_DICT[k_mer],
-                                                m=global_min, M=global_max, return_array=True)
-                rescale_2, fcgr_image = CGR.array2img(rescale_fcgr, bits=BITS_DICT[self.species],
-                                                      resolution=RESOLUTION_DICT[k_mer], return_array=True)
-                fcgr_pil = Image.fromarray(fcgr_image, 'L')
-            else:
-                low, high = np.percentile(fcgr, [2, 98])
-                # clamp value higher than high to high and lower than low to low
-                # fcgr = np.clip(fcgr, low, high)
-                composite_cgr = (fcgr - low) / (high - low)  # Normalize to 0-1
-                fcgr_pil = 1.0 - composite_cgr  # Invert colors for visualization
+            rescale_fcgr, _ = CGR.array2img(fcgr, bits=bits, resolution=resolution, m=global_min, M=global_max,
+                                            return_array=True)
+            rescale_2, fcgr_image = CGR.array2img(rescale_fcgr, bits=bits, resolution=resolution, return_array=True)
+            fcgr_pil = Image.fromarray(fcgr_image, 'L')
         else:
             fcgr = CGR(segment_sequence, k_mer).get_cgr()
-            fcgr_image = CGR.array2img(fcgr, bits=BITS_DICT[self.species], resolution=RESOLUTION_DICT[k_mer])
+            fcgr_image = CGR.array2img(fcgr, bits=bits, resolution=resolution)
             fcgr_pil = Image.fromarray(fcgr_image, 'L')
 
         if _3d:
@@ -353,39 +389,8 @@ class ChromosomesHolder:
                     zaxis_title="FCGR Value",
                 )
             )
-
             # Show the interactive plot
             fig.show()
-
-            # size = rescale_2.shape[0]
-            # x, y = np.meshgrid(np.arange(size), np.arange(size))  # Grid for positions
-            # x = x.flatten()
-            # y = y.flatten()
-            # z = np.zeros_like(x)  # Bars start at z = 0
-            # dx = dy = 1.0  # Width of bars
-            # dz = rescale_2.flatten()  # Heights are the intensity values
-            #
-            # fig = plt.figure(figsize=(12, 9))
-            # ax = fig.add_subplot(111, projection='3d')
-            #
-            # cmap = plt.cm.inferno  # Alternative: 'viridis', 'inferno'
-            # colors = cmap(dz)  # Direct mapping from FCGR values
-            #
-            # # Plot 3D bars
-            # ax.bar3d(x, y, z, dx, dy, dz, color=colors, shade=True)
-            #
-            # ax.set_title(f"3D Bar Plot of FCGR for Chromosome {chromosome_name}")
-            #
-            # # Save the figure
-            # save_path = os.path.join('Figures', 'FCGRs', self.species, '3D')
-            # if not os.path.exists(save_path):
-            #     os.makedirs(save_path)
-            # plt.savefig(
-            #     f"{save_path}/chr_{chromosome_name}_range_{start_of_segment}_{start_of_segment + segment_length}_"
-            #     f"{k_mer}kmer.png",
-            #     dpi=300, bbox_inches='tight', transparent=True)
-            # # plt.show()
-            # plt.close()
 
         plt.imshow(fcgr_pil, cmap="gray")
         plt.xticks([])  # Remove x ticks
@@ -403,14 +408,16 @@ class ChromosomesHolder:
             if k_mer == 6 or k_mer == 9:
                 for (x, y), label in zip(points, labels):
                     plt.text(x, y, label, color='black', fontsize=14, ha='center', va='center')
-            # plt.title(f"Chromosome {chromosome_name}", fontsize=14)
+            plt.title(f"Chromosome {chromosome_name}", fontsize=14)
 
-        save_path = os.path.join('Figures', 'FCGRs', 'each kingdom')
+        # Get the absolute path of the project root directory
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        save_path = os.path.join(project_root, 'Figures', 'FCGRs', self.species)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         plt.savefig(
-            f"{save_path}/chr_{chromosome_name}_range_{start_of_segment}_{start_of_segment + segment_length}_"
-            f"{k_mer}kmer_{fcgr_cgr}.png",
+            f"{save_path}/chr-{chromosome_name}_range-{start_of_segment}-{start_of_segment + segment_length}_"
+            f"kmer-{k_mer}_{fcgr_cgr}.png",
             dpi=300, bbox_inches='tight', transparent=True)
         # plt.show()
         plt.close()
@@ -432,8 +439,10 @@ class ChromosomesHolder:
     def clear_cache(self):
         self._chromosome_sequence_cache = {}
 
-    '''Run this method to create chromosome files from a whole genome file (Run only once)'''
     def create_chromosomes_files(self, whole_genome_path):
+        """
+            Run this method to create chromosome files from a whole genome file (Run only once)
+        """
         file_path = os.path.join(self.root_path, self.species, 'extra', whole_genome_path)
         save_path = os.path.join(self.root_path, self.species, 'chromosomes')
         with open(file_path) as fasta_file:
@@ -455,7 +464,6 @@ class ChromosomesHolder:
                     f.write(line)
             f.close()
 
-    ''' Private Methods '''
     def _fill_chromosomes_path(self):
         chromosomes_path = os.path.join(self.root_path, self.species, 'chromosomes')
         for filename in os.listdir(chromosomes_path):
@@ -568,9 +576,9 @@ if __name__ == '__main__':
     # ChromosomesHolder(specie).create_chromosomes_files("GCA_000011425.1_ASM1142v1_genomic.fna")
     genome = ChromosomesHolder(specie)
     genome.plot_fcgr("1", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                     label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
+                     label=True, global_min=None, global_max=None, _3d=True)
     genome.plot_fcgr("2", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                     label=True, global_min=None, global_max=None, _3d=True, global_norm=True)
+                     label=True, global_min=None, global_max=None, _3d=True)
 
     # genome.find_n_counts()
     # genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True)

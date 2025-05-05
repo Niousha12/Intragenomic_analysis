@@ -16,8 +16,8 @@ np.random.seed(46)
 
 
 class IntraGenomicAnalysis:
-    def __init__(self, specie, kmer):
-        self.chromosomes_holder = ChromosomesHolder(specie)
+    def __init__(self, root_path, specie, kmer):
+        self.chromosomes_holder = ChromosomesHolder(specie, root_path)
         self.kmer = kmer
 
     def telomere_vs_telomere(self, distance_metrics: list):
@@ -134,15 +134,15 @@ class IntraGenomicAnalysis:
         return distance_values
 
     def run_experiment(self, new_run=False):
-        experiment_path = os.path.join('outputs', 'intragenome_analysis_test.csv')
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        experiment_path = os.path.join(project_root, 'outputs', 'intragenome_analysis.csv')
         if not os.path.exists(experiment_path):
             new_run = True
         if new_run:
             experiments_list = ['Telomere vs. Telomere', 'Heterochromatin vs. Heterochromatin',
                                 'Heterochromatin vs. Euchromatin', 'Y (p-arm vs. q-arm)', '13 (p-arm vs. q-arm)',
                                 '14 (p-arm vs. q-arm)', '15 (p-arm vs. q-arm)', '21 (p-arm vs. q-arm)',
-                                '22 (p-arm vs. q-arm)', 'Large Tandem Repeat Arrays-P1',
-                                'Large Tandem Repeat Arrays-P2', 'Arbitrary Sequences']
+                                '22 (p-arm vs. q-arm)', 'Large Tandem Repeat Arrays', 'Arbitrary Sequences']
 
             df = pd.DataFrame({'Experiment': experiments_list})
 
@@ -157,7 +157,6 @@ class IntraGenomicAnalysis:
                 self.p_vs_q("21", DISTANCE_METRICS_LIST, 11134529),
                 self.p_vs_q("22", DISTANCE_METRICS_LIST, 14249622),
                 self.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT),
-                self.tandem_repeat_vs_tandem_repeat(DISTANCE_METRICS_LIST, TANDEM_REPEAT_DICT, exclude_chromosome="Y"),
                 self.arbitrary_vs_arbitrary(DISTANCE_METRICS_LIST)
             ]
             data_df = pd.DataFrame(data, columns=DISTANCE_METRICS_LIST)
@@ -169,7 +168,8 @@ class IntraGenomicAnalysis:
 
     @staticmethod
     def plot_intragenomic_analysis(df):
-        save_path = os.path.join('Figures', 'intragenomic_experiment')
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        save_path = os.path.join(project_root, 'Figures', 'intragenomic_experiment')
         if not os.path.exists(save_path):
             os.makedirs(save_path)
 
@@ -184,17 +184,8 @@ class IntraGenomicAnalysis:
                   '#FFA07A',
                   '#FFD700',
 
-                  '#9370DB',
-                  '#6A0DAD',
+                  '#6A0DAD',  # '#9370DB',
                   '#A89F91']
-
-        exclude_color = '#6A0DAD'  # Color to remove
-        exclude_index = colors.index(exclude_color) if exclude_color in colors else None
-
-        # Remove corresponding row in df
-        if exclude_index is not None and exclude_index < len(df):
-            df = df.drop(df.index[exclude_index])  # Drop experiment by index
-            colors.pop(exclude_index)  # Remove color to keep alignment
 
         metrics = list(df.columns)
         experiments = list(df.index)
@@ -206,8 +197,6 @@ class IntraGenomicAnalysis:
 
         for i, ax in enumerate(axes):
             for j in range(len(experiments)):
-                if experiments[j] == "Large Tandem Repeat Arrays-P1":
-                    experiments[j] = "Large Tandem Repeat Arrays"
                 ax.bar(j, data[i][j], width=bar_width, color=colors[j], label=experiments[j] if i == 0 else "")
             ax.set_title(metrics[i])
             ax.grid(True, axis='y', color='lightgrey', linestyle='-', linewidth=0.5)  # Adjust grid properties
@@ -223,11 +212,12 @@ class IntraGenomicAnalysis:
         plt.tight_layout(rect=[0, 0.1, 1, 1])
         plt.subplots_adjust(wspace=0.4)
 
-        plt.savefig(f"{save_path}/intragenomic_analysis_clamped.png", dpi=300, bbox_inches='tight', transparent=True)
+        plt.savefig(f"{save_path}/intragenomic_analysis.png", dpi=300, bbox_inches='tight', transparent=True)
         # plt.show()
+        plt.close()
 
 
 if __name__ == '__main__':
-    intragenome = IntraGenomicAnalysis('Human', kmer=6)
+    intragenome = IntraGenomicAnalysis('./Data', 'Human', kmer=6)
     dataframe = intragenome.run_experiment(new_run=True)
     intragenome.plot_intragenomic_analysis(dataframe)

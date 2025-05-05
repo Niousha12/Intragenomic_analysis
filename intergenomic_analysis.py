@@ -15,14 +15,15 @@ from distances.distance_metrics import get_dist
 
 
 class InterGenomicAnalysis:
-    def __init__(self, base_specie, target_species_list, length=500_000, num_samples=100, run=True):
+    def __init__(self, root_path, base_specie, target_species_list, length=500_000, num_samples=100, run=True):
+        self.root_path = root_path
         self.base_specie = base_specie
         self.target_species_list = target_species_list
         self.num_samples = num_samples
 
         if run:
             self.base_segments = []
-            chromosomes_holder_base = ChromosomesHolder(self.base_specie)
+            chromosomes_holder_base = ChromosomesHolder(self.base_specie, self.root_path)
             for _ in tqdm(range(self.num_samples)):
                 if self.base_specie == "Human":
                     remove_outlier = True
@@ -35,7 +36,7 @@ class InterGenomicAnalysis:
             self.species_segments_dict = {}
             for target_species in self.target_species_list:
                 self.species_segments_dict[target_species] = []
-                chromosomes_holder_target = ChromosomesHolder(target_species)
+                chromosomes_holder_target = ChromosomesHolder(target_species, self.root_path)
                 for _ in tqdm(range(100)):
                     if target_species == "Human":
                         remove_outlier = True
@@ -45,8 +46,9 @@ class InterGenomicAnalysis:
                                                                                   return_dict=False)
                     self.species_segments_dict[target_species].append(random_segment)
 
-    def run_experiment(self, trim=True, new_run=False):
-        experiment_path = os.path.join('outputs', 'intergenome_analysis.csv')
+    def run_experiment(self, trim=False, new_run=False):
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        experiment_path = os.path.join(project_root, 'outputs', 'intergenome_analysis.csv')
         if not os.path.exists(experiment_path):
             new_run = True
         if new_run:
@@ -75,7 +77,8 @@ class InterGenomicAnalysis:
 
     @staticmethod
     def plot_means_variances(df, plot_type='barplot'):
-        save_path = os.path.join('Figures', 'intergenomic_experiment')
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        save_path = os.path.join(project_root, 'Figures', 'intergenomic_experiment')
         if not os.path.exists(save_path):
             os.makedirs(save_path)
 
@@ -140,6 +143,7 @@ class InterGenomicAnalysis:
 
             # Save the plot
             plt.savefig(f"{save_path}/{distance_m}_{plot_type}.png", bbox_inches='tight', transparent=False)
+            # plt.show()
             plt.close()
 
     @staticmethod
