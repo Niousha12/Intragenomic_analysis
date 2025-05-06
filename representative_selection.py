@@ -19,18 +19,16 @@ np.random.seed(24)
 
 
 class ChromosomeRepresentativeSelection:
-    def __init__(self, specie, kmer, distance_metric, segment_length=None, root_path='./Data/species'):
+    def __init__(self, specie, kmer, distance_metric, segment_length=None, root_path='Data'):
         self.specie = specie
         self.chromosomes_holder = ChromosomesHolder(specie, root_path=root_path)
         self.kmer = kmer
-        if segment_length is not None:
-            self.length = segment_length
-        else:
-            self.length = self.chromosomes_holder.get_appropriate_segment_length(scale='genome')
-            print(f"Segment length for {self.specie} is {self.length}")
+        self.length = segment_length
         self.distance_metric = distance_metric
+        self.x_range = None
 
-        self.pickle_path_root = f"./outputs/cache_pickles/{self.specie}/"
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        self.pickle_path_root = os.path.join(project_root, 'outputs', 'cache_pickles', specie)
         if not os.path.exists(self.pickle_path_root):
             os.makedirs(self.pickle_path_root)
 
@@ -186,12 +184,22 @@ class ChromosomeRepresentativeSelection:
             random_error = np.mean(
                 np.abs((distances_from_random_representative - distances_from_representative)))
             # np.sqrt(np.mean((distances_from_random_representative - distances_from_representative) ** 2))
-            print(f"Random error: {random_error}")
+            # print(f"Random error: {random_error}")
 
         return distances_from_representative, approximation_error, random_error, end_time
 
-    def plot_distance_variations(self, chromosome_name, plot_random_outliers=True, plot_approximate=True, x_range=None):
-        figure_path = os.path.join('Figures', 'Representative', self.specie, 'Different_centroids', 'kmedoids')
+    def plot_distance_variations(self, chromosome_name, plot_random_outliers=True, plot_approximate=True,
+                                 random_sequences_number=30, x_range=None):
+        prefix = "RepSeg"
+        if plot_approximate:
+            prefix = "RepSeg_and_aRepSeg"
+            if plot_random_outliers:
+                prefix = "RepSeg_and_aRepSeg_and_random"
+        elif plot_random_outliers:
+            prefix = "RepSeg_and_random"
+
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        figure_path = os.path.join(project_root, 'Figures', 'Representative', self.specie, prefix)
         if not os.path.exists(figure_path):
             os.makedirs(figure_path)
 
@@ -207,7 +215,8 @@ class ChromosomeRepresentativeSelection:
             plt.plot(distance_from_outlier_representative, marker='o', linestyle='-', markersize=4, color='black')
 
         if plot_approximate:
-            approximate_representative_dict = self.get_approximate_representative(chromosome_name, verbose=True)
+            approximate_representative_dict = self.get_approximate_representative(chromosome_name,
+                                                                                  random_sequences_number)
             distance_from_approximate_representative = \
                 self.get_distance_from_representative(chromosome_name, approximate_representative_dict)
 
@@ -221,18 +230,21 @@ class ChromosomeRepresentativeSelection:
         else:
             include_whole_genome = False
 
-        if x_range is None:
-            x_range = math.ceil(
-                self.chromosomes_holder.get_largest_chromosome_length(include_whole_genome) / self.length / 20)
-        else:
-            x_range = x_range
+        if self.x_range is None:
+            if x_range is None:
+                self.x_range = math.ceil(
+                    self.chromosomes_holder.get_largest_chromosome_length(include_whole_genome) / self.length / 20)
+            else:
+                self.x_range = x_range
+
         x_ticks = []
-        for i in range(0, int(x_range) + 1):
+        for i in range(0, int(self.x_range) + 1):
             x_ticks.append(i * 20)
         y_ticks = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
         plt.xticks(x_ticks)
         plt.yticks(y_ticks)
-        plt.savefig(f'{figure_path}/distance_from_centroid_{chromosome_name}_k{self.kmer}_size{self.length}.png')
+        plt.savefig(f'{figure_path}/chr-{chromosome_name}_kmer-{self.kmer}_length-{self.length}.png')
+        # plt.show()
         plt.close()
 
     def get_non_overlapping_segments(self, chromosome_name):
@@ -391,7 +403,6 @@ class ChromosomeRepresentativeSelection:
         else:
             raise ValueError("Invalid coloring type")
 
-        # Update marker properties for a shiny effect
         fig.update_traces(marker=dict(
             size=8,  # Increase marker size
             opacity=0.9,  # Adjust opacity for a shiny effect
@@ -399,7 +410,7 @@ class ChromosomeRepresentativeSelection:
             # color=df['labels'].apply(lambda x: AnnotationRecord.get_color_display_dict().get(x, 'grey'))
         ))
 
-        axis_value = 0.15
+        axis_value = 1
         fig.update_layout(
             scene=dict(xaxis=dict(range=[-axis_value, axis_value], gridcolor="lightgrey",
                                   zerolinecolor="lightgrey", linecolor="lightgrey"),

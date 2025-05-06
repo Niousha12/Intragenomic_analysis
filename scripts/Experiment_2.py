@@ -9,10 +9,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--Experiment_type', type=str, required=True, help='There are two experiments: '
                                                                            'intragenomic and intergenomic')
-    parser.add_argument('--root_path', type=str, default='../Data', help='Path to the datasets directory')
+    parser.add_argument('--root_path', type=str, default='Data', help='Path to the datasets directory')
     parser.add_argument('--k_mer', type=int, default=6, help='K-mer size for FCGR')
 
     args = parser.parse_args()
+
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
     # Check if the experiment type is valid
     if args.Experiment_type not in ['intragenomic', 'intergenomic']:
@@ -29,7 +31,7 @@ def main():
     if args.Experiment_type == 'intragenomic':
         species = 'Human'
         # Check if the genome file exists
-        chromosomes_path = os.path.join(args.root_path, species)
+        chromosomes_path = os.path.join(project_root, args.root_path, species)
         if not os.path.exists(chromosomes_path):
             raise FileNotFoundError(f"Genome file not found at {chromosomes_path}. Please check the path.")
 
@@ -48,13 +50,13 @@ def main():
         num_samples = 100
 
         # Check if the genome file exists
-        chromosomes_path = os.path.join(args.root_path, base_species)
+        chromosomes_path = os.path.join(project_root, args.root_path, base_species)
         if not os.path.exists(chromosomes_path):
             raise FileNotFoundError(f"Genome file not found at {chromosomes_path}. Please check the path.")
 
         # Check if the target species genome files exist
         for target in target_list:
-            chromosomes_path = os.path.join(args.root_path, target)
+            chromosomes_path = os.path.join(project_root, args.root_path, target)
             if not os.path.exists(chromosomes_path):
                 raise FileNotFoundError(f"Genome file not found at {chromosomes_path}. Please check the path.")
 

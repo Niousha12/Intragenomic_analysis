@@ -45,9 +45,10 @@ class AnnotationRecord:
 
 
 class ChromosomesHolder:
-    def __init__(self, species, root_path='./Data', use_cache=True):
+    def __init__(self, species, root_path='Data', use_cache=True):
         self.species = species
-        self.root_path = root_path
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        self.root_path = os.path.join(project_root, root_path)
         self.use_cache = use_cache
 
         self._chromosomes_path = {}
@@ -489,7 +490,7 @@ class ChromosomesHolder:
         for chromosome_name in self.get_all_chromosomes_name(include_whole_genome=True):
             self.cytobands[chromosome_name] = {}
         if self.species == "Human":
-            file_path = f"{self.root_path}/{self.species}/bedfiles/telomere.bed"
+            file_path = os.path.join(self.root_path, self.species, 'bedfiles', 'telomere.bed')
             switch = 0
             with open(file_path) as file:
                 for line in file:
@@ -505,7 +506,7 @@ class ChromosomesHolder:
 
                     switch = 1 - switch
 
-            file_path = f"{self.root_path}/{self.species}/bedfiles/centromere.bed"
+            file_path = os.path.join(self.root_path, self.species, 'bedfiles', 'centromere.bed')
             chr_name = None
             last_start = None
             last_end = None
@@ -530,7 +531,7 @@ class ChromosomesHolder:
 
                     last_end = int(parts[2])
 
-            file_path = f"{self.root_path}/{self.species}/bedfiles/cytobands.bed"
+            file_path = os.path.join(self.root_path, self.species, 'bedfiles', 'cytobands.bed')
             with open(file_path) as file:
                 for line in file:
                     line = line.strip()

@@ -7,7 +7,7 @@ from chromosomes_holder import ChromosomesHolder
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--species', type=str, required=True, help='Species name')
-    parser.add_argument('--root_path', type=str, default='../Data', help='Path to the datasets directory')
+    parser.add_argument('--root_path', type=str, default='Data', help='Path to the datasets directory')
 
     parser.add_argument('--chromosome_name', type=str, default='all', help='Set it to the name of the chromosome that '
                                                                            'you want to plot, if you want to '
@@ -29,7 +29,8 @@ def main():
     args = parser.parse_args()
 
     # Check if the genome file exists
-    chromosomes_path = os.path.join(args.root_path, args.species)
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    chromosomes_path = os.path.join(project_root, args.root_path, args.species)
     if not os.path.exists(chromosomes_path):
         raise FileNotFoundError(f"Genome file not found at {chromosomes_path}. Please check the path.")
 

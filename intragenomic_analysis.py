@@ -218,6 +218,6 @@ class IntraGenomicAnalysis:
 
 
 if __name__ == '__main__':
-    intragenome = IntraGenomicAnalysis('./Data', 'Human', kmer=6)
+    intragenome = IntraGenomicAnalysis('Data', 'Human', kmer=6)
     dataframe = intragenome.run_experiment(new_run=True)
     intragenome.plot_intragenomic_analysis(dataframe)
