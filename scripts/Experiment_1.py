@@ -103,15 +103,13 @@ def main():
                                                                        args.k_mer)
 
     if args.chromosome_name == 'all':
-        for chr_name in chromosomes_holder.get_all_chromosomes_name():
-            print(f"Plotting {args.fcgr_cgr} for chromosome {chr_name}...")
-            chromosomes_holder.plot_fcgr(chr_name, start_of_segment=args.start_of_segment,
-                                         segment_length=args.segment_length, k_mer=args.k_mer, fcgr_cgr=args.fcgr_cgr,
-                                         label=args.label, global_min=global_min, global_max=global_max,
-                                         _3d=args.plot_3d, resolution=args.resolution, bits=args.bits)
+        chromosomes_list = chromosomes_holder.get_all_chromosomes_name()
     else:
-        print(f"Plotting {args.fcgr_cgr} for chromosome {args.chromosome_name}...")
-        chromosomes_holder.plot_fcgr(args.chromosome_name, start_of_segment=args.start_of_segment,
+        chromosomes_list = [args.chromosome_name]
+
+    for chr_name in chromosomes_list:
+        print(f"Plotting {args.fcgr_cgr} for chromosome {chr_name}...")
+        chromosomes_holder.plot_fcgr(chr_name, start_of_segment=args.start_of_segment,
                                      segment_length=args.segment_length, k_mer=args.k_mer, fcgr_cgr=args.fcgr_cgr,
                                      label=args.label, global_min=global_min, global_max=global_max,
                                      _3d=args.plot_3d, resolution=args.resolution, bits=args.bits)
