@@ -64,9 +64,9 @@ class App(customtkinter.CTk):
             os.makedirs(self.temp_output_path)
         # self.assets_path = "./assets"
         self.assets_path = self.resource_path("assets")
-        self.data_path = self.resource_path("Data/species")
+        self.data_path = self.resource_path("Data")
 
-        self.title("CGR GUI.py")
+        self.title("CGR-Diff.py")
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         self.geometry(f"{int(screen_width)}x{int(screen_height)}")
@@ -719,7 +719,7 @@ class App(customtkinter.CTk):
         representative_l.grid(row=3, columnspan=2, padx=10, sticky="w")
         self.representative_algo = customtkinter.StringVar(value="")
         self.t4_algo_combobox = customtkinter.CTkComboBox(self.t4_chr_frame, width=200, state="normal",
-                                                          values=["RSSP", "ARSSP"],
+                                                          values=["RepSeg", "aRepSeg"],
                                                           variable=self.representative_algo,
                                                           command=partial(self.t4_algo_change_event))
         self.t4_algo_combobox.grid(row=4, columnspan=2, sticky="w", padx=10, pady=(0, 10))
@@ -1589,9 +1589,9 @@ class App(customtkinter.CTk):
         self.t4_ds["1"].invalidate_based_specie()
 
         if specie == "Human":
-            self.t4_algo_combobox.configure(values=["RSSP", "ARSSP", "Random from Outliers"])
+            self.t4_algo_combobox.configure(values=["RepSeg", "aRepSeg", "Random from Outliers"])
         else:
-            self.t4_algo_combobox.configure(values=["RSSP", "ARSSP"])
+            self.t4_algo_combobox.configure(values=["RepSeg", "aRepSeg"])
 
     def t4_chromosome_change_event(self, value):
         specie = self.t4_ds["1"].specie.get()
@@ -1608,7 +1608,7 @@ class App(customtkinter.CTk):
         if len(sequence) > 0:
             self.t4_ds[sender].specie.set("Custom")
             self.t4_species_combobox.set("Custom")
-            self.t4_algo_combobox.configure(values=["RSSP", "ARSSP"])
+            self.t4_algo_combobox.configure(values=["RepSeg", "aRepSeg"])
             self.t4_ds[sender].invalidate_based_specie()
             self.t4_ds[sender].seq = sequence
             self.t4_ds[sender].end_seq.set(len(self.t4_ds[sender].seq))
@@ -1616,7 +1616,7 @@ class App(customtkinter.CTk):
             self.t4_window_entry.configure(state="normal")
 
     def t4_algo_change_event(self, value):
-        if value == "ARSSP":
+        if value == "RepSeg":
             self.t4_num_seg.set("")
             self.t4_num_seg_entry.configure(state="normal")
         else:
@@ -1633,7 +1633,7 @@ class App(customtkinter.CTk):
         if self.dist_metric.get() == "":
             messagebox.showerror("Error", "Please choose the distance measure")
             return
-        if self.t4_algo_combobox.get() == "ARSSP" and self.t4_num_seg.get() == "":
+        if self.t4_algo_combobox.get() == "aRepSeg" and self.t4_num_seg.get() == "":
             messagebox.showerror("Error", "Please enter the number of segments")
             return
         global foo_thread_3
@@ -1649,7 +1649,7 @@ class App(customtkinter.CTk):
             self.t4_scale.configure(to=int(len(self.t4_cgr_distance_history) - 1))  # Update the scale range
 
             # Display the reference image
-            if self.representative_algo.get() == "ARSSP":
+            if self.representative_algo.get() == "aRepSeg":
                 with open(f"{self.temp_output_path}/representative/pickle/ref.pkl", 'rb') as handle:
                     dictionary = pickle.load(handle)
             else:
@@ -1705,9 +1705,9 @@ class App(customtkinter.CTk):
 
         t4_step_length = np.floor(len(self.t4_ds["1"].seq) / int(self.t4_window_s.get()))
         arssp_max_retry = 50
-        if self.representative_algo.get() == "ARSSP":
+        if self.representative_algo.get() == "aRepSeg":
             t4_step_length_all = t4_step_length + t4_step_length + arssp_max_retry
-        elif self.representative_algo.get() == "RSSP":
+        elif self.representative_algo.get() == "RepSeg":
             t4_step_length_all = t4_step_length + int(t4_step_length * (t4_step_length + 1) / 2) + t4_step_length
         else:
             t4_step_length_all = t4_step_length + t4_step_length
@@ -1746,7 +1746,7 @@ class App(customtkinter.CTk):
             information_list.append(segment_information)
 
         # Find the representative
-        if self.representative_algo.get() == "ARSSP":
+        if self.representative_algo.get() == "aRepSeg":
             random_sequences_number = int(self.t4_num_seg.get())
             random_sequences_list = []
             retry_count, outlier_indices_number_total = 0, 0
@@ -1818,7 +1818,7 @@ class App(customtkinter.CTk):
             with open(f"{path}/ref.pkl", 'wb') as f:
                 pickle.dump(dictionary, f)
 
-        elif self.representative_algo.get() == "RSSP":
+        elif self.representative_algo.get() == "RepSeg":
             # get distance matrix
             distance_matrix = np.zeros((len(fcgrs_list), len(fcgrs_list)))
             for i in range(distance_matrix.shape[0]):
