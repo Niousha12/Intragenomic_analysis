@@ -113,7 +113,7 @@ database.
 
 <p><sup>📌</sup> Among all the species in this table, the assembly for <em>Paramecium caudatum</em> is at the scaffold level.</p>
 
-## Run the experiments in our paper
+## Replicate the experiments of our paper
 
 1. Clone this repository and install the required libraries by running:
 ```bash
@@ -198,5 +198,34 @@ gunzip Data/Maize/chromosomes/*.gz
 ```
 
 You can also download the complete datasets used in the paper from the [Google Drive](https://drive.google.com/file/d/1q7fbymvlAd7XLA7D94QN575tON1qk1fR/view?usp=sharing).
+3. Run the following command to replicate each experiment:
+```bash
+# Experiment 1: Pervasive Nature of Genomic Signatures
+python -m scripts.Experiment_1 --species <species_name>
+# Example: python -m scripts.Experiment_1 --species Human
 
+# Experiment 2: Distance Selection
+python -m scripts.Experiment_2 --Experiment_type <intragenomic(Exp 2.1) | intergenomic(Exp 2.2)>
+# Example: python -m scripts.Experiment_2 --Experiment_type intragenomic
 
+# Experiment 3: Intragenomic Variation
+python -m scripts.Experiment_3 --species <species_name> --plot_approximate True --plot_random_outliers True --plot_MDS True
+# Example: python -m scripts.Experiment_3 --species Human --plot_approximate True --plot_random_outliers True --plot_MDS True
+# Example: python -m scripts.Experiment_3 --species Maize --plot_approximate True --plot_random_outliers False --plot_MDS True
+
+# Experiment 4: Taxonomic Classification
+python -m scripts.Experiment_4 --Experiment_type <all | no_chimp>
+# Example: python -m scripts.Experiment_4 --Experiment_type all
+```
+
+## CGR-Diff
+To run the CGR-Diff software, you can use the following command:
+```bash
+python GUI.py
+```
+Alternatively, you can download and run the executable file from the following links.
+- [CGR-Diff for Mac](https://drive.google.com/drive/folders/1PY2sN-PWIWRTAc-2o5lbrbgzJOZuFdOI?usp=sharing)
+- [CGR-Diff for Linux](https://drive.google.com/file/d/11SWT93QyBsdzf1tOZsYQUEhPzfMPdX2T/view?usp=sharing)
+- [CGR-Diff for Windows](https://drive.google.com/file/d/1F_tOTC_K3ocYcfrovsCrToGpQUMdHelC/view?usp=sharing)
+You can also download the video tutorial from the following link:
+- [CGR-Diff Video Tutorial](https://drive.google.com/file/d/1wTLiaFOS8Qjpv7w9OaGKkrYFIBQUda0n/view?usp=sharing)
