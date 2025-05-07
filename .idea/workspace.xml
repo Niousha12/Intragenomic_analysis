@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Adding the Experiment 3 along with some small updates to the other experiments.">
-      <change afterPath="$PROJECT_DIR$/scripts/Experiment_4.py" afterDir="false" />
+    <list default="true" id="7b5234a7-3c6c-45e9-935b-0c0f966fe047" name="Changes" comment="Updating Readme for the experiments">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/knn.py" beforeDir="false" afterPath="$PROJECT_DIR$/knn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/representative_selection.py" beforeDir="false" afterPath="$PROJECT_DIR$/representative_selection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Experiment_3.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Experiment_3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +57,7 @@
       <recent name="$PROJECT_DIR$/temp/.gui_temp_outputs" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Experiment_4">
+  <component name="RunManager" selected="Python.GUI">
     <configuration name="Experiment_1" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Intragenomic_analysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -146,7 +142,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="chromosomes_holder" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="GUI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Intragenomic_analysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -158,7 +154,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/chromosomes_holder.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GUI.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -253,11 +249,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.GUI" />
         <item itemvalue="Python.Experiment_4" />
         <item itemvalue="Python.knn" />
         <item itemvalue="Python.temp" />
         <item itemvalue="Python.intragenomic_analysis" />
-        <item itemvalue="Python.chromosomes_holder" />
       </list>
     </recent_temporary>
   </component>
@@ -269,20 +265,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1721775415152</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Added multi_dimensional_scaling function and tested it.">
-      <created>1722547450961</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1722547450961</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Intergenomic experiment is added.">
-      <created>1722563848360</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1722563848360</updated>
     </task>
     <task id="LOCAL-00016" summary="First page of GUI is added.">
       <created>1722730654541</created>
@@ -613,7 +595,21 @@
       <option name="project" value="LOCAL" />
       <updated>1746555656981</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="Adding the Experiment 4 and some necessary changes.">
+      <created>1746647193893</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1746647193893</updated>
+    </task>
+    <task id="LOCAL-00064" summary="Updating Readme for the experiments">
+      <created>1746647223461</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1746647223462</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -628,8 +624,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="GUI fourth page, displaying plots and fcgrs are completed." />
-    <MESSAGE value="GUI fourth page, ARSSP algorithm is added." />
     <MESSAGE value="GUI fourth page, a description is added for the representative." />
     <MESSAGE value="Added a function for concatenating all the chromosomes and save to a file." />
     <MESSAGE value="Added the whole genome to the chromosome list." />
@@ -653,7 +647,9 @@
     <MESSAGE value="Added script for Experiment 1 and Experiment 2, and some small updates to their code." />
     <MESSAGE value="Updated Experiment 1." />
     <MESSAGE value="Adding the Experiment 3 along with some small updates to the other experiments." />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding the Experiment 3 along with some small updates to the other experiments." />
+    <MESSAGE value="Adding the Experiment 4 and some necessary changes." />
+    <MESSAGE value="Updating Readme for the experiments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updating Readme for the experiments" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
