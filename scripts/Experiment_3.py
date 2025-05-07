@@ -27,22 +27,20 @@ def main():
                                                                            'whole genome and this parameter '
                                                                            'will be ignored.')
     parser.add_argument('--plot_approximate', type=bool, default=True, help='Plot Experiment 3.1 and 3.2')
-    parser.add_argument('--plot_random_outliers', type=bool, default=False, help='Plot Experiment 3.1 and 3.3. This is '
-                                                                                 'only available for human genome')
+    parser.add_argument('--plot_random_outliers', type=bool, default=True, help='Plot Experiment 3.1 and 3.3. This is '
+                                                                                'only available for human genome')
     parser.add_argument('--n_value', type=int, default=30, help='Length of the set of random sequences '
                                                                 'in Experiment 3.2.')
-    parser.add_argument('--get_MAE_aRepSeg', type=bool, default=False, help='Get the average approximation error '
-                                                                            'for aRepSeg')
+    parser.add_argument('--get_MAE_aRepSeg', type=bool, default=True, help='Get the average approximation error '
+                                                                           'for aRepSeg')
     parser.add_argument('--get_MAE_random_outliers', type=bool, default=False, help='Get the average approximation '
                                                                                     'error for random outliers. '
                                                                                     'This is only available for human')
-    parser.add_argument('--get_threshold', type=bool, default=False, help='Get the average number of segments '
-                                                                          'that are below the threshold value')
+    parser.add_argument('--get_threshold', type=bool, default=True, help='Get the average number of segments '
+                                                                         'that are below the threshold value')
     parser.add_argument('--threshold_value', type=float, default=0.24, help='Threshold value for the distance '
                                                                             'between segments')
-    parser.add_argument('--plot_MDS', type=bool, default=False, help='Plot the Multi dimensional scaling')
-
-    # --species "Human" --root_path "Data" --k_mer 6 --segment_length 500000 --distance_metric "DSSIM" --chromosome_name "all" --plot_approximate True --plot_random_outliers True --n_value 30 --get_MAE_aRepSeg True --get_MAE_random_outliers True --get_threshold True --threshold_value 0.24 --plot_MDS True
+    parser.add_argument('--plot_MDS', type=bool, default=True, help='Plot the Multi dimensional scaling')
 
     args = parser.parse_args()
 

@@ -32,12 +32,12 @@ class ChromosomeRepresentativeSelection:
         if not os.path.exists(self.pickle_path_root):
             os.makedirs(self.pickle_path_root)
 
-    def get_representative_of_representatives(self, pipeline="RSSP"):
+    def get_representative_of_representatives(self, pipeline="RepSeg"):
         representative_dict_list = []
         for chromosome_name in self.chromosomes_holder.get_all_chromosomes_name():
-            if pipeline == "RSSP":
+            if pipeline == "RepSeg":
                 representative_dict_list.append(self.get_representative(chromosome_name))
-            elif pipeline == "ARSSP":
+            elif pipeline == "aRepSeg":
                 representative_dict_list.append(self.get_approximate_representative(chromosome_name))
         representative_fcgrs = [rep['fcgr'] for rep in representative_dict_list]
 
@@ -471,6 +471,6 @@ if __name__ == '__main__':
     # chr_n = "21"
     # human_representative = ChromosomeRepresentativeSelection('Human', 9, 'DSSIM', segment_length=500_000)
     # segments_info = human_representative.get_non_overlapping_segments(chr_n)['segments_information']
-    # RSSP = human_representative.get_representative(chr_n)['index']
+    # rep = human_representative.get_representative(chr_n)['index']
     # ChromosomeRepresentativeSelection.plot_multi_dimensional_scaling(human_representative.get_distance_matrix(chr_n),
-    #                                                                  segments_info, RSSP, coloring_type='NCBI')
+    #                                                                  segments_info, rep, coloring_type='NCBI')

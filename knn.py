@@ -22,22 +22,24 @@ if __name__ == '__main__':
     # Modify the species list to include only the desired species
     # Mode 1: All species, or remove some species
     species_list = list(SCIENTIFIC_NAMES.keys())
-    to_remove = ['Paramecium caudatum', 'Aspergillus terreus']  # Chimp, Mouse
+    to_remove = ['Paramecium caudatum', 'Aspergillus terreus', 'Chimp']  # , Mouse
     species_list = [s for s in species_list if s not in to_remove]
-    data_path = './Data'
-    name = 'all'
+    data_path = 'Data'
+    name = 'no_chimp'
 
-    # Mode 2: Each kingdom or specific species
-    # species_list = ["Human", "Saccharomyces cerevisiae", "Maize", "Dictyostelium discoideum", "Pyrococcus furiosus",
-    #                 "Escherichia coli"]
-    # species_list = ["Human", "Mouse"]
-    # data_path = './Data'
+    # # Mode 2: Each kingdom or specific species
+    # # species_list = ["Human", "Saccharomyces cerevisiae", "Maize", "Dictyostelium discoideum", "Pyrococcus furiosus",
+    # #                 "Escherichia coli"]
+    # species_list = ["Human", "Chimp"]
+    # data_path = 'Data'
     # name = 'human_mouse'
 
-    # # Mode 3: Hyena
-    # species_list = ["hippo", "humans", "lemur", "mouse", "pig"]
-    # data_path = './Data/hyena_data'
-    # name = 'hyena'
+    # # Mode 3: Hyena or other datasets
+    # # species_list = ["hippo", "humans", "lemur", "mouse", "pig"]
+    # species_list = ["cacao", "camaldule", "clementin", "grandis", "halophilu", "lyrata", "papaya", "parvulum",
+    #                 "raimondil", "rapa", "rubella", "sinensis", "thalian", "vinifera"]
+    # data_path = 'Data/plats_dataset'
+    # name = 'plants_dataset'
 
     X_pickle_path = f'outputs/knn/X_test_{sequence_length}_{n_samples}_{name}.pkl'
     y_pickle_path = f'outputs/knn/y_test_{sequence_length}_{n_samples}_{name}.pkl'
