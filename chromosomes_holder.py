@@ -341,6 +341,55 @@ class ChromosomesHolder:
                 global_max = M
         return global_min, global_max
 
+    def get_max_kmer_values(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=6, top_n=50,
+                            bottom_n=50):
+        chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
+        if start_of_segment is None:
+            start_of_segment = 0
+        else:
+            if (start_of_segment < 0) or (start_of_segment >= len(chromosome_sequence)):
+                raise ValueError(f"Start of segment {start_of_segment} is out of range of the chromosome length "
+                                 f"{len(self.get_chromosome_sequence(chromosome_name))}")
+        if segment_length is None:
+            segment_length = len(chromosome_sequence)
+        else:
+            if (segment_length <= 0) or (start_of_segment + segment_length > len(chromosome_sequence)):
+                raise ValueError(f"Segment length {segment_length} is out of range of the chromosome length "
+                                 f"{len(self.get_chromosome_sequence(chromosome_name))}")
+        segment_sequence = chromosome_sequence[start_of_segment:start_of_segment + segment_length]
+
+        fcgr = CGR(segment_sequence, k_mer).get_fcgr()
+        kmer_matrix = CGR(segment_sequence, k_mer).get_kmer_matrix()
+
+        # flat_indices = np.argsort(fcgr, axis=None)[-top_n:][::-1]
+        # top_kmers = []
+        # for idx in flat_indices:
+        #     y, x = np.unravel_index(idx, fcgr.shape)
+        #     kmer = kmer_matrix[y, x]
+        #     count = fcgr[y, x]
+        #     top_kmers.append((kmer, count))
+        flat_fcgr = fcgr.flatten()
+
+        zero_count = np.sum(flat_fcgr == 0)
+        if zero_count > 0:
+            print(f"The FCGR contains {zero_count} k-mers with zero frequency.")
+
+        # Only consider non-zero entries
+        non_zero_indices = np.nonzero(flat_fcgr)[0]
+        sorted_indices = non_zero_indices[np.argsort(flat_fcgr[non_zero_indices])]
+
+        bottom_indices = sorted_indices[:bottom_n]
+        top_indices = sorted_indices[-top_n:][::-1]
+
+        def idx_to_info(idx):
+            y, x = np.unravel_index(idx, fcgr.shape)
+            return kmer_matrix[y, x], fcgr[y, x]
+
+        bottom_kmers = [idx_to_info(idx) for idx in bottom_indices]
+        top_kmers = [idx_to_info(idx) for idx in top_indices]
+
+        return fcgr, top_kmers, bottom_kmers
+
     def plot_fcgr(self, chromosome_name, start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
                   label=True, global_min=None, global_max=None, _3d=False, resolution=None, bits=None):
         chromosome_sequence = self.get_chromosome_sequence(chromosome_name)
@@ -573,13 +622,27 @@ class ChromosomesHolder:
 
 
 if __name__ == '__main__':
-    specie = "Human"
-    # ChromosomesHolder(specie).create_chromosomes_files("GCA_000011425.1_ASM1142v1_genomic.fna")
-    genome = ChromosomesHolder(specie)
-    genome.plot_fcgr("1", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                     label=True, global_min=None, global_max=None, _3d=True)
-    genome.plot_fcgr("2", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
-                     label=True, global_min=None, global_max=None, _3d=True)
+    # specie = "Human"
+    # # ChromosomesHolder(specie).create_chromosomes_files("GCA_000011425.1_ASM1142v1_genomic.fna")
+    # genome = ChromosomesHolder(specie)
+    # genome.plot_fcgr("1", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
+    #                  label=True, global_min=None, global_max=None, _3d=True)
+    # genome.plot_fcgr("2", start_of_segment=None, segment_length=None, k_mer=9, fcgr_cgr='fcgr',
+    #                  label=True, global_min=None, global_max=None, _3d=True)
+
+    genome = ChromosomesHolder("Maize")
+    for chr_name in genome.get_all_chromosomes_name():
+        print(f"chromosome length is {len(genome.get_chromosome_sequence(chr_name))}")
+        fcgr, top_kmers, _ = genome.get_max_kmer_values(chr_name, start_of_segment=None, segment_length=None,
+                                                        k_mer=9, top_n=3, bottom_n=0)
+        print(f"Top 3 most frequent k-mers in chromosome {chr_name} of Maize:")
+        for kmer, count in top_kmers:
+            print(f"{kmer}: {count}")
+            print(f"{count / np.sum(fcgr) * 100}")
+
+        # print(f"Last 10 most frequent k-mers in chromosome {chr_name} of Human:")
+        # for kmer, count in bottom_kmers:
+        #     print(f"{kmer}: {count}")
 
     # genome.find_n_counts()
     # genome.plot_fcgr("21", k_mer=9, fcgr_cgr='fcgr', label=True)

@@ -62,6 +62,27 @@ class CGR:
         c = np.array(chaos)
         return c
 
+    def get_kmer_matrix(self):
+        array_size = int(math.sqrt(4 ** self.k_mer))
+        kmer_matrix = [[""] * array_size for _ in range(array_size)]
+
+        def recursive_fill(prefix, x, y, size, k):
+            if k == 0:
+                kmer_matrix[y][x] = prefix
+                return
+            half = size // 2
+            # A (top-left)
+            recursive_fill(prefix + "C", x, y, half, k - 1)
+            # C (top-right)
+            recursive_fill(prefix + "G", x + half, y, half, k - 1)
+            # G (bottom-left)
+            recursive_fill(prefix + "A", x, y + half, half, k - 1)
+            # T (bottom-right)
+            recursive_fill(prefix + "T", x + half, y + half, half, k - 1)
+
+        recursive_fill("", 0, 0, array_size, self.k_mer)
+        return np.array(kmer_matrix)
+
     def get_cgr(self):
         seq = list(self.data)
         d = {'C': (0, 0), 'A': (0, 1), 'T': (1, 1), 'G': (1, 0)}
