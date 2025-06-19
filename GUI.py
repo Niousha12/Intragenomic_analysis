@@ -1616,7 +1616,7 @@ class App(customtkinter.CTk):
             self.t4_window_entry.configure(state="normal")
 
     def t4_algo_change_event(self, value):
-        if value == "RepSeg":
+        if value == "aRepSeg":
             self.t4_num_seg.set("")
             self.t4_num_seg_entry.configure(state="normal")
         else:
