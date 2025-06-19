@@ -197,7 +197,23 @@ ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/022/117/705/GCA_022117705.1_Zm-Mo17-R
 gunzip Data/Maize/chromosomes/*.gz
 ```
 
-You can also download the complete datasets used in the paper from the [Google Drive](https://drive.google.com/file/d/1q7fbymvlAd7XLA7D94QN575tON1qk1fR/view?usp=sharing).
+You can also download the complete datasets and bedfiles used in the paper from the [Google Drive](https://drive.google.com/file/d/1q7fbymvlAd7XLA7D94QN575tON1qk1fR/view?usp=sharing).
+
+
+The bedfiles in this dataset were processed from the original CHM13 dataset provided by the [CHM13 GitHub repository](https://github.com/marbl/CHM13). However, in the `cytobands.bed` file, the color of each cytoband region is added based on the [NCBI Genome Data Viewer](https://www.ncbi.nlm.nih.gov/gdv/browser/genome/?id=GCF_009914755.1).
+Please cite both the original dataset and this repository when using this processed dataset.
+
+[//]: # (- **Repository**: [https://github.com/marbl/CHM13]&#40;https://github.com/marbl/CHM13&#41;)
+
+[//]: # (- **Publication/Citation**:)
+
+[//]: # (  )
+[//]: # (  > Nurk, S., Koren, S., Rhie, A., Rautiainen, M., Bzikadze, A. V., Mikheenko, A., Vollger, M. R., Altemose, N., Uralsky, L., Gershman, A., Aganezov, S., Hoyt, S. J., Diekhans, M., Logsdon, G. A., Alonge, M., Antonarakis, S. E., Borchers, M., Bouffard, G. G., Brooks, S. Y., … Phillippy, A. M. &#40;2022&#41;. **The complete sequence of a human genome.** *Science*, 376&#40;6588&#41;, 44–53. [https://doi.org/10.1126/science.abj6987]&#40;https://doi.org/10.1126/science.abj6987&#41;)
+
+[//]: # (  )
+[//]: # (- **Modification**: In the cytobands.bed file the color of each cytoband region is added based on the [NCBI Genome Data Viewer]&#40;https://www.ncbi.nlm.nih.gov/gdv/browser/genome/?id=GCF_009914755.1}&#41;.)
+
+
 3. Run the following command to replicate each experiment:
 ```bash
 # Experiment 1: Pervasive Nature of Genomic Signatures
