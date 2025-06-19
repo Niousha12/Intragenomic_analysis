@@ -17,13 +17,13 @@ from representative_selection import ChromosomeRepresentativeSelection
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--Experiment_type', type=str, default='all', help='Two options are available:'
-                                                                                          'all or no_chimp.'
-                                                                                          'If you want to run the '
-                                                                                          'experiment with all the '
-                                                                                          'species then set it to all. '
-                                                                                          'If you want to run the '
-                                                                                          'experiment without chimp '
-                                                                                          'then set it to no_chimp.')
+                                                                           'all or no_chimp.'
+                                                                           'If you want to run the '
+                                                                           'experiment with all the '
+                                                                           'species then set it to all. '
+                                                                           'If you want to run the '
+                                                                           'experiment without chimp '
+                                                                           'then set it to no_chimp.')
     parser.add_argument('--root_path', type=str, default='Data', help='Path to the datasets directory')
 
     parser.add_argument('--number_of_samples', type=int, default=100, help='Number of samples from each species for '
@@ -182,14 +182,15 @@ def main():
 
         # Step 1: Get all unique classes
         all_labels = sorted(set(y_test + y_pred))
+        all_labels = [SCIENTIFIC_NAMES[label] for label in all_labels]
 
         # Step 2: Map class names to integers
         label_to_int = {label: idx for idx, label in enumerate(all_labels)}
         int_to_label = {idx: label for label, idx in label_to_int.items()}  # optional reverse map
 
         # Step 3: Convert to integer labels
-        y_test_int = [label_to_int[label] for label in y_test]
-        y_pred_int = [label_to_int[label] for label in y_pred]
+        y_test_int = [label_to_int[SCIENTIFIC_NAMES[label]] for label in y_test]
+        y_pred_int = [label_to_int[SCIENTIFIC_NAMES[label]] for label in y_pred]
 
         # Compute confusion matrix
         cm = confusion_matrix(y_test_int, y_pred_int)
