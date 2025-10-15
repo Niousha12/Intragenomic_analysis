@@ -197,7 +197,7 @@ ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/022/117/705/GCA_022117705.1_Zm-Mo17-R
 gunzip Data/Maize/chromosomes/*.gz
 ```
 
-You can also download the complete datasets and bedfiles used in the paper from the [Google Drive](https://drive.google.com/file/d/1q7fbymvlAd7XLA7D94QN575tON1qk1fR/view?usp=sharing).
+You can also download the complete datasets and bedfiles used in the paper from the [Google Drive](https://drive.google.com/file/d/1q7fbymvlAd7XLA7D94QN575tON1qk1fR/view?usp=sharing) or [Zenodo](https://doi.org/10.5281/zenodo.15700257).
 
 
 The bedfiles in this dataset were processed from the original CHM13 dataset provided by the [CHM13 GitHub repository](https://github.com/marbl/CHM13). However, in the `cytobands.bed` file, the color of each cytoband region is added based on the [NCBI Genome Data Viewer](https://www.ncbi.nlm.nih.gov/gdv/browser/genome/?id=GCF_009914755.1).
@@ -233,6 +233,63 @@ python -m scripts.Experiment_3 --species <species_name> --plot_approximate True 
 python -m scripts.Experiment_4 --Experiment_type <all | no_chimp>
 # Example: python -m scripts.Experiment_4 --Experiment_type all
 ```
+
+### Quick Example
+
+This minimal example runs the intragenomic variation analysis (Experiment 3) on human chromosome 1 and includes three sub-experiments (Exp 3.1, Exp 3.2, and Exp 3.3). In each sub-experiment, a representative segment is selected using a different strategy — Exp 3.1 uses RepSeg, Exp 3.2 uses aRepSeg, and Exp 3.3 selects a random segment from tandem repeat regions — after which the distances of non-overlapping consecutive segments to that representative are computed and visualized.
+
+You can run the example by executing the following commands:
+
+```bash
+### Clone the repository ---------------------------------------------------
+git clone https://github.com/Niousha12/Intragenomic_analysis.git
+cd Intragenomic_analysis
+
+### (Optional) Create and activate a virtual environment -------------------
+python -m venv venv
+source venv/bin/activate
+
+### Install dependencies ---------------------------------------------------
+pip install -r requirements.txt
+
+### Download chromosome 1 (Human, T2T-CHM13v2.0) ---------------------------
+wget -P Data/Human/chromosomes/ \
+ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/009/914/755/GCA_009914755.4_T2T-CHM13v2.0/GCA_009914755.4_T2T-CHM13v2.0_assembly_structure/Primary_Assembly/assembled_chromosomes/FASTA/chr1.fna.gz
+gunzip Data/Human/chromosomes/chr1.fna.gz
+
+### Run the intragenomic analysis (Experiment 3) ---------------------------
+python -m scripts.Experiment_3 \
+  --species "Human" \
+  --root_path "Data" \
+  --k_mer 6 \
+  --segment_length 500000 \
+  --distance_metric "DSSIM" \
+  --chromosome_name "1" \
+  --plot_approximate True \
+  --plot_random_outliers True \
+  --n_value 30 \
+  --get_MAE_aRepSeg False \
+  --get_MAE_random_outliers False \
+  --get_threshold False \
+  --threshold_value 0.24 \
+  --plot_MDS False
+```
+
+💡 Note: 
+- This is a lightweight demonstration meant to verify installation and functionality.
+- You can replace `--chromosome_name "1"` with any other chromosome (e.g., "2", "9", "X") to analyze different chromosomes of the human genome.
+- Runtime depends on chromosome length, but generally ranges from ~1 to 5 minutes per chromosome on a standard laptop equipped with an 8-core CPU and 16 GB RAM.
+  - Chromosome 1 (248,387,328 bp, the longest chromosome) takes approximately 4 min 24 s for the complete experiment. The breakdown of the timing is as follows:
+  
+      <table align="center">
+        <tr><th>Sub-experiment</th><th>Time (min:s)</th></tr>
+        <tr><td><b>Exp 3.1</b></td><td>2:29.87</td></tr>
+        <tr><td><b>Exp 3.2</b></td><td>1:00.64</td></tr>
+        <tr><td><b>Exp 3.3</b></td><td>0:53.47</td></tr>
+      </table>
+
+
+
 
 ## CGR-Diff
 To run the CGR-Diff software, you can use the following command:
